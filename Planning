@@ -1,2 +1,9 @@
 First meeting: 
 - weekend after midterms (19-20Feb): decide on the plan to divide work, set meetings and use of trello, messaging apps or excel sheet for keeping track of progress
+
+19 Feb 2022: Meeting 1
+	-setting up git and adding the specification and requirements for the cw
+	-finding C89 documentation http://port70.net/~nsz/c/c89/c89-draft.html
+	-first look at testing codes and understand them
+	-decided on starting by having a basic fully working compiler (lexer, parser,code gen and vm) and then build up on it with more instructions
+	-will start working on lexer and parser
