@@ -1,0 +1,77 @@
+int main () {
+    return 0;
+}
+
+
+lexer:
+    divide by whitespace (ignore whitespace)
+    only passing string valued tokens
+    tokens sent to parser:
+        int
+        main
+        (
+        )
+        {
+        return
+        0
+        ; 
+        }
+
+        int
+        a
+        =
+        7           // -?{DIGIT}+
+        ;
+
+        double      //string 
+        b           //string 
+        =           //token 
+        4.02343     // {DIGIT}+.{DIGIT}+f?     - yyval
+        ;           //token
+
+        float       //string 
+        b           //string 
+        =           //token 
+        4.0f        // {DIGIT}+.{DIGIT}+f?   - yyval
+        ;           //token
+
+    
+        double a = 4.0f ;           
+        Srg : double <- type
+        srg : a <- vrbl
+        srg 4.0f <- 
+
+        Double a 
+
+
+
+parser:
+    receives tokens from lexer
+    EXPR: TERMS SEMICOLON  
+
+    TERM: INITIALISE
+          || DEFINE   
+
+    INITIALISE: INT NAME 
+
+    DEFINE:     INT     NAME EQ VALUE
+                FLOAT   NAME EQ VALUE
+                DOUBLE  NAME EQ VALUE
+
+    FUNCTION: TYPE FUNCTION_NAME OPEN_BRACKET CLOSED_BRACKET OPEN_CURLY_BRACKET EXPR CLOSED_CURLY_BRACKET
+              TYPE FUNCTION_NAME OPEN_BRACKET ARGUMENT CLOSED_BRACKET OPEN_CURLY_BRACKET EXPR CLOSED_CURLY_BRACKET
+
+    DEFINE: TYPEDEF TYPE NAME_TYPE  ->adds to hash 
+
+All given examples: FORMAT of header driver file
+int f(); //calling a separate function
+//float g(); //could we have more functions??
+//double i(); //or could we have nested calls of functions? main()->f()->g()
+
+
+int main()  //main function
+{
+    return !(f()==4);
+}
+    
+ 
