@@ -34,8 +34,8 @@
 /* Undocumented macros, especially those whose name start with YY_,
    are private implementation details.  Do not rely on them.  */
 
-#ifndef YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
-# define YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
+#ifndef YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
+# define YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "src/maths_parser.y"
+#line 1 "src/parser.y"
 
   #include "ast.hpp"
 
@@ -60,7 +60,7 @@ extern int yydebug;
   int yylex(void);
   void yyerror(const char *);
 
-#line 64 "src/maths_parser.tab.hpp"
+#line 64 "src/parser.tab.hpp"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -98,13 +98,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "src/maths_parser.y"
+#line 19 "src/parser.y"
 
   const Expression *expr;
   double number;
   std::string *string;
 
-#line 96 "src/maths_parser.tab.hpp"
+#line 96 "src/parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -117,4 +117,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED  */
+#endif /* !YY_YY_SRC_PARSER_TAB_HPP_INCLUDED  */
