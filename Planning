@@ -7,3 +7,5 @@ First meeting:
 	-first look at testing codes and understand them
 	-decided on starting by having a basic fully working compiler (lexer, parser,code gen and vm) and then build up on it with more instructions
 	-will start working on lexer and parser
+25-26 Feb 2022:
+	- useful links: https://www.lysator.liu.se/c/ANSI-C-grammar-y.html ; https://www.lysator.liu.se/c/ANSI-C-grammar-l.html
