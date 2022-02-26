@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "*.flex": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "string": "cpp",
+        "cassert": "cpp",
+        "*.y": "cpp",
+        "iostream": "cpp"
     }
 }

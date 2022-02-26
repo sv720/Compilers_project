@@ -2,7 +2,7 @@
 
 %{
 // Avoid error "error: `fileno' was not declared in this scope"
-//extern "C" int fileno(FILE *stream);
+extern "C" int fileno(FILE *stream);
 
 #include "parser.tab.hpp"
 %}
@@ -10,8 +10,8 @@
 
 %%
 [*]             { return T_TIMES; }
-[/]             { return T_DIVIDE; }
 [+]             { return T_PLUS; }
+[/]             { return T_DIVIDE; }
 [\^]            { return T_EXPONENT; }
 [-]             { return T_MINUS; }
 
@@ -37,8 +37,8 @@ break           { return T_BREAK; }
 
 
 
-[0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-[a-z]+          { yylval.string=new std::string(yytext); return T_VARIABLE; }
+[0-9]+([.][0-9]*)?  { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+[a-z]+              { yylval.string=new std::string(yytext); return T_VARIABLE; }
 
 [ \t\r\n]+		{;}
 
