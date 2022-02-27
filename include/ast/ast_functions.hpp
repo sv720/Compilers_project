@@ -51,7 +51,7 @@ public:
         : Function(_arg)
     {}
 
-    virtual const char *getFunction() const
+    virtual const char *getFunction() const //why no need for const override?
     { return "log"; }
 
     virtual double evaluate(

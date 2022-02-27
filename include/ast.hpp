@@ -6,8 +6,17 @@
 #include "ast/ast_operators.hpp"
 #include "ast/ast_unary.hpp"
 #include "ast/ast_functions.hpp"
+//My addition
+#include "ast/ast_assign.hpp"
 
 extern const Expression *parseAST();
+
+static int makeNameUnq=0;
+
+static std::string makeName(std::string base)
+{
+    return "_"+base+"_"+std::to_string(makeNameUnq++);
+}
 
 #endif
 

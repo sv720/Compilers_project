@@ -21,44 +21,52 @@ fi
 echo "========================================"
 echo " Cleaning the temporaries and outputs"
 make clean
-echo " Force building bin/compiler"
+echo "========================================"
+echo " Building lexer"
+make lexer
+echo "========================================"
+echo " Building parser"
+make parser
+echo "========================================"
+echo " Force building bin/compiler (all lexer, parser..)"
 make bin/compiler
 if [[ "$?" -ne 0 ]]; then
     echo "Build failed.";
 fi
 echo ""
-
-# echo "Compiling to MIPS..."
+echo "========================================"
+echo "Compiling to MIPS..."
+echo $2 | ./bin/compiler 
 # cat $2 | ./bin/compiler 2> /dev/null 1> $4
 
 # -------------------------
-PASSED=0
-CHECKED=0
+# PASSED=0
+# CHECKED=0
 
-if [[ -f test/valid_expressions.got.txt ]]; then
-    rm test/valid_expressions.got.txt
-fi
-while IFS=, read -r INPUT_LINE REF_LINE BINDINGS REF_VALUE; do
-    echo "==========================="
-    echo ""
-    echo "Input : ${INPUT_LINE}"
-    GOT_LINE=$( echo -n "${INPUT_LINE}" | bin/compiler )
-    echo "Output : ${GOT_LINE}"
-    if [[ "${GOT_LINE}" != "${REF_LINE}" ]]; then
-        echo ""
-        echo "ERROR"
-    else
-        PASSED=$(( ${PASSED}+1 ));
-    fi
-    CHECKED=$(( ${CHECKED}+1 ));
+# if [[ -f test/valid_expressions.got.txt ]]; then
+#     rm test/valid_expressions.got.txt
+# fi
+# while IFS=, read -r INPUT_LINE REF_LINE BINDINGS REF_VALUE; do
+#     echo "==========================="
+#     echo ""
+#     echo "Input : ${INPUT_LINE}"
+#     GOT_LINE=$( echo -n "${INPUT_LINE}" | bin/compiler )
+#     echo "Output : ${GOT_LINE}"
+#     if [[ "${GOT_LINE}" != "${REF_LINE}" ]]; then
+#         echo ""
+#         echo "ERROR"
+#     else
+#         PASSED=$(( ${PASSED}+1 ));
+#     fi
+#     CHECKED=$(( ${CHECKED}+1 ));
 
-    echo "${INPUT_LINE},${GOT_LINE}" >> test/valid_expressions.got.txt
+#     echo "${INPUT_LINE},${GOT_LINE}" >> test/valid_expressions.got.txt
 
-done < <( cat test/valid_expressions.input.txt | ${DOS2UNIX})
+# done < <( cat test/valid_expressions.input.txt | ${DOS2UNIX})
 
-echo "########################################"
-echo "Passed ${PASSED} out of ${CHECKED} checks".
-echo ""
+# echo "########################################"
+# echo "Passed ${PASSED} out of ${CHECKED} checks".
+# echo ""
 # -------------------------
 
 

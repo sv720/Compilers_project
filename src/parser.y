@@ -5,103 +5,442 @@
 
   extern const Expression *g_root; // A way of getting the AST out
 
-  //! This is to fix problems when generating C++
+  // ! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
   // that Bison generated code can call them.
   int yylex(void);
   void yyerror(const char *);
 }
 
-// Represents the value associated with any kind of
-// AST node.
+// Represents the value associated with any kind of AST node.
 %union{
   const Expression *expr;
   double number;
   std::string *string;
 }
 
-%token T_TIMES T_DIVIDE T_PLUS T_MINUS T_EXPONENT T_EQUAL
-%token T_LBRACKET T_RBRACKET T_LCURBRACKET T_RCULBRACKET T_SEMICOLON T_COMMA
-%token T_LSQBRACKET T_RSQBRACKET T_COLON T_TILDE T_HASH T_EXCLAMATIONMARK T_QUESTIONMARK
-%token T_LOG T_EXP T_SQRT T_RETURN T_IF T_WHILE T_FOR T_BREAK
-%token T_NUMBER T_VALUE T_VARIABLE T_TYPE FUNCTION_NAME
+%token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
+%token POINTER_OP INCREMENT_OP DECREMENT_OP LEFTSHIFT_OP RIGHTSHIFT_OP LE_OP GE_OP EQ_OP NE_OP
+%token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
+%token SUB_ASSIGN LEFTSHIFT_ASSIGN RIGHTSHIFT_ASSIGN AND_ASSIGN
+%token XOR_ASSIGN OR_ASSIGN TYPE_NAME
 
-%type <expr> FUNCTION T_TYPE ARGUMENT LINES EXPR INITIALISE DEFINE OPERATIONS CONDITION FOR_CONDITION FOR_STEP EQUATION TERM UNARY FACTOR
-%type <number> T_NUMBER T_VALUE
-%type <string> T_VARIABLE T_LOG T_EXP T_SQRT FUNCTION_NAME
+%token TYPEDEF EXTERN STATIC AUTO REGISTER 
+%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
+%token STRUCT UNION ENUM ELLIPSIS
 
-%start ROOT
+%token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
+
+%type <expr> IDENTIFIER expression cast_expression CONSTANT
+%type <expr> primary_expression postfix_expression assignment_expression unary_expression external_declaration translation_unit
+// %type <number> CONSTANT
+%type <string> assignment_operator STRING_LITERAL
+
+
+%start translation_unit // ROOT
 
 %%
 
-ROOT  : EQUATION          { g_root = $1; }
-      // | ROOT FUNCTION
+primary_expression
+	: IDENTIFIER
+	| CONSTANT
+	| STRING_LITERAL
+	| '(' expression ')'
+	;
 
-// FUNCTION    : T_TYPE FUNCTION_NAME T_LBRACKET          T_RBRACKET T_LCURBRACKET LINES T_RCULBRACKET
-//             | T_TYPE FUNCTION_NAME T_LBRACKET ARGUMENT T_RBRACKET T_LCURBRACKET LINES T_RCULBRACKET 
-//             | T_TYPE FUNCTION_NAME T_LBRACKET          T_RBRACKET T_SEMICOLON
-//             | T_TYPE FUNCTION_NAME T_LBRACKET ARGUMENT T_RBRACKET T_SEMICOLON
+postfix_expression
+	: primary_expression
+	| postfix_expression '[' expression ']'
+	| postfix_expression '(' ')'
+	| postfix_expression '(' argument_expression_list ')'
+	| postfix_expression '.' IDENTIFIER
+	| postfix_expression POINTER_OP IDENTIFIER
+	| postfix_expression INCREMENT_OP
+	| postfix_expression DECREMENT_OP
+	;
 
-// ARGUMENT    : INITIALISE
-//             | INITIALISE T_COMMA ARGUMENT
+argument_expression_list
+	: assignment_expression
+	| argument_expression_list ',' assignment_expression
+	;
 
-// LINES       : EXPR T_SEMICOLON
-//             | LINES EXPR T_SEMICOLON  //version 1 - agreed on
+unary_expression
+	: postfix_expression
+	| INCREMENT_OP unary_expression
+	| DECREMENT_OP unary_expression
+	| unary_operator cast_expression
+	| SIZEOF unary_expression
+	| SIZEOF '(' type_name ')'
+	;
 
-// EXPR        : INITIALISE
-//             | DEFINE
-//             | OPERATIONS
-//             | T_RETURN EQUATION
+unary_operator
+	: '&'
+	| '*'
+	| '+'
+	| '-'
+	| '~'
+	| '!'
+	;
 
-// INITIALISE  : T_TYPE T_VARIABLE
-// DEFINE      : T_TYPE T_VARIABLE T_EQUAL T_VALUE
-//             | T_VARIABLE T_EQUAL EQUATION
+cast_expression
+	: unary_expression
+	| '(' type_name ')' cast_expression
+	;
 
-// OPERATIONS  : T_IF    T_LBRACKET CONDITION T_RBRACKET T_LCURBRACKET LINES T_RCULBRACKET
-//             | T_WHILE T_LBRACKET CONDITION T_RBRACKET T_LCURBRACKET LINES T_RCULBRACKET
-//             | T_FOR T_LBRACKET FOR_CONDITION T_RBRACKET T_LCURBRACKET LINES T_RCULBRACKET
+multiplicative_expression
+	: cast_expression
+	| multiplicative_expression '*' cast_expression
+	| multiplicative_expression '/' cast_expression
+	| multiplicative_expression '%' cast_expression
+	;
 
-// CONDITION   : EQUATION T_EQUAL T_EQUAL EQUATION
-// // <= >= < > comparisons tokens
+additive_expression
+	: multiplicative_expression
+	| additive_expression '+' multiplicative_expression
+	| additive_expression '-' multiplicative_expression
+	;
 
-// FOR_CONDITION : DEFINE T_SEMICOLON CONDITION T_SEMICOLON FOR_STEP
+shift_expression
+	: additive_expression
+	| shift_expression LEFTSHIFT_OP additive_expression
+	| shift_expression RIGHTSHIFT_OP additive_expression
+	;
 
-// FOR_STEP  : T_VARIABLE OPERATOR OPERATOR
-//           | OPERATOR OPERATOR T_VARIABLE
-//           | T_VARIABLE OPERATOR T_EQUAL
+relational_expression
+	: shift_expression
+	| relational_expression '<' shift_expression
+	| relational_expression '>' shift_expression
+	| relational_expression LE_OP shift_expression
+	| relational_expression GE_OP shift_expression
+	;
 
-// OPERATOR  : T_PLUS
-//             | T_MINUS
-//             | T_TIMES
-//             | T_DIVIDE
-            
+equality_expression
+	: relational_expression
+	| equality_expression EQ_OP relational_expression
+	| equality_expression NE_OP relational_expression
+	;
 
-EQUATION  : EQUATION T_PLUS TERM             { $$ = new AddOperator( $1 , $3 );}
-          | EQUATION T_MINUS TERM            { $$ = new SubOperator( $1 , $3 );}
-          | TERM                             { $$ = $1; }
+and_expression
+	: equality_expression
+	| and_expression '&' equality_expression
+	;
 
-TERM : TERM T_TIMES UNARY           { $$ = new MulOperator( $1 , $3 );}
-     | TERM T_DIVIDE UNARY          { $$ = new DivOperator( $1 , $3 );}
-     | UNARY                        { $$ = $1; }
+exclusive_or_expression
+	: and_expression
+	| exclusive_or_expression '^' and_expression
+	;
 
-UNARY : T_MINUS FACTOR              { $$ = new NegOperator( $2 );}
-      | FACTOR                      { $$ = $1; }
+inclusive_or_expression
+	: exclusive_or_expression
+	| inclusive_or_expression '|' exclusive_or_expression
+	;
 
-FACTOR : T_NUMBER                   { $$ = new Number( $1 );} 
-       | T_VARIABLE                 { $$ = new Variable( *$1 );}
+logical_and_expression
+	: inclusive_or_expression
+	| logical_and_expression AND_OP inclusive_or_expression
+	;
 
-       | FACTOR T_EXPONENT UNARY    { $$ = new ExpOperator( $1 , $3 );}
+logical_or_expression
+	: logical_and_expression
+	| logical_or_expression OR_OP logical_and_expression
+	;
 
-//        | FUNCTION_NAME T_LBRACKET EQUATION T_RBRACKET       {   if (*$1 == "log")   {$$ = new LogFunction( $3 );}
-//                                                             if (*$1 == "exp")   {$$ = new ExpFunction( $3 );}
-//                                                             if (*$1 == "sqrt")  {$$ = new SqrtFunction( $3 );}
-//                                                           }
-       | T_LBRACKET EQUATION T_RBRACKET { $$ = $2; }
+conditional_expression
+	: logical_or_expression
+	| logical_or_expression '?' expression ':' conditional_expression
+	;
+
+assignment_expression
+	: conditional_expression        
+	| unary_expression assignment_operator assignment_expression    { $$ = new Assign($1, $3, $2); }
+	;
+
+assignment_operator
+	: '='                { $$ = new std::string("="); }
+	| MUL_ASSIGN         { $$ = new std::string("*="); }
+	| DIV_ASSIGN         { $$ = new std::string("/="); }
+	| MOD_ASSIGN         { $$ = new std::string("%="); }
+	| ADD_ASSIGN         { $$ = new std::string("+="); }
+	| SUB_ASSIGN         { $$ = new std::string("-="); }
+	| LEFTSHIFT_ASSIGN   { $$ = new std::string("<<="); }
+	| RIGHTSHIFT_ASSIGN  { $$ = new std::string(">>="); }
+	| AND_ASSIGN         { $$ = new std::string("&="); }
+	| XOR_ASSIGN         { $$ = new std::string("^="); }
+	| OR_ASSIGN          { $$ = new std::string("|="); }
+	;
+
+expression
+	: assignment_expression
+	| expression ',' assignment_expression
+	;
+
+constant_expression
+	: conditional_expression
+	;
+
+declaration
+	: declaration_specifiers ';'
+	| declaration_specifiers init_declarator_list ';'
+	;
+
+declaration_specifiers
+	: storage_class_specifier
+	| storage_class_specifier declaration_specifiers
+	| type_specifier
+	| type_specifier declaration_specifiers
+	| type_qualifier
+	| type_qualifier declaration_specifiers
+	;
+
+init_declarator_list
+	: init_declarator
+	| init_declarator_list ',' init_declarator
+	;
+
+init_declarator
+	: declarator
+	| declarator '=' initializer
+	;
+
+storage_class_specifier
+	: TYPEDEF
+	| EXTERN
+	| STATIC
+	| AUTO
+	| REGISTER
+	;
+
+type_specifier
+	: VOID
+	| CHAR
+	| SHORT
+	| INT
+	| LONG
+	| FLOAT
+	| DOUBLE
+	| SIGNED
+	| UNSIGNED
+	| struct_or_union_specifier
+	| enum_specifier
+	| TYPE_NAME
+	;
+
+struct_or_union_specifier
+	: struct_or_union IDENTIFIER '{' struct_declaration_list '}'
+	| struct_or_union '{' struct_declaration_list '}'
+	| struct_or_union IDENTIFIER
+	;
+
+struct_or_union
+	: STRUCT
+	| UNION
+	;
+
+struct_declaration_list
+	: struct_declaration
+	| struct_declaration_list struct_declaration
+	;
+
+struct_declaration
+	: specifier_qualifier_list struct_declarator_list ';'
+	;
+
+specifier_qualifier_list
+	: type_specifier specifier_qualifier_list
+	| type_specifier
+	| type_qualifier specifier_qualifier_list
+	| type_qualifier
+	;
+
+struct_declarator_list
+	: struct_declarator
+	| struct_declarator_list ',' struct_declarator
+	;
+
+struct_declarator
+	: declarator
+	| ':' constant_expression
+	| declarator ':' constant_expression
+	;
+
+enum_specifier
+	: ENUM '{' enumerator_list '}'
+	| ENUM IDENTIFIER '{' enumerator_list '}'
+	| ENUM IDENTIFIER
+	;
+
+enumerator_list
+	: enumerator
+	| enumerator_list ',' enumerator
+	;
+
+enumerator
+	: IDENTIFIER
+	| IDENTIFIER '=' constant_expression
+	;
+
+type_qualifier
+	: CONST
+	| VOLATILE
+	;
+
+declarator
+	: pointer direct_declarator
+	| direct_declarator
+	;
+
+direct_declarator
+	: IDENTIFIER
+	| '(' declarator ')'
+	| direct_declarator '[' constant_expression ']'
+	| direct_declarator '[' ']'
+	| direct_declarator '(' parameter_type_list ')'
+	| direct_declarator '(' identifier_list ')'
+	| direct_declarator '(' ')'
+	;
+
+pointer
+	: '*'
+	| '*' type_qualifier_list
+	| '*' pointer
+	| '*' type_qualifier_list pointer
+	;
+
+type_qualifier_list
+	: type_qualifier
+	| type_qualifier_list type_qualifier
+	;
 
 
-// FUNCTION_NAME : T_LOG   { $$ = new std::string("log"); }
-//               | T_EXP   { $$ = new std::string("exp"); }
-//               | T_SQRT  { $$ = new std::string("sqrt"); }
+parameter_type_list
+	: parameter_list
+	| parameter_list ',' ELLIPSIS
+	;
+
+parameter_list
+	: parameter_declaration
+	| parameter_list ',' parameter_declaration
+	;
+
+parameter_declaration
+	: declaration_specifiers declarator
+	| declaration_specifiers abstract_declarator
+	| declaration_specifiers
+	;
+
+identifier_list
+	: IDENTIFIER
+	| identifier_list ',' IDENTIFIER
+	;
+
+type_name
+	: specifier_qualifier_list
+	| specifier_qualifier_list abstract_declarator
+	;
+
+abstract_declarator
+	: pointer
+	| direct_abstract_declarator
+	| pointer direct_abstract_declarator
+	;
+
+direct_abstract_declarator
+	: '(' abstract_declarator ')'
+	| '[' ']'
+	| '[' constant_expression ']'
+	| direct_abstract_declarator '[' ']'
+	| direct_abstract_declarator '[' constant_expression ']'
+	| '(' ')'
+	| '(' parameter_type_list ')'
+	| direct_abstract_declarator '(' ')'
+	| direct_abstract_declarator '(' parameter_type_list ')'
+	;
+
+initializer
+	: assignment_expression
+	| '{' initializer_list '}'
+	| '{' initializer_list ',' '}'
+	;
+
+initializer_list
+	: initializer
+	| initializer_list ',' initializer
+	;
+
+statement
+	: labeled_statement
+	| compound_statement
+	| expression_statement
+	| selection_statement
+	| iteration_statement
+	| jump_statement
+	;
+
+labeled_statement
+	: IDENTIFIER ':' statement
+	| CASE constant_expression ':' statement
+	| DEFAULT ':' statement
+	;
+
+compound_statement
+	: '{' '}'
+	| '{' statement_list '}'
+	| '{' declaration_list '}'
+	| '{' declaration_list statement_list '}'
+	;
+
+declaration_list
+	: declaration
+	| declaration_list declaration
+	;
+
+statement_list
+	: statement
+	| statement_list statement
+	;
+
+expression_statement
+	: ';'
+	| expression ';'
+	;
+
+selection_statement
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
+	| SWITCH '(' expression ')' statement
+	;
+
+iteration_statement
+	: WHILE '(' expression ')' statement
+	| DO statement WHILE '(' expression ')' ';'
+	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
+	;
+
+jump_statement
+	: GOTO IDENTIFIER ';'
+	| CONTINUE ';'
+	| BREAK ';'
+	| RETURN ';'
+	| RETURN expression ';'
+	;
+
+translation_unit
+	: external_declaration                    { g_root = $1; }
+	| translation_unit external_declaration   { $$ = $2; }
+	;
+
+external_declaration
+	: function_definition
+	| declaration
+	;
+
+function_definition
+	: declaration_specifiers declarator declaration_list compound_statement
+	| declaration_specifiers declarator compound_statement
+	| declarator declaration_list compound_statement
+	| declarator compound_statement
+	;
 
 %%
 

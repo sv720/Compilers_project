@@ -1,4 +1,5 @@
 #include "../include/ast.hpp"
+#include<iostream>
 
 int main()
 {
@@ -9,8 +10,6 @@ int main()
 
     return 0;
 }
-
-// #include<iostream>
 
 
 // int main()
