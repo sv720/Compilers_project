@@ -1,7 +1,7 @@
 #ifndef ast_assign_hpp
 #define ast_assign_hpp
 
-// #include "ast_expression.hpp"
+#include "ast_expression.hpp"
 
 #include <string>
 #include <iostream>
@@ -15,18 +15,18 @@ private:
     ExpressionPtr left;
     std::string middle;
     ExpressionPtr right;
-protected:
-    Assign(ExpressionPtr _left, ExpressionPtr _right, std::string _middle)
+public:
+    Assign(ExpressionPtr _left, ExpressionPtr _right, std::string* _middle)
      : left(_left)
-     , middle(_middle)
+     , middle(*_middle)
      , right(_right)
     {}
-public:
-    virtual ~Assign()
-    {
-        delete left;
-        delete right;
-    }
+
+    // virtual ~Assign()
+    // {
+    //     delete left;
+    //     delete right;
+    // }
 
     ExpressionPtr getLeft() const
     { return left; }
@@ -38,8 +38,6 @@ public:
     // virtual const char * getMiddle() const 
     // { return operator; } 
 
-    //int a += b
-    //int a += 5
 
     virtual void print(std::ostream &dst) const override
     {

@@ -21,23 +21,44 @@ fi
 echo "========================================"
 echo " Cleaning the temporaries and outputs"
 make clean
-echo "========================================"
-echo " Building lexer"
-make lexer
-echo "========================================"
-echo " Building parser"
-make parser
+# echo "========================================"
+# echo " Building lexer"
+# make lexer
+# echo "========================================"
+# echo " Building parser"
+# make parser
 echo "========================================"
 echo " Force building bin/compiler (all lexer, parser..)"
-make bin/compiler
+make -B bin/c_compiler
 if [[ "$?" -ne 0 ]]; then
     echo "Build failed.";
 fi
 echo ""
 echo "========================================"
 echo "Compiling to MIPS..."
-echo $2 | ./bin/compiler 
-# cat $2 | ./bin/compiler 2> /dev/null 1> $4
+# echo $2 | bin/compiler 
+# cat $2 | ./bin/compiler 2> $4
+
+mkdir -p test/working/local_var/
+
+for i in compiler_tests/local_var/*_driver.c; do
+    b=$(basename ${i});
+    n=${b%_driver.c}
+    f=${i%_driver.c}.c
+    
+    echo "==========================="
+    echo ""
+    echo "Input file : ${f}"
+    echo "Testing ${n}"
+
+    bin/c_compiler $f > test/working/local_var/$n.o 
+    # bin/c_compiler -S test_program.c -o test_program.s
+
+    # MIPS conversion 
+    # mips-linux-gnu-gcc -mfp32 -o test/working/local_var/$n.o \
+    #                             -c test/working/local_var/$n.s
+done
+
 
 # -------------------------
 # PASSED=0

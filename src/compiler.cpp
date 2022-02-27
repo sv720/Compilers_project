@@ -5,6 +5,9 @@ int main()
 {
     const Expression *ast=parseAST();
 
+    	double d = 2.4f; 
+    	std:: cout << d << std::endl;
+
     ast->print(std::cout);
     std::cout<<std::endl;
 

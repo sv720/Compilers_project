@@ -42,9 +42,9 @@
 %%
 
 primary_expression
-	: IDENTIFIER
-	| CONSTANT
-	| STRING_LITERAL
+	: IDENTIFIER		{ $$ = new Identifier( $1 );}
+	| CONSTANT			{ $$ = new Number( $1 );}
+	| STRING_LITERAL	
 	| '(' expression ')'
 	;
 
@@ -286,17 +286,17 @@ type_qualifier
 
 declarator
 	: pointer direct_declarator
-	| direct_declarator
+	| direct_declarator				{ $$ = $1; }
 	;
 
 direct_declarator
-	: IDENTIFIER
-	| '(' declarator ')'
+	: IDENTIFIER					{ $$ = new Identifier($1);}
+	| '(' declarator ')'			{ $$ = $2; }
 	| direct_declarator '[' constant_expression ']'
 	| direct_declarator '[' ']'
 	| direct_declarator '(' parameter_type_list ')'
 	| direct_declarator '(' identifier_list ')'
-	| direct_declarator '(' ')'
+	| direct_declarator '(' ')'		{ $$ = $1; }
 	;
 
 pointer
@@ -431,12 +431,12 @@ translation_unit
 	;
 
 external_declaration
-	: function_definition
-	| declaration
+	: function_definition		{ $$ = $1; }
+	| declaration				{ $$ = $1; }
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement
+	: declaration_specifiers declarator declaration_list compound_statement {/*int f(int x){} ->no need for declaration_list*/}
 	| declaration_specifiers declarator compound_statement
 	| declarator declaration_list compound_statement
 	| declarator compound_statement

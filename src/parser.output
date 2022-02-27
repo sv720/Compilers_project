@@ -5922,6 +5922,22 @@ State 333
     ELSE      [reduce using rule 192 (selection_statement)]
     $default  reduce using rule 192 (selection_statement)
 
+    shift/reduce conflict on token ELSE:
+      192 selection_statement: IF '(' expression ')' statement •
+      193 selection_statement: IF '(' expression ')' statement • ELSE statement
+      Example: IF '(' expression ')' IF '(' expression ')' statement • ELSE statement
+      Shift derivation
+        selection_statement
+        ↳ IF '(' expression ')' statement
+                                ↳ selection_statement
+                                  ↳ IF '(' expression ')' statement • ELSE statement
+      Reduce derivation
+        selection_statement
+        ↳ IF '(' expression ')' statement                             ELSE statement
+                                ↳ selection_statement
+                                  ↳ IF '(' expression ')' statement •
+
+
 
 State 334
 

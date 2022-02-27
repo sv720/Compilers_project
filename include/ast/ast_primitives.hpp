@@ -36,9 +36,9 @@ class Number
     : public Expression
 {
 private:
-    double value;
+    int value;
 public:
-    Number(double _value)
+    Number(int _value)
         : value(_value)
     {}
 
@@ -59,5 +59,23 @@ public:
     }
 };
 
+class Identifier
+    : public Expression
+{
+private:
+    std::string id;
+public:
+    Identifier(const std::string &_id)
+        : id(_id)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<id;
+    }   
+};
 
 #endif
