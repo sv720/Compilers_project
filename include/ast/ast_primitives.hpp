@@ -78,4 +78,23 @@ public:
     }   
 };
 
+class Return
+    : public Expression
+{
+private:
+    std::string id;
+public:
+    Return(const std::string &_id)
+        : id(_id)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<id;
+    }   
+};
+
 #endif

@@ -16,3 +16,6 @@ First meeting:
 	- lexer intensive approach is better
 	- all testing is in the testbench, the debugging needed is just printouts with pretty print
 	- 
+
+https://github.com/TszwangKo/C_compiler
+https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y

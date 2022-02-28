@@ -15,8 +15,11 @@
 // Represents the value associated with any kind of AST node.
 %union{
   const Expression *expr;
-  double number;
+  ExpressionList exprList;
+  int number;
+  double numberFloat;
   std::string *string;
+  yytokentype token;
 }
 
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
@@ -31,20 +34,217 @@
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <expr> IDENTIFIER expression cast_expression CONSTANT
-%type <expr> primary_expression postfix_expression assignment_expression unary_expression external_declaration translation_unit
-// %type <number> CONSTANT
-%type <string> assignment_operator STRING_LITERAL
+%type <expr> cast_expression CONSTANT
+
+%type <expr> primary_expression postfix_expression unary_expression
+%type <expr> multiplicative_expression additive_expression shift_expression
+%type <expr> relational_expression equality_expression and_expression
+%type <expr> exclusive_or_expression inclusive_or_expression logical_and_expression
+%type <expr> logical_or_expression conditional_expression assignment_expression
+%type <expr> expression constant_expression
+
+%type <expr> declaration init_declarator
+%type <expr> declaration_specifiers type_specifier
+%type <expr> struct_specifier struct_declaration
+%type <expr> struct_declarator declarator
+%type <expr> enum_specifier enumerator direct_declarator pointer
+
+%type <expr> parameter_declaration type_name abstract_declarator direct_abstract_declarator
+%type <expr> initializer statement labeled_statement compound_statement
+%type <expr> expression_statement selection_statement iteration_statement
+%type <expr> jump_statement external_declaration function_definition
+
+%type <exprList> translation_unit struct_declaration_list argument_expression_list
+%type <exprList> specifier_qualifier_list struct_declarator_list
+%type <exprList> enumerator_list parameter_list
+%type <exprList> identifier_list initializer_list declaration_list statement_list
+
+%type <number> INT_LITERAL CHAR_LITERAL
+%type <numberFloat> FLOAT_LITERAL
+%type <string> IDENTIFIER assignment_operator
 
 
 %start translation_unit // ROOT
 
 %%
+translation_unit
+	: external_declaration                    { g_root = new $1; }
+	| translation_unit external_declaration   
+	;
 
+external_declaration
+	: function_definition		{ $$ = $1; }
+	| declaration				{ $$ = $1; }
+	;
+
+function_definition
+	: declaration_specifiers declarator compound_statement { $$ = new Specifier($1); $$ = new Declarator($2); $$ = new compound_statement($3); /*(declaration_specifiers)int (declarator)f(int x) (compound_statement){} ->no need for declaration_list*/}
+	| declarator compound_statement
+	;
+
+declarator
+	: pointer direct_declarator
+	| direct_declarator				{ $$ = $1; }
+	;
+
+direct_declarator
+	: IDENTIFIER										{ $$ = new Declare($1);}
+	| '(' declarator ')'								{ $$ = $2; }
+	| direct_declarator '[' constant_expression ']'		{ $$ = new DeclareArray($1, $2);}
+	| direct_declarator '[' ']'							{ $$ = new DeclareArray($1);}
+	| direct_declarator '(' parameter_type_list ')'		{ $$ = new DeclareFunction($1, $2);}
+	| direct_declarator '(' identifier_list ')'			{ $$ = new DeclareFunction($1, $2);}
+	| direct_declarator '(' ')'							{ $$ = new DeclareFunction($1, $2);}
+	;
+
+/* from direct_declarator */
+parameter_type_list
+	: parameter_list	{ $$ = $1; }
+	| parameter_list ',' ELLIPSIS
+	;
+
+parameter_list
+	: parameter_declaration		{ $$ = $1; }
+	| parameter_list ',' parameter_declaration
+	;
+	
+parameter_declaration
+	: declaration_specifiers declarator				{ $$ = new Declare($1, $2);}
+	| declaration_specifiers abstract_declarator	{ $$ = new Declare($1, $2);}
+	| declaration_specifiers
+	;
+
+/* from external_declaration */
+declaration
+	: declaration_specifiers ';'						{ $$ = $1; }
+	| declaration_specifiers init_declarator_list ';'	{ $$ = new Declare($1, $2);}
+	;
+
+/* from init_declarator & parameter_declaration*/
+declaration_specifiers
+	: storage_class_specifier
+	| storage_class_specifier declaration_specifiers
+	| type_specifier									{ $$ == $1; }
+	| type_specifier declaration_specifiers
+	;
+
+storage_class_specifier
+	: TYPEDEF				{/*should only be typedef*/}
+	| EXTERN
+	| STATIC
+	| AUTO
+	| REGISTER
+	;
+
+/* from declaration */
+init_declarator_list
+	: init_declarator								{ $$ = $1; }
+	| init_declarator_list ',' init_declarator
+	;
+
+init_declarator
+	: declarator						{ $$ = $1; }
+	| declarator '=' initializer		{ $$ = new InitDeclaration($1, $3); }
+	;
+
+/* from init_declarator */
+initializer
+	: assignment_expression
+	| '{' initializer_list '}'
+	| '{' initializer_list ',' '}'
+	;
+
+initializer_list
+	: initializer
+	| initializer_list ',' initializer
+	;
+
+abstract_declarator
+	: pointer
+	| direct_abstract_declarator
+	| pointer direct_abstract_declarator
+	;
+
+direct_abstract_declarator
+	: '(' abstract_declarator ')'
+	| '[' ']'
+	| '[' constant_expression ']'
+	| direct_abstract_declarator '[' ']'
+	| direct_abstract_declarator '[' constant_expression ']'
+	| '(' ')'
+	| '(' parameter_type_list ')'
+	| direct_abstract_declarator '(' ')'
+	| direct_abstract_declarator '(' parameter_type_list ')'
+	;
+
+/* from function_definition */
+compound_statement
+	: '{' '}'
+	| '{' statement_list '}'
+	| '{' declaration_list '}'
+	| '{' declaration_list statement_list '}'
+	;
+
+declaration_list
+	: declaration
+	| declaration_list declaration
+	;
+
+/* from compound_statement */
+statement_list
+	: statement
+	| statement_list statement
+	;
+
+statement
+	: labeled_statement		{ $$ = $1; }
+	| expression_statement	{ $$ = $1; }
+	| selection_statement	{ $$ = $1; }
+	| iteration_statement	{ $$ = $1; }
+	| jump_statement		{ $$ = $1; }
+	| compound_statement	{ $$ = $1; }
+	;
+
+/* from statement */
+labeled_statement
+	: IDENTIFIER ':' statement
+	| CASE constant_expression ':' statement
+	| DEFAULT ':' statement
+	;
+/* from statement */
+expression_statement
+	: ';'
+	| expression ';'
+	;
+/* from statement */
+selection_statement
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
+	| SWITCH '(' expression ')' statement
+	;
+/* from statement */
+iteration_statement
+	: WHILE '(' expression ')' statement
+	| DO statement WHILE '(' expression ')' ';'
+	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
+	;
+/* from statement */
+jump_statement
+	: GOTO IDENTIFIER ';'
+	| CONTINUE ';'
+	| BREAK ';'
+	| RETURN ';' 			{ $$ = new Return(1); }
+	| RETURN expression ';' { $$ = new Return($2); }
+	;
+
+
+/* new */
 primary_expression
 	: IDENTIFIER		{ $$ = new Identifier( $1 );}
-	| CONSTANT			{ $$ = new Number( $1 );}
-	| STRING_LITERAL	
+	| INT_LITERAL			{ $$ = new Number( $1 );}
+	| FLOAT_LITERAL			{ $$ = new Number( $1 );}
+	| CHAR_LITERAL	
 	| '(' expression ')'
 	;
 
@@ -178,37 +378,7 @@ constant_expression
 	: conditional_expression
 	;
 
-declaration
-	: declaration_specifiers ';'
-	| declaration_specifiers init_declarator_list ';'
-	;
 
-declaration_specifiers
-	: storage_class_specifier
-	| storage_class_specifier declaration_specifiers
-	| type_specifier
-	| type_specifier declaration_specifiers
-	| type_qualifier
-	| type_qualifier declaration_specifiers
-	;
-
-init_declarator_list
-	: init_declarator
-	| init_declarator_list ',' init_declarator
-	;
-
-init_declarator
-	: declarator
-	| declarator '=' initializer
-	;
-
-storage_class_specifier
-	: TYPEDEF
-	| EXTERN
-	| STATIC
-	| AUTO
-	| REGISTER
-	;
 
 type_specifier
 	: VOID
@@ -284,21 +454,6 @@ type_qualifier
 	| VOLATILE
 	;
 
-declarator
-	: pointer direct_declarator
-	| direct_declarator				{ $$ = $1; }
-	;
-
-direct_declarator
-	: IDENTIFIER					{ $$ = new Identifier($1);}
-	| '(' declarator ')'			{ $$ = $2; }
-	| direct_declarator '[' constant_expression ']'
-	| direct_declarator '[' ']'
-	| direct_declarator '(' parameter_type_list ')'
-	| direct_declarator '(' identifier_list ')'
-	| direct_declarator '(' ')'		{ $$ = $1; }
-	;
-
 pointer
 	: '*'
 	| '*' type_qualifier_list
@@ -312,21 +467,7 @@ type_qualifier_list
 	;
 
 
-parameter_type_list
-	: parameter_list
-	| parameter_list ',' ELLIPSIS
-	;
 
-parameter_list
-	: parameter_declaration
-	| parameter_list ',' parameter_declaration
-	;
-
-parameter_declaration
-	: declaration_specifiers declarator
-	| declaration_specifiers abstract_declarator
-	| declaration_specifiers
-	;
 
 identifier_list
 	: IDENTIFIER
@@ -338,109 +479,10 @@ type_name
 	| specifier_qualifier_list abstract_declarator
 	;
 
-abstract_declarator
-	: pointer
-	| direct_abstract_declarator
-	| pointer direct_abstract_declarator
-	;
 
-direct_abstract_declarator
-	: '(' abstract_declarator ')'
-	| '[' ']'
-	| '[' constant_expression ']'
-	| direct_abstract_declarator '[' ']'
-	| direct_abstract_declarator '[' constant_expression ']'
-	| '(' ')'
-	| '(' parameter_type_list ')'
-	| direct_abstract_declarator '(' ')'
-	| direct_abstract_declarator '(' parameter_type_list ')'
-	;
 
-initializer
-	: assignment_expression
-	| '{' initializer_list '}'
-	| '{' initializer_list ',' '}'
-	;
 
-initializer_list
-	: initializer
-	| initializer_list ',' initializer
-	;
 
-statement
-	: labeled_statement
-	| compound_statement
-	| expression_statement
-	| selection_statement
-	| iteration_statement
-	| jump_statement
-	;
-
-labeled_statement
-	: IDENTIFIER ':' statement
-	| CASE constant_expression ':' statement
-	| DEFAULT ':' statement
-	;
-
-compound_statement
-	: '{' '}'
-	| '{' statement_list '}'
-	| '{' declaration_list '}'
-	| '{' declaration_list statement_list '}'
-	;
-
-declaration_list
-	: declaration
-	| declaration_list declaration
-	;
-
-statement_list
-	: statement
-	| statement_list statement
-	;
-
-expression_statement
-	: ';'
-	| expression ';'
-	;
-
-selection_statement
-	: IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
-	| SWITCH '(' expression ')' statement
-	;
-
-iteration_statement
-	: WHILE '(' expression ')' statement
-	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
-	;
-
-jump_statement
-	: GOTO IDENTIFIER ';'
-	| CONTINUE ';'
-	| BREAK ';'
-	| RETURN ';'
-	| RETURN expression ';'
-	;
-
-translation_unit
-	: external_declaration                    { g_root = $1; }
-	| translation_unit external_declaration   { $$ = $2; }
-	;
-
-external_declaration
-	: function_definition		{ $$ = $1; }
-	| declaration				{ $$ = $1; }
-	;
-
-function_definition
-	: declaration_specifiers declarator declaration_list compound_statement {/*int f(int x){} ->no need for declaration_list*/}
-	| declaration_specifiers declarator compound_statement
-	| declarator declaration_list compound_statement
-	| declarator compound_statement
-	;
 
 %%
 

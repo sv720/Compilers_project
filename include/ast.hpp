@@ -1,6 +1,8 @@
 #ifndef ast_hpp
 #define ast_hpp
 
+#include <vector>
+
 #include "ast/ast_expression.hpp"
 #include "ast/ast_primitives.hpp"
 #include "ast/ast_operators.hpp"
@@ -17,6 +19,24 @@ static std::string makeName(std::string base)
 {
     return "_"+base+"_"+std::to_string(makeNameUnq++);
 }
+
+// // Functions to be used in parser for instantiation / concatenation
+typedef std::vector<Expression> ExpressionList;
+typedef ExpressionList *ListPtr;
+
+// // Functions to be used in parser for instantiation / concatenation
+// inline ListPtr initialiseList(Expression expr)
+// {
+//   ListPtr exprList = new ExpressionList(); // Potentially replace with Nodelist(NodePtr) constructor
+//   exprList->push_back(expr);
+//   return exprList;
+// }
+
+// inline ListPtr addToList(ListPtr exprList, Expression expr)
+// {
+//   exprList->push_back(expr);
+//   return exprList;
+// }
 
 #endif
 

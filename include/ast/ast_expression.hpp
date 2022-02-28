@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
 
 #include <memory>
 
@@ -14,17 +15,19 @@ typedef const Expression *ExpressionPtr;
 class Expression
 {
 public:
+    Expression(std::vector<ExpressionPtr> _branches);
+    Expression();
+    Expression(std::vector<ExpressionPtr> branches1, std::vector<ExpressionPtr> branches2); 
+
+
     virtual ~Expression()
     {}
 
     //! Tell and expression to print itself to the given stream
     virtual void print(std::ostream &dst) const =0;
 
-    //! Evaluate the tree using the given mapping of variables to numbers
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const
-    { throw std::runtime_error("Not implemented."); }
+    virtual ExpressionPtr getExpression(unsigned index) const;
+    
 };
 
 
