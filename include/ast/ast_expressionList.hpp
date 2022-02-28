@@ -11,8 +11,13 @@ class ExpressionList
 {
 public:
   // Constructors
-  ExpressionList(std::vector<ExpressionPtr> nodes);
-  ExpressionList();
+  ExpressionList()
+    : ExpressionList(std::vector<ExpressionPtr>{})
+  {}
+  ExpressionList(std::vector<ExpressionPtr> expressions){
+    branches = expressions;
+  }
+  
 
   // Destructor
   virtual ~ExpressionList();
@@ -21,7 +26,16 @@ public:
 //   virtual void PrettyPrint(std::ostream &dst, std::string indent) const override;
 
   // Get stuff in list (codegen)
-  virtual ExpressionListPtr getExpression(unsigned index) const override;
+  virtual ExpressionPtr getExpression(unsigned index) const{
+    if(index < branches.size()){
+      return branches[index];
+    }
+    else{
+      return NULL;
+    }
+  }
+
+
 };
 
 #endif

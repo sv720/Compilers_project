@@ -42,7 +42,7 @@ IS			      (u|U|l|L)*
 "|"			        { return('|'); }
 "?"			        { return('?'); }
 "#"             { return('#'); }
-"..."			      { return(ELLIPSIS); }
+"..."			      { return(ELLIPSIS); } //never seen
 ">>="			      { return(RIGHTSHIFT_ASSIGN); } // RIGHT_ASSIGN
 "<<="			      { return(LEFTSHIFT_ASSIGN); } // LEFT_ASSIGN
 "+="			      { return(ADD_ASSIGN); }
@@ -94,13 +94,15 @@ IS			      (u|U|l|L)*
 "default"		      { return DEFAULT; }
 
 
-
-{LETTER}({LETTER}|{DIGIT})*	  { return(IDENTIFIER); }
+{LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return IDENTIFIER; }
             
-0[xX]{HEX}+{IS}?	            { return CONSTANT; }
-0{DIGIT}+{IS}?		            { return CONSTANT; }
-{DIGIT}+{IS}?		              { return CONSTANT; }
-{LETTER}?'(\\.|[^\\'])+'	      { /*TODO: L?'(\\.|[^\\'])+'	*/ }
+{DIGIT}+{IS}?         { yylval.number=(int)strtol(yytext, NULL, 0); return INT_LITERAL; }
+0[xX]{HEX}+{IS}?      { yylval.number=(int)strtol(yytext, NULL, 0); return INT_LITERAL; }
+0{DIGIT}+{IS}?        { yylval.number=(int)strtol(yytext, NULL, 0); return INT_LITERAL; }
+
+{DIGIT}+{E}{FS}?                { yylval.numberFloat=strtod(yytext, NULL); return FLOAT_LITERAL; }
+{DIGIT}*"."{DIGIT}+({E})?{FS}?  { yylval.numberFloat=strtod(yytext, NULL); return FLOAT_LITERAL; }
+{DIGIT}+"."{DIGIT}*({E})?{FS}?  { yylval.numberFloat=strtod(yytext, NULL); return FLOAT_LITERAL; }
 
 {LETTER}?\"(\\.|[^\\"])*\"	      { return(STRING_LITERAL); } /*TODO: L?\"(\\.|[^\\"])*\" */ // valid: a"s" or "\." or bbd"s0sd2l;;[;"
 
@@ -111,28 +113,8 @@ IS			      (u|U|l|L)*
 
 %%
 
-// {DIGIT}+{E}{FS}?		              { /*floats*/ }
-// {DIGIT}+.{DIGIT}*({E})?{FS}?	  { /*floats,doubles*/ }
-// {DIGIT}*.{DIGIT}+({E})?{FS}?	  { /*floats,doubles*/ }
 // "/*"			            { comment(); }
 
-int check_type()
-{
-/*
-* pseudo code --- this is what it should check
-*
-*	if (yytext == type_name)
-*		return(TYPE_NAME);
-*
-*	return(IDENTIFIER);
-*/
-
-/*
-*	it actually will only return IDENTIFIER
-*/
-
-	return(IDENTIFIER); //IDENTIFIER
-}
 
 void yyerror (char const *s)
 {

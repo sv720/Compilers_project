@@ -15,7 +15,10 @@ First meeting:
 	- expect 40-50 ast files if we separate them fully
 	- lexer intensive approach is better
 	- all testing is in the testbench, the debugging needed is just printouts with pretty print
-	- 
+
+27-28 Feb 2022:
+	- working on parser and lexer as the grammar presented by C90
+	- start adding ast files and setting up 
 
 https://github.com/TszwangKo/C_compiler
 https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y

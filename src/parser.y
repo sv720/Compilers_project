@@ -64,12 +64,15 @@
 %type <string> IDENTIFIER assignment_operator
 
 
-%start translation_unit // ROOT
+%start ROOT
 
 %%
+
+ROOT : translation_unit			{ g_root = new Root(new GlobalSequence(*$1)); delete $1; }
+
 translation_unit
-	: external_declaration                    { g_root = new $1; }
-	| translation_unit external_declaration   
+	: external_declaration     					{ $$ = initList($1); }               
+	| translation_unit external_declaration   	{ $$ = concatList($1, $2); }
 	;
 
 external_declaration
@@ -78,8 +81,8 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator compound_statement { $$ = new Specifier($1); $$ = new Declarator($2); $$ = new compound_statement($3); /*(declaration_specifiers)int (declarator)f(int x) (compound_statement){} ->no need for declaration_list*/}
-	| declarator compound_statement
+	: declaration_specifiers declarator compound_statement { $$ = new FunctionDefinition(new Declaration($1, $2), $3); /*(declaration_specifiers)int (declarator)f(int x) (compound_statement){} ->no need for declaration_list*/}
+	| declarator 
 	;
 
 declarator
@@ -88,36 +91,31 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER										{ $$ = new Declare($1);}
+	: IDENTIFIER										{ $$ = new Declarator($1);}
 	| '(' declarator ')'								{ $$ = $2; }
-	| direct_declarator '[' constant_expression ']'		{ $$ = new DeclareArray($1, $2);}
-	| direct_declarator '[' ']'							{ $$ = new DeclareArray($1);}
-	| direct_declarator '(' parameter_type_list ')'		{ $$ = new DeclareFunction($1, $2);}
-	| direct_declarator '(' identifier_list ')'			{ $$ = new DeclareFunction($1, $2);}
-	| direct_declarator '(' ')'							{ $$ = new DeclareFunction($1, $2);}
+	| direct_declarator '[' constant_expression ']'		{ $$ = new ArrayDeclarator($1, $2);}
+	| direct_compound_statementdeclarator '[' ']'		{ $$ = new ArrayDeclarator($1);}
+	| direct_declarator '(' parameter_list ')'			{ $$ = new FunctionDeclarator($1, $2);}
+	| direct_declarator '(' identifier_list ')'			{ $$ = new FunctionDeclarator($1, $2);}
+	| direct_declarator '(' ')'							{ $$ = new FunctionDeclarator($1, $2);}
 	;
 
 /* from direct_declarator */
-parameter_type_list
-	: parameter_list	{ $$ = $1; }
-	| parameter_list ',' ELLIPSIS
-	;
-
 parameter_list
-	: parameter_declaration		{ $$ = $1; }
-	| parameter_list ',' parameter_declaration
+	: parameter_declaration						{ $$ = initList($1); } 
+	| parameter_list ',' parameter_declaration	{ $$ = concatList($1, $2); }
 	;
 	
 parameter_declaration
-	: declaration_specifiers declarator				{ $$ = new Declare($1, $2);}
-	| declaration_specifiers abstract_declarator	{ $$ = new Declare($1, $2);}
+	: declaration_specifiers declarator				{ $$ = new Declaration($1, $2);}
+	| declaration_specifiers abstract_declarator	{ $$ = new Declaration($1, $2);}
 	| declaration_specifiers
 	;
 
 /* from external_declaration */
 declaration
 	: declaration_specifiers ';'						{ $$ = $1; }
-	| declaration_specifiers init_declarator_list ';'	{ $$ = new Declare($1, $2);}
+	| declaration_specifiers init_declarator_list ';'	{ $$ = new Declaration($1, $2);}
 	;
 
 /* from init_declarator & parameter_declaration*/
@@ -179,10 +177,10 @@ direct_abstract_declarator
 
 /* from function_definition */
 compound_statement
-	: '{' '}'
-	| '{' statement_list '}'
-	| '{' declaration_list '}'
-	| '{' declaration_list statement_list '}'
+	: '{' '}'										{ $$ = new ();}
+	| '{' statement_list '}'						{ $$ = new ($2);}
+	| '{' declaration_list '}'						{ $$ = new ($2);}
+	| '{' declaration_list statement_list '}'		{ $$ = new ($2, $3);}
 	;
 
 declaration_list
@@ -378,6 +376,8 @@ constant_expression
 	: conditional_expression
 	;
 
+//Start reading from hear up
+
 
 
 type_specifier
@@ -488,9 +488,14 @@ type_name
 
 const Expression *g_root;
 
-const Expression *parseAST()
+const Expression *parseAST(std::string filename)
 {
-  g_root=0;
-  yyparse();
-  return g_root;
+	yyin = fopen(filename.c_str(), "r");
+	if(yyin == NULL){
+		std::cerr << "Could not open input file: " << filename << std::endl;
+		exit(1);
+	}
+	g_root=0;
+	yyparse();
+	return g_root;
 }
