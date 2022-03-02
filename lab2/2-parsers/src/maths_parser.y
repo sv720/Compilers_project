@@ -31,9 +31,9 @@
 %token T_NUMBER T_VARIABLE
 
 // declare non-terminals
-%type <expr> EXPR STATEMENT DECLARATOR RETURN_TYPE
+%type <expr> EXPR STATEMENT ASSIGN_DECLARE RETURN_TYPE
 %type <number> T_NUMBER
-%type <string> T_VOID T_INT IDENTIFIER '}' '{' '(' ')'
+%type <string> T_VOID T_INT IDENTIFIER '{' '}' '(' ')' ';'
 
 %start ROOT
 
@@ -41,9 +41,11 @@
 
 ROOT : EXPR { g_root = $1; }
 
-EXPR : EXPR T_PLUS TERM { $$ = new AddOperator($1, $3); } 
-  | EXPR T_MINUS TERM { $$ = new SubOperator($1, $3); } // LHS is TERM for safer precedence
-  | TERM           { $$ = $1; }
+EXPR : RETURN_TYPE DECLARATOR STATEMENT { $$ = new Function($1, $2, $3); //not sure what to do in AST function }  
+
+
+ASSIGN_DECLARE : RETURN_TYPE IDENTIFIER '=' T_NUMBER { $$ = new Assign_Declare_Operator; //IDEM} 
+
 
 
 TERM : TERM T_TIMES UNARY { $$ = new MulOperator($1, $3); }
@@ -62,6 +64,7 @@ FACTOR : T_VARIABLE { $$ = new Variable( *$1 ); }
        | T_EXP T_LBRACKET EXPR T_RBRACKET { $$ = new ExpFunction($3); }
        | T_SQRT T_LBRACKET EXPR T_RBRACKET { $$ = new SqrtFunction($3); }
        | FACTOR T_EXPONENT UNARY { $$ = new ExpOperator($1, $3);}
+
 
 
 RETURN_TYPE : T_INT { $$ = new std::string("int"); }
