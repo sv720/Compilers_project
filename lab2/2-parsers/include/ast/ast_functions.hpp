@@ -43,25 +43,14 @@ public:
     }
 };
 
-class LogFunction
+class Statment
     : public Function
 {
 public:
-    LogFunction(ExpressionPtr _arg)
+    Statment(ExpressionPtr _arg)
         : Function(_arg)
     {}
 
-    virtual const char *getFunction() const
-    { return "log"; }
-
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    { 
-        double v = getArg()->evaluate(bindings); //traverse down args
-        return log(v);
-    }
-    // TODO-E : Override evaluate, and implement it
 };
 
 class ExpFunction

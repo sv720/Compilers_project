@@ -43,6 +43,49 @@ public:
     }
 };
 
+class Function_Definition
+    : public Operator
+{
+public:
+    Function_Definition(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+    //no member functions yet
+};
+
+
+class Full_Function
+    : public Operator
+{
+public:
+    Full_Function(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+    //no member functions yet
+};
+class AssignOperator
+    : public Operator
+{
+
+public:
+    AssignOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+    //no member functions yet
+};
+
+class AssignDeclareOperator
+    : public Operator
+{
+
+public:
+    AssignDeclareOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+    //no member functions yet
+};
+
+
 class AddOperator
     : public Operator
 {

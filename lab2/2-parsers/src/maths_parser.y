@@ -31,7 +31,7 @@
 %token T_NUMBER T_VARIABLE
 
 // declare non-terminals
-%type <expr> EXPR STATEMENT ASSIGN_DECLARE RETURN_TYPE
+%type <expr> EXPR STATEMENT ASSIGN_DECLARE RETURN_TYPE ASSIGN FUNCTION_DEFINITION
 %type <number> T_NUMBER
 %type <string> T_VOID T_INT IDENTIFIER '{' '}' '(' ')' ';'
 
@@ -41,31 +41,15 @@
 
 ROOT : EXPR { g_root = $1; }
 
-EXPR : RETURN_TYPE DECLARATOR STATEMENT { $$ = new Function($1, $2, $3); //not sure what to do in AST function }  
+EXPR : FUNCTION_DECLARATOR '(' ')' '{' STATEMENT '}' { $$ = new Full_Function($1, $5); //not sure what to do in AST function } 
 
+FUNCTION_DEFINITION : RETURN_TYPE DECLARATOR { $$ = new Function_Definition($1, $2); //}
 
-ASSIGN_DECLARE : RETURN_TYPE IDENTIFIER '=' T_NUMBER { $$ = new Assign_Declare_Operator; //IDEM} 
+STATEMENT : ASSIGN_DECLARE ';' { $$ = new Statment($1); //has ast_function}
 
+ASSIGN_DECLARE : RETURN_TYPE ASSIGN { $$ = new Assign_DeclareOperator($1, $2); //has ast_operator} 
 
-
-TERM : TERM T_TIMES UNARY { $$ = new MulOperator($1, $3); }
-  | TERM T_DIVIDE UNARY { $$ = new DivOperator($1, $3); }
-  | UNARY          { $$ = $1; }
-
-
-UNARY : T_MINUS FACTOR            { $$ = new NegOperator($2); }
-  | FACTOR        { $$ = $1; }
-  
-
-FACTOR : T_VARIABLE { $$ = new Variable( *$1 ); }
-       | T_NUMBER { $$ = new Number( $1 ); }
-       | T_LBRACKET EXPR T_RBRACKET { $$ = $2; } 
-       | T_LOG T_LBRACKET EXPR T_RBRACKET { $$ = new LogFunction($3); }
-       | T_EXP T_LBRACKET EXPR T_RBRACKET { $$ = new ExpFunction($3); }
-       | T_SQRT T_LBRACKET EXPR T_RBRACKET { $$ = new SqrtFunction($3); }
-       | FACTOR T_EXPONENT UNARY { $$ = new ExpOperator($1, $3);}
-
-
+ASSIGN : IDENTIFIER '=' T_NUMBER { $$ = new AssignOperator($1, $2); //has ast_operator}
 
 RETURN_TYPE : T_INT { $$ = new std::string("int"); }
        | T_VOID { $$ = new std::string("void"); }
