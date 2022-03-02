@@ -53,6 +53,26 @@ public:
 
 };
 
+class Return_Type
+    : public Function
+{
+public:
+    Return_Type(ExpressionPtr _arg)
+        : Function(_arg)
+    {}
+
+};
+
+class Function_name_Args
+    : public Function
+{
+public:
+    Function_name_Args(ExpressionPtr _arg)
+        : Function(_arg)
+    {}
+
+};
+
 class ExpFunction
     : public Function
 {

@@ -23,7 +23,7 @@ LETTER			  [a-zA-Z_]
 "void"			    { return T_VOID; }
 
 [0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-{LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return IDENTIFIER; }
+{LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return T_IDENTIFIER; }
 
 
 

@@ -27,32 +27,33 @@
 %token '{' '}'
 %token T_INT T_VOID
 
-%token T_LOG T_EXP T_SQRT
+%token T_IDENTIFIER
 %token T_NUMBER T_VARIABLE
 
 // declare non-terminals
-%type <expr> EXPR STATEMENT ASSIGN_DECLARE RETURN_TYPE ASSIGN FUNCTION_DEFINITION
+%type <expr> EXPR STATEMENT ASSIGN_DECLARE RETURN_TYPE ASSIGN FUNCTION_DEFINITION FUNCTION_NAME_ARGS
 %type <number> T_NUMBER
-%type <string> T_VOID T_INT IDENTIFIER '{' '}' '(' ')' ';'
+%type <string> T_VOID T_INT T_IDENTIFIER '{' '}' '(' ')' ';'
 
 %start ROOT
 
 %%
-
 ROOT : EXPR { g_root = $1; }
 
-EXPR : FUNCTION_DECLARATOR '(' ')' '{' STATEMENT '}' { $$ = new Full_Function($1, $5); //not sure what to do in AST function } 
+EXPR : FUNCTION_DEFINITION  '{' STATEMENT '}' { $$ = new Full_Function($1, $3); /*has ast_operator */} 
 
-FUNCTION_DEFINITION : RETURN_TYPE DECLARATOR { $$ = new Function_Definition($1, $2); //}
+FUNCTION_DEFINITION : RETURN_TYPE FUNCTION_NAME_ARGS { $$ = new Function_Definition($1, $2); /*has ast_operator */}
 
-STATEMENT : ASSIGN_DECLARE ';' { $$ = new Statment($1); //has ast_function}
+FUNCTION_NAME_ARGS : T_IDENTIFIER '(' ')' { $$ = new Function_name_Args($1); /* TODO : allow to pass argument */ }
 
-ASSIGN_DECLARE : RETURN_TYPE ASSIGN { $$ = new Assign_DeclareOperator($1, $2); //has ast_operator} 
+STATEMENT : ASSIGN_DECLARE ';' { $$ = new Statment($1); /* has ast_function */ }
 
-ASSIGN : IDENTIFIER '=' T_NUMBER { $$ = new AssignOperator($1, $2); //has ast_operator}
+ASSIGN_DECLARE : RETURN_TYPE ASSIGN { $$ = new Assign_DeclareOperator($1, $2); /* has ast_operator */ } 
 
-RETURN_TYPE : T_INT { $$ = new std::string("int"); }
-       | T_VOID { $$ = new std::string("void"); }
+ASSIGN : T_IDENTIFIER '=' T_NUMBER { $$ = new AssignOperator($1, $3); /* has ast_operator */ }
+
+RETURN_TYPE : T_INT { $$ = new Return_Type($1); }
+       | T_VOID { $$ = new Return_Type($1); }
 %%
 
 const Expression *g_root; // Definition of variable (to match declaration earlier)

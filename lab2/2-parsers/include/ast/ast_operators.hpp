@@ -46,6 +46,10 @@ public:
 class Function_Definition
     : public Operator
 {
+protected:
+    virtual const char *getOpcode() const override
+    { return "Function Definition"; }
+    
 public:
     Function_Definition(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -54,18 +58,28 @@ public:
 };
 
 
+
+
 class Full_Function
     : public Operator
 {
+protected:
+    virtual const char *getOpcode() const override
+    { return "Full_function"; }
 public:
     Full_Function(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
     //no member functions yet
 };
+
+
 class AssignOperator
     : public Operator
 {
+protected:
+    virtual const char *getOpcode() const override
+    { return "AssignOperator"; }
 
 public:
     AssignOperator(ExpressionPtr _left, ExpressionPtr _right)
@@ -77,6 +91,9 @@ public:
 class AssignDeclareOperator
     : public Operator
 {
+protected:
+    virtual const char *getOpcode() const override
+    { return "AssignDeclateOperator"; }
 
 public:
     AssignDeclareOperator(ExpressionPtr _left, ExpressionPtr _right)
