@@ -74,7 +74,7 @@ Nonterminals, with rules where they appear
 
 State 0
 
-    0 $accept: . ROOT $end
+    0 $accept: • ROOT $end
 
     T_INT   shift, and go to state 1
     T_VOID  shift, and go to state 2
@@ -87,42 +87,42 @@ State 0
 
 State 1
 
-    8 TYPE: T_INT .
+    8 TYPE: T_INT •
 
     $default  reduce using rule 8 (TYPE)
 
 
 State 2
 
-    9 TYPE: T_VOID .
+    9 TYPE: T_VOID •
 
     $default  reduce using rule 9 (TYPE)
 
 
 State 3
 
-    0 $accept: ROOT . $end
+    0 $accept: ROOT • $end
 
     $end  shift, and go to state 7
 
 
 State 4
 
-    1 ROOT: EXPR .
+    1 ROOT: EXPR •
 
     $default  reduce using rule 1 (ROOT)
 
 
 State 5
 
-    2 EXPR: FUNCTION_DEFINITION . '{' STATEMENT '}'
+    2 EXPR: FUNCTION_DEFINITION • '{' STATEMENT '}'
 
     '{'  shift, and go to state 8
 
 
 State 6
 
-    3 FUNCTION_DEFINITION: TYPE . FUNCTION_NAME_ARGS
+    3 FUNCTION_DEFINITION: TYPE • FUNCTION_NAME_ARGS
 
     T_IDENTIFIER  shift, and go to state 9
 
@@ -131,14 +131,14 @@ State 6
 
 State 7
 
-    0 $accept: ROOT $end .
+    0 $accept: ROOT $end •
 
     $default  accept
 
 
 State 8
 
-    2 EXPR: FUNCTION_DEFINITION '{' . STATEMENT '}'
+    2 EXPR: FUNCTION_DEFINITION '{' • STATEMENT '}'
 
     T_INT   shift, and go to state 1
     T_VOID  shift, and go to state 2
@@ -150,35 +150,35 @@ State 8
 
 State 9
 
-    4 FUNCTION_NAME_ARGS: T_IDENTIFIER . '(' ')'
+    4 FUNCTION_NAME_ARGS: T_IDENTIFIER • '(' ')'
 
     '('  shift, and go to state 14
 
 
 State 10
 
-    3 FUNCTION_DEFINITION: TYPE FUNCTION_NAME_ARGS .
+    3 FUNCTION_DEFINITION: TYPE FUNCTION_NAME_ARGS •
 
     $default  reduce using rule 3 (FUNCTION_DEFINITION)
 
 
 State 11
 
-    2 EXPR: FUNCTION_DEFINITION '{' STATEMENT . '}'
+    2 EXPR: FUNCTION_DEFINITION '{' STATEMENT • '}'
 
     '}'  shift, and go to state 15
 
 
 State 12
 
-    5 STATEMENT: ASSIGN_DECLARE . ';'
+    5 STATEMENT: ASSIGN_DECLARE • ';'
 
     ';'  shift, and go to state 16
 
 
 State 13
 
-    6 ASSIGN_DECLARE: TYPE . ASSIGN
+    6 ASSIGN_DECLARE: TYPE • ASSIGN
 
     T_IDENTIFIER  shift, and go to state 17
 
@@ -187,55 +187,55 @@ State 13
 
 State 14
 
-    4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' . ')'
+    4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' • ')'
 
     ')'  shift, and go to state 19
 
 
 State 15
 
-    2 EXPR: FUNCTION_DEFINITION '{' STATEMENT '}' .
+    2 EXPR: FUNCTION_DEFINITION '{' STATEMENT '}' •
 
     $default  reduce using rule 2 (EXPR)
 
 
 State 16
 
-    5 STATEMENT: ASSIGN_DECLARE ';' .
+    5 STATEMENT: ASSIGN_DECLARE ';' •
 
     $default  reduce using rule 5 (STATEMENT)
 
 
 State 17
 
-    7 ASSIGN: T_IDENTIFIER . '=' T_NUMBER
+    7 ASSIGN: T_IDENTIFIER • '=' T_NUMBER
 
     '='  shift, and go to state 20
 
 
 State 18
 
-    6 ASSIGN_DECLARE: TYPE ASSIGN .
+    6 ASSIGN_DECLARE: TYPE ASSIGN •
 
     $default  reduce using rule 6 (ASSIGN_DECLARE)
 
 
 State 19
 
-    4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')' .
+    4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')' •
 
     $default  reduce using rule 4 (FUNCTION_NAME_ARGS)
 
 
 State 20
 
-    7 ASSIGN: T_IDENTIFIER '=' . T_NUMBER
+    7 ASSIGN: T_IDENTIFIER '=' • T_NUMBER
 
     T_NUMBER  shift, and go to state 21
 
 
 State 21
 
-    7 ASSIGN: T_IDENTIFIER '=' T_NUMBER .
+    7 ASSIGN: T_IDENTIFIER '=' T_NUMBER •
 
     $default  reduce using rule 7 (ASSIGN)

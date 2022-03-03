@@ -43,25 +43,30 @@ public:
     }
 };
 
-class LogFunction
+class Statement
     : public Function
 {
 public:
-    LogFunction(ExpressionPtr _arg)
+    Statement(ExpressionPtr _arg)
         : Function(_arg)
     {}
 
-    virtual const char *getFunction() const //why no need for const override?
-    { return "log"; }
+    virtual const char *getFunction() const
+    { return "statement"; }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    { 
-        double v = getArg()->evaluate(bindings); //traverse down args
-        return log(v);
-    }
-    // TODO-E : Override evaluate, and implement it
+};
+
+class Function_name_Args
+    : public Function
+{
+public:
+    Function_name_Args(ExpressionPtr _arg)
+        : Function(_arg)
+    {}
+
+    virtual const char *getFunction() const
+    { return "function_name_args"; }
+
 };
 
 class ExpFunction

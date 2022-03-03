@@ -42,7 +42,7 @@ public:
         : value(_value)
     {}
 
-    double getValue() const
+    int getValue() const
     { return value; }
 
     virtual void print(std::ostream &dst) const override
@@ -59,42 +59,101 @@ public:
     }
 };
 
-class Identifier
+
+//FUNCTION______________________________________
+class Function_Definition
     : public Expression
 {
 private:
-    std::string id;
+    std::string left;
+    ExpressionPtr right;  
 public:
-    Identifier(const std::string &_id)
-        : id(_id)
+    Function_Definition(const std::string &_left, ExpressionPtr &_right)
+        : left(_left)
+        , right(_right)
     {}
 
-    const std::string getId() const
-    { return id; }
+    const std::string getLeft() const
+    { return left; }
+
+    ExpressionPtr getRight() const
+    { return right; }
+    //no member functions yet
 
     virtual void print(std::ostream &dst) const override
     {
-        dst<<id;
-    }   
+        dst<<left<<" ";
+        right->print(dst);
+    }
+};
+//________________________________________________
+
+/*
+class Return_Type
+    : public Expression
+{
+public:
+    Return_Type(ExpressionPtr _arg)
+        : Function(_arg)
+    {}
+    
+    virtual const char *getFunction() const
+    { return "return"; }
+
 };
 
-class Return
+*/
+//________________________________________________
+
+class Assign_Declare
     : public Expression
 {
 private:
-    std::string id;
+    std::string left;
+    ExpressionPtr right;  
 public:
-    Return(const std::string &_id)
-        : id(_id)
+    Assign_Declare(std::string &_left, ExpressionPtr _right)
+        : left(_left)
+        , right(_right)
     {}
 
-    const std::string getId() const
-    { return id; }
+    virtual ~Assign_Declare()
+    {
+        delete right;
+    }
+    //no member functions yet
+    const std::string getLeft() const
+    { return left; }
+
+    ExpressionPtr getRight() const
+    { return right; }
 
     virtual void print(std::ostream &dst) const override
     {
-        dst<<id;
-    }   
+        dst<<left<<" ";
+        right->print(dst);
+    }
+};
+
+//________________________________________________
+
+class AssignOperator
+    : public Expression
+{
+private:
+    std::string left;
+    int right;  
+
+public:
+    AssignOperator(std::string _left, int _right)
+        : left(_left)
+        , right(_right)
+    {}
+    //no member functions yet
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<left<<" = "<<right;
+    }
 };
 
 #endif
