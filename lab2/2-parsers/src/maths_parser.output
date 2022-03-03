@@ -11,29 +11,29 @@ Grammar
 
     2 EXPR: FUNCTION_DEFINITION '{' STATEMENT '}'
 
-    3 FUNCTION_DEFINITION: RETURN_TYPE FUNCTION_NAME_ARGS
+    3 FUNCTION_DEFINITION: TYPE FUNCTION_NAME_ARGS
 
     4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')'
 
     5 STATEMENT: ASSIGN_DECLARE ';'
 
-    6 ASSIGN_DECLARE: RETURN_TYPE ASSIGN
+    6 ASSIGN_DECLARE: TYPE ASSIGN
 
     7 ASSIGN: T_IDENTIFIER '=' T_NUMBER
 
-    8 RETURN_TYPE: T_INT
-    9            | T_VOID
+    8 TYPE: T_INT
+    9     | T_VOID
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
-    '(' <string> (40) 4
-    ')' <string> (41) 4
-    ';' <string> (59) 5
+    '(' (40) 4
+    ')' (41) 4
+    ';' (59) 5
     '=' (61) 7
-    '{' <string> (123) 2
-    '}' <string> (125) 2
+    '{' (123) 2
+    '}' (125) 2
     error (256)
     T_INT <string> (258) 8
     T_VOID <string> (259) 9
@@ -67,7 +67,7 @@ Nonterminals, with rules where they appear
     ASSIGN <expr> (21)
         on left: 7
         on right: 6
-    RETURN_TYPE <expr> (22)
+    TYPE <string> (22)
         on left: 8 9
         on right: 3 6
 
@@ -82,21 +82,21 @@ State 0
     ROOT                 go to state 3
     EXPR                 go to state 4
     FUNCTION_DEFINITION  go to state 5
-    RETURN_TYPE          go to state 6
+    TYPE                 go to state 6
 
 
 State 1
 
-    8 RETURN_TYPE: T_INT .
+    8 TYPE: T_INT .
 
-    $default  reduce using rule 8 (RETURN_TYPE)
+    $default  reduce using rule 8 (TYPE)
 
 
 State 2
 
-    9 RETURN_TYPE: T_VOID .
+    9 TYPE: T_VOID .
 
-    $default  reduce using rule 9 (RETURN_TYPE)
+    $default  reduce using rule 9 (TYPE)
 
 
 State 3
@@ -122,7 +122,7 @@ State 5
 
 State 6
 
-    3 FUNCTION_DEFINITION: RETURN_TYPE . FUNCTION_NAME_ARGS
+    3 FUNCTION_DEFINITION: TYPE . FUNCTION_NAME_ARGS
 
     T_IDENTIFIER  shift, and go to state 9
 
@@ -145,7 +145,7 @@ State 8
 
     STATEMENT       go to state 11
     ASSIGN_DECLARE  go to state 12
-    RETURN_TYPE     go to state 13
+    TYPE            go to state 13
 
 
 State 9
@@ -157,7 +157,7 @@ State 9
 
 State 10
 
-    3 FUNCTION_DEFINITION: RETURN_TYPE FUNCTION_NAME_ARGS .
+    3 FUNCTION_DEFINITION: TYPE FUNCTION_NAME_ARGS .
 
     $default  reduce using rule 3 (FUNCTION_DEFINITION)
 
@@ -178,7 +178,7 @@ State 12
 
 State 13
 
-    6 ASSIGN_DECLARE: RETURN_TYPE . ASSIGN
+    6 ASSIGN_DECLARE: TYPE . ASSIGN
 
     T_IDENTIFIER  shift, and go to state 17
 
@@ -215,7 +215,7 @@ State 17
 
 State 18
 
-    6 ASSIGN_DECLARE: RETURN_TYPE ASSIGN .
+    6 ASSIGN_DECLARE: TYPE ASSIGN .
 
     $default  reduce using rule 6 (ASSIGN_DECLARE)
 

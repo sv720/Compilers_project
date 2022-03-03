@@ -18,11 +18,12 @@ LETTER			  [a-zA-Z_]
 
 "("             { return('('); }
 ")"             { return(')'); }
+"="             { return('='); }
 
 "int"			      { return T_INT; }
 "void"			    { return T_VOID; }
 
-[0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+[0-9]+ { yylval.number=strtod(yytext, 0); return T_NUMBER; }
 {LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return T_IDENTIFIER; }
 
 

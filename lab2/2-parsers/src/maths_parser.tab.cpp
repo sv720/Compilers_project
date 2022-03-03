@@ -537,7 +537,7 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "';'", "'{'", "'}'", "T_INT", "T_VOID",
   "T_IDENTIFIER", "T_NUMBER", "T_VARIABLE", "'('", "')'", "'='", "$accept",
   "ROOT", "EXPR", "FUNCTION_DEFINITION", "FUNCTION_NAME_ARGS", "STATEMENT",
-  "ASSIGN_DECLARE", "ASSIGN", "RETURN_TYPE", YY_NULLPTR
+  "ASSIGN_DECLARE", "ASSIGN", "TYPE", YY_NULLPTR
 };
 #endif
 
@@ -1336,43 +1336,43 @@ yyreduce:
 
   case 4:
 #line 45 "src/maths_parser.y"
-                                                     { (yyval.expr) = new Function_Definition((yyvsp[-1].expr), (yyvsp[0].expr)); /*has ast_operator */}
+                                              { (yyval.expr) = new Function_Definition(*(yyvsp[-1].string), (yyvsp[0].expr)); /*has ast_operator */}
 #line 1341 "src/maths_parser.tab.cpp"
     break;
 
   case 5:
 #line 47 "src/maths_parser.y"
-                                          { (yyval.expr) = new Function_name_Args((yyvsp[-2].string)); /* TODO : allow to pass argument */ }
+                                          { (yyval.expr) = new Variable( *(yyvsp[-2].string) ); /* TODO : allow to pass argument */ }
 #line 1347 "src/maths_parser.tab.cpp"
     break;
 
   case 6:
 #line 49 "src/maths_parser.y"
-                               { (yyval.expr) = new Statment((yyvsp[-1].expr)); /* has ast_function */ }
+                               { (yyval.expr) = new Statement((yyvsp[-1].expr)); /* has ast_function */ }
 #line 1353 "src/maths_parser.tab.cpp"
     break;
 
   case 7:
 #line 51 "src/maths_parser.y"
-                                    { (yyval.expr) = new Assign_DeclareOperator((yyvsp[-1].expr), (yyvsp[0].expr)); /* has ast_operator */ }
+                             { (yyval.expr) = new Assign_Declare(*(yyvsp[-1].string), (yyvsp[0].expr)); /* has ast_operator */ }
 #line 1359 "src/maths_parser.tab.cpp"
     break;
 
   case 8:
 #line 53 "src/maths_parser.y"
-                                   { (yyval.expr) = new AssignOperator((yyvsp[-2].string), (yyvsp[0].number)); /* has ast_operator */ }
+                                   { (yyval.expr) = new AssignOperator(*(yyvsp[-2].string), (yyvsp[0].number)); /* has ast_operator */ }
 #line 1365 "src/maths_parser.tab.cpp"
     break;
 
   case 9:
 #line 55 "src/maths_parser.y"
-                    { (yyval.expr) = new Return_Type((yyvsp[0].string)); }
+               { (yyval.string) = new std::string("int"); }
 #line 1371 "src/maths_parser.tab.cpp"
     break;
 
   case 10:
 #line 56 "src/maths_parser.y"
-                { (yyval.expr) = new Return_Type((yyvsp[0].string)); }
+               { (yyval.string) = new std::string("void"); }
 #line 1377 "src/maths_parser.tab.cpp"
     break;
 

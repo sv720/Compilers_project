@@ -1,0 +1,1 @@
+( void f Full_function statement( int a = 0 ) )

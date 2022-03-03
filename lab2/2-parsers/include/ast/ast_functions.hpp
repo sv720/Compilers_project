@@ -43,23 +43,16 @@ public:
     }
 };
 
-class Statment
+class Statement
     : public Function
 {
 public:
-    Statment(ExpressionPtr _arg)
+    Statement(ExpressionPtr _arg)
         : Function(_arg)
     {}
 
-};
-
-class Return_Type
-    : public Function
-{
-public:
-    Return_Type(ExpressionPtr _arg)
-        : Function(_arg)
-    {}
+    virtual const char *getFunction() const
+    { return "statement"; }
 
 };
 
@@ -70,6 +63,9 @@ public:
     Function_name_Args(ExpressionPtr _arg)
         : Function(_arg)
     {}
+
+    virtual const char *getFunction() const
+    { return "function_name_args"; }
 
 };
 
