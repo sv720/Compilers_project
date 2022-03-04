@@ -98,7 +98,11 @@ extern int yydebug;
     NE_OP = 281,                   /* NE_OP  */
     AND_OP = 282,                  /* AND_OP  */
     OR_OP = 283,                   /* OR_OP  */
-    PTR_OP = 284                   /* PTR_OP  */
+    PTR_OP = 284,                  /* PTR_OP  */
+    T_TIMES = 285,                 /* T_TIMES  */
+    T_DIVIDE = 286,                /* T_DIVIDE  */
+    T_PLUS = 287,                  /* T_PLUS  */
+    T_MINUS = 288                  /* T_MINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -113,7 +117,7 @@ union YYSTYPE
   double number;
   std::string *string;
 
-#line 117 "src/maths_parser.tab.hpp"
+#line 121 "src/maths_parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

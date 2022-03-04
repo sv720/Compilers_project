@@ -2,3 +2,7 @@
 ( void f Full_function statement( int b *= 5 ) )
 ( void f Full_function 5 )
 ( void f Full_function a )
+( void f Full_function statement( int a = ( 4 + 3 ) ) )
+( void f Full_function statement( int a = ( ( 4 * 2 ) + 1 ) ) )
+( void f Full_function statement( int a = ( ( 4 * ( - 2 ) ) + 1 ) ) )
+( void f Full_function statement( int a = ( ( 4 * ( - 2 ) ) + ( - 1 ) ) ) )

@@ -32,8 +32,14 @@
 %token XOR_ASSIGN OR_ASSIGN INC_OP DEC_OP LEFTSHIFT_OP RIGHTSHIFT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP PTR_OP
 
+// ASSOCIATIVITY
+%left T_TIMES T_DIVIDE
+%left T_PLUS T_MINUS
+// %nonassoc %left or %right
+
 // declare non-terminals
-%type <expr> TOPLEVEL LINE ASSIGN_DECLARE ASSIGN FUNCTION_NAME_ARGS T_RETURN STATEMENT STATEMENT_LINES
+%type <expr> TOPLEVEL LINE ASSIGN_DECLARE ASSIGN FUNCTION_NAME_ARGS T_RETURN 
+%type <expr> STATEMENT_LINES STATEMENT MATHS_STATEMENT TERM UNARY FACTOR
 %type <number> T_NUMBER
 %type <string> T_VOID T_INT T_IDENTIFIER TYPE assignment_operator
 
@@ -56,12 +62,10 @@ LINE      : ASSIGN_DECLARE                  { $$ = new Statement($1); /* has ast
           | T_RETURN STATEMENT              { $$ = new Return($2);}
           ;
 
-STATEMENT : T_NUMBER                  { $$ = new Number($1); }
-          | T_IDENTIFIER              { $$ = new Variable(*$1); }
-// MATHS_STATEMENT
-//           | CONDITIONAL_STATEMENT
-//           | LOGIC_STATEMENT
-//           ;
+STATEMENT : MATHS_STATEMENT         { $$ = $1; }
+          // | CONDITIONAL_STATEMENT
+          // | LOGIC_STATEMENT
+          ;
 
 ASSIGN_DECLARE : TYPE ASSIGN { $$ = new Assign_Declare(*$1, $2); /* has ast_operator */ } 
                ;
@@ -86,6 +90,22 @@ assignment_operator
 TYPE : T_INT   { $$ = new std::string("int"); }
      | T_VOID  { $$ = new std::string("void"); }
      ;
+
+MATHS_STATEMENT : MATHS_STATEMENT '+' TERM { $$ = new AddOperator($1, $3); } 
+                | MATHS_STATEMENT '-' TERM { $$ = new SubOperator($1, $3); }
+                | TERM           { $$ = $1; }
+
+TERM : TERM '*' UNARY { $$ = new MulOperator($1, $3); }
+      | TERM '/' UNARY { $$ = new DivOperator($1, $3); }
+      | UNARY          { $$ = $1; }
+
+UNARY : '-' FACTOR            { $$ = new NegOperator($2); }
+      | FACTOR        { $$ = $1; }
+
+FACTOR : T_IDENTIFIER     { $$ = new Variable( *$1 ); }
+       | T_NUMBER   { $$ = new Number( $1 ); }
+       | '(' MATHS_STATEMENT ')' { $$ = $2; } 
+
 %%
 
 const Expression *g_root; // Definition of variable (to match declaration earlier)

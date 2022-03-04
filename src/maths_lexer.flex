@@ -12,13 +12,31 @@ LETTER			  [a-zA-Z_]
 
 %%
 
-";"			        { return(';'); }
-"{"		          { return('{'); }
-"}"		          { return('}'); }
+";"			                { return(';'); }
+("{"|"<%")		          { return('{'); }
+("}"|"%>")		          { return('}'); }
+","			                { return(','); }
+":"			                { return(':'); }
+"="			                { return('='); }
+"("			                { return('('); }
+")"			                { return(')'); }
+("["|"<:")		          { return('['); }
+("]"|":>")		          { return(']'); }
+"."			                { return('.'); }
+"&"			                { return('&'); }
+"!"			                { return('!'); }
+"~"			                { return('~'); }
+"-"			                { return('-'); }
+"+"			                { return('+'); }
+"*"			                { return('*'); }
+"/"			                { return('/'); }
+"%"			                { return('%'); }
+"<"			                { return('<'); }
+">"			                { return('>'); }
+"^"			                { return('^'); }
+"|"			                { return('|'); }
+"?"			                { return('?'); }
 
-"("             { return('('); }
-")"             { return(')'); }
-"="             { return('='); }
 ">>="			            { return(RIGHTSHIFT_ASSIGN); }
 "<<="			            { return(LEFTSHIFT_ASSIGN); }
 "+="			            { return(ADD_ASSIGN); }
