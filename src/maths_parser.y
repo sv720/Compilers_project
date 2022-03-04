@@ -1,13 +1,13 @@
 %code requires{
   #include "ast.hpp"
-
+  
   #include <cassert>
 
   #include <iostream>
 
   extern const Expression *g_root; // A way of getting the AST out
 
-  //! This is to fix problems when generating C++
+  // ! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
   // that Bison generated code can call them.
   int yylex(void);
@@ -23,39 +23,67 @@
 }
 
 // declare tokens
-%token ';'
-%token '{' '}'
 %token T_INT T_VOID
-
-%token T_IDENTIFIER
+%token T_IDENTIFIER T_RETURN
 %token T_NUMBER T_VARIABLE
 
+%token MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
+%token SUB_ASSIGN LEFTSHIFT_ASSIGN RIGHTSHIFT_ASSIGN AND_ASSIGN
+%token XOR_ASSIGN OR_ASSIGN INC_OP DEC_OP LEFTSHIFT_OP RIGHTSHIFT_OP LE_OP GE_OP EQ_OP NE_OP
+%token AND_OP OR_OP PTR_OP
+
 // declare non-terminals
-%type <expr> EXPR STATEMENT ASSIGN_DECLARE ASSIGN FUNCTION_DEFINITION FUNCTION_NAME_ARGS
+%type <expr> TOPLEVEL LINE ASSIGN_DECLARE ASSIGN FUNCTION_NAME_ARGS T_RETURN STATEMENT STATEMENT_LINES
 %type <number> T_NUMBER
-%type <string> T_VOID T_INT T_IDENTIFIER TYPE
+%type <string> T_VOID T_INT T_IDENTIFIER TYPE assignment_operator
 
 %start ROOT
 
 %%
-ROOT : EXPR { g_root = $1; }
+ROOT : TOPLEVEL { g_root = $1; }
 
-//function->getArgs[0]->getArgs[0]
-
-EXPR : FUNCTION_DEFINITION  '{' STATEMENT '}' { $$ = new Full_Function($1, $3); /*has ast_operator */} 
-
-FUNCTION_DEFINITION : TYPE FUNCTION_NAME_ARGS { $$ = new Function_Definition(*$1, $2); /*has ast_operator */}
+TOPLEVEL : TYPE FUNCTION_NAME_ARGS  '{' STATEMENT_LINES '}' { $$ = new Full_Function(new Function_Definition(*$1, $2), $4); /*has ast_operator */}
+         ;
 
 FUNCTION_NAME_ARGS : T_IDENTIFIER '(' ')' { $$ = new Variable( *$1 ); /* TODO : allow to pass argument */ }
+                   ;
 
-STATEMENT : ASSIGN_DECLARE ';' { $$ = new Statement($1); /* has ast_function */ }
+STATEMENT_LINES : LINE ';'                  { $$ = $1; }
+                | STATEMENT_LINES LINE ';'  { $$ = $2; }
+                ;
+
+LINE      : ASSIGN_DECLARE                  { $$ = new Statement($1); /* has ast_function */ }
+          // | T_RETURN STATEMENT              { $$ = new Return($2);}
+          ;
+
+// STATEMENT : MATHS_STATEMENT
+//           | CONDITIONAL_STATEMENT
+//           | LOGIC_STATEMENT
+//           ;
 
 ASSIGN_DECLARE : TYPE ASSIGN { $$ = new Assign_Declare(*$1, $2); /* has ast_operator */ } 
+               ;
 
-ASSIGN : T_IDENTIFIER '=' T_NUMBER { $$ = new AssignOperator(*$1, $3); /* has ast_operator */ }
+ASSIGN : T_IDENTIFIER assignment_operator T_NUMBER { $$ = new AssignOperator(*$1, *$2, $3); /* has ast_operator */ }
+       ;
+
+assignment_operator
+	: '='                { $$ = new std::string("="); }
+	| MUL_ASSIGN         { $$ = new std::string("*="); }
+	| DIV_ASSIGN         { $$ = new std::string("/="); }
+	| MOD_ASSIGN         { $$ = new std::string("%="); }
+	| ADD_ASSIGN         { $$ = new std::string("+="); }
+	| SUB_ASSIGN         { $$ = new std::string("-="); }
+	| LEFTSHIFT_ASSIGN   { $$ = new std::string("<<="); }
+	| RIGHTSHIFT_ASSIGN  { $$ = new std::string(">>="); }
+	| AND_ASSIGN         { $$ = new std::string("&="); }
+	| XOR_ASSIGN         { $$ = new std::string("^="); }
+	| OR_ASSIGN          { $$ = new std::string("|="); }
+	;
 
 TYPE : T_INT   { $$ = new std::string("int"); }
      | T_VOID  { $$ = new std::string("void"); }
+     ;
 %%
 
 const Expression *g_root; // Definition of variable (to match declaration earlier)

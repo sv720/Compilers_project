@@ -55,7 +55,7 @@ extern int yydebug;
 
   extern const Expression *g_root; // A way of getting the AST out
 
-  //! This is to fix problems when generating C++
+  // ! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
   // that Bison generated code can call them.
   int yylex(void);
@@ -75,8 +75,30 @@ extern int yydebug;
     T_INT = 258,                   /* T_INT  */
     T_VOID = 259,                  /* T_VOID  */
     T_IDENTIFIER = 260,            /* T_IDENTIFIER  */
-    T_NUMBER = 261,                /* T_NUMBER  */
-    T_VARIABLE = 262               /* T_VARIABLE  */
+    T_RETURN = 261,                /* T_RETURN  */
+    T_NUMBER = 262,                /* T_NUMBER  */
+    T_VARIABLE = 263,              /* T_VARIABLE  */
+    MUL_ASSIGN = 264,              /* MUL_ASSIGN  */
+    DIV_ASSIGN = 265,              /* DIV_ASSIGN  */
+    MOD_ASSIGN = 266,              /* MOD_ASSIGN  */
+    ADD_ASSIGN = 267,              /* ADD_ASSIGN  */
+    SUB_ASSIGN = 268,              /* SUB_ASSIGN  */
+    LEFTSHIFT_ASSIGN = 269,        /* LEFTSHIFT_ASSIGN  */
+    RIGHTSHIFT_ASSIGN = 270,       /* RIGHTSHIFT_ASSIGN  */
+    AND_ASSIGN = 271,              /* AND_ASSIGN  */
+    XOR_ASSIGN = 272,              /* XOR_ASSIGN  */
+    OR_ASSIGN = 273,               /* OR_ASSIGN  */
+    INC_OP = 274,                  /* INC_OP  */
+    DEC_OP = 275,                  /* DEC_OP  */
+    LEFTSHIFT_OP = 276,            /* LEFTSHIFT_OP  */
+    RIGHTSHIFT_OP = 277,           /* RIGHTSHIFT_OP  */
+    LE_OP = 278,                   /* LE_OP  */
+    GE_OP = 279,                   /* GE_OP  */
+    EQ_OP = 280,                   /* EQ_OP  */
+    NE_OP = 281,                   /* NE_OP  */
+    AND_OP = 282,                  /* AND_OP  */
+    OR_OP = 283,                   /* OR_OP  */
+    PTR_OP = 284                   /* PTR_OP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -91,7 +113,7 @@ union YYSTYPE
   double number;
   std::string *string;
 
-#line 95 "src/maths_parser.tab.hpp"
+#line 117 "src/maths_parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

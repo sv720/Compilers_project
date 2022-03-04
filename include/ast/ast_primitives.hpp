@@ -88,21 +88,28 @@ public:
 };
 //________________________________________________
 
-/*
-class Return_Type
+
+class Return
     : public Expression
 {
+private:
+    ExpressionPtr arg;
 public:
-    Return_Type(ExpressionPtr _arg)
-        : Function(_arg)
+    Return(ExpressionPtr _arg)
+        : arg(_arg)
     {}
     
     virtual const char *getFunction() const
     { return "return"; }
 
+    virtual void print(std::ostream &dst) const override
+    {
+        arg->print(dst);
+    }
+
 };
 
-*/
+
 //________________________________________________
 
 class Assign_Declare
@@ -142,17 +149,19 @@ class AssignOperator
 {
 private:
     std::string left;
+    std::string middle;
     int right;  
 
 public:
-    AssignOperator(std::string _left, int _right)
+    AssignOperator(std::string _left, std::string _middle, int _right)
         : left(_left)
+        , middle(_middle)
         , right(_right)
     {}
     //no member functions yet
     virtual void print(std::ostream &dst) const override
-    {
-        dst<<left<<" = "<<right;
+    {   
+        dst<<left<<" "<<middle<<" "<<right;
     }
 };
 

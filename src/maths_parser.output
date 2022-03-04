@@ -1,75 +1,130 @@
+Nonterminals useless in grammar
+
+    STATEMENT
+
+
 Terminals unused in grammar
 
+    T_RETURN
     T_VARIABLE
+    INC_OP
+    DEC_OP
+    LEFTSHIFT_OP
+    RIGHTSHIFT_OP
+    LE_OP
+    GE_OP
+    EQ_OP
+    NE_OP
+    AND_OP
+    OR_OP
+    PTR_OP
 
 
 Grammar
 
     0 $accept: ROOT $end
 
-    1 ROOT: EXPR
+    1 ROOT: TOPLEVEL
 
-    2 EXPR: FUNCTION_DEFINITION '{' STATEMENT '}'
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}'
 
-    3 FUNCTION_DEFINITION: TYPE FUNCTION_NAME_ARGS
+    3 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')'
 
-    4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')'
+    4 STATEMENT_LINES: LINE ';'
+    5                | STATEMENT_LINES LINE ';'
 
-    5 STATEMENT: ASSIGN_DECLARE ';'
+    6 LINE: ASSIGN_DECLARE
 
-    6 ASSIGN_DECLARE: TYPE ASSIGN
+    7 ASSIGN_DECLARE: TYPE ASSIGN
 
-    7 ASSIGN: T_IDENTIFIER '=' T_NUMBER
+    8 ASSIGN: T_IDENTIFIER assignment_operator T_NUMBER
 
-    8 TYPE: T_INT
-    9     | T_VOID
+    9 assignment_operator: '='
+   10                    | MUL_ASSIGN
+   11                    | DIV_ASSIGN
+   12                    | MOD_ASSIGN
+   13                    | ADD_ASSIGN
+   14                    | SUB_ASSIGN
+   15                    | LEFTSHIFT_ASSIGN
+   16                    | RIGHTSHIFT_ASSIGN
+   17                    | AND_ASSIGN
+   18                    | XOR_ASSIGN
+   19                    | OR_ASSIGN
+
+   20 TYPE: T_INT
+   21     | T_VOID
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
-    '(' (40) 4
-    ')' (41) 4
-    ';' (59) 5
-    '=' (61) 7
+    '(' (40) 3
+    ')' (41) 3
+    ';' (59) 4 5
+    '=' (61) 9
     '{' (123) 2
     '}' (125) 2
     error (256)
-    T_INT <string> (258) 8
-    T_VOID <string> (259) 9
-    T_IDENTIFIER <string> (260) 4 7
-    T_NUMBER <number> (261) 7
-    T_VARIABLE (262)
+    T_INT <string> (258) 20
+    T_VOID <string> (259) 21
+    T_IDENTIFIER <string> (260) 3 8
+    T_RETURN <expr> (261)
+    T_NUMBER <number> (262) 8
+    T_VARIABLE (263)
+    MUL_ASSIGN (264) 10
+    DIV_ASSIGN (265) 11
+    MOD_ASSIGN (266) 12
+    ADD_ASSIGN (267) 13
+    SUB_ASSIGN (268) 14
+    LEFTSHIFT_ASSIGN (269) 15
+    RIGHTSHIFT_ASSIGN (270) 16
+    AND_ASSIGN (271) 17
+    XOR_ASSIGN (272) 18
+    OR_ASSIGN (273) 19
+    INC_OP (274)
+    DEC_OP (275)
+    LEFTSHIFT_OP (276)
+    RIGHTSHIFT_OP (277)
+    LE_OP (278)
+    GE_OP (279)
+    EQ_OP (280)
+    NE_OP (281)
+    AND_OP (282)
+    OR_OP (283)
+    PTR_OP (284)
 
 
 Nonterminals, with rules where they appear
 
-    $accept (14)
+    $accept (36)
         on left: 0
-    ROOT (15)
+    ROOT (37)
         on left: 1
         on right: 0
-    EXPR <expr> (16)
+    TOPLEVEL <expr> (38)
         on left: 2
         on right: 1
-    FUNCTION_DEFINITION <expr> (17)
+    FUNCTION_NAME_ARGS <expr> (39)
         on left: 3
         on right: 2
-    FUNCTION_NAME_ARGS <expr> (18)
-        on left: 4
-        on right: 3
-    STATEMENT <expr> (19)
-        on left: 5
-        on right: 2
-    ASSIGN_DECLARE <expr> (20)
+    STATEMENT_LINES <expr> (40)
+        on left: 4 5
+        on right: 2 5
+    LINE <expr> (41)
         on left: 6
-        on right: 5
-    ASSIGN <expr> (21)
+        on right: 4 5
+    ASSIGN_DECLARE <expr> (42)
         on left: 7
         on right: 6
-    TYPE <string> (22)
-        on left: 8 9
-        on right: 3 6
+    ASSIGN <expr> (43)
+        on left: 8
+        on right: 7
+    assignment_operator <string> (44)
+        on left: 9 10 11 12 13 14 15 16 17 18 19
+        on right: 8
+    TYPE <string> (45)
+        on left: 20 21
+        on right: 2 7
 
 
 State 0
@@ -79,163 +134,273 @@ State 0
     T_INT   shift, and go to state 1
     T_VOID  shift, and go to state 2
 
-    ROOT                 go to state 3
-    EXPR                 go to state 4
-    FUNCTION_DEFINITION  go to state 5
-    TYPE                 go to state 6
+    ROOT      go to state 3
+    TOPLEVEL  go to state 4
+    TYPE      go to state 5
 
 
 State 1
 
-    8 TYPE: T_INT •
+   20 TYPE: T_INT •
 
-    $default  reduce using rule 8 (TYPE)
+    $default  reduce using rule 20 (TYPE)
 
 
 State 2
 
-    9 TYPE: T_VOID •
+   21 TYPE: T_VOID •
 
-    $default  reduce using rule 9 (TYPE)
+    $default  reduce using rule 21 (TYPE)
 
 
 State 3
 
     0 $accept: ROOT • $end
 
-    $end  shift, and go to state 7
+    $end  shift, and go to state 6
 
 
 State 4
 
-    1 ROOT: EXPR •
+    1 ROOT: TOPLEVEL •
 
     $default  reduce using rule 1 (ROOT)
 
 
 State 5
 
-    2 EXPR: FUNCTION_DEFINITION • '{' STATEMENT '}'
+    2 TOPLEVEL: TYPE • FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}'
 
-    '{'  shift, and go to state 8
+    T_IDENTIFIER  shift, and go to state 7
+
+    FUNCTION_NAME_ARGS  go to state 8
 
 
 State 6
-
-    3 FUNCTION_DEFINITION: TYPE • FUNCTION_NAME_ARGS
-
-    T_IDENTIFIER  shift, and go to state 9
-
-    FUNCTION_NAME_ARGS  go to state 10
-
-
-State 7
 
     0 $accept: ROOT $end •
 
     $default  accept
 
 
+State 7
+
+    3 FUNCTION_NAME_ARGS: T_IDENTIFIER • '(' ')'
+
+    '('  shift, and go to state 9
+
+
 State 8
 
-    2 EXPR: FUNCTION_DEFINITION '{' • STATEMENT '}'
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS • '{' STATEMENT_LINES '}'
 
-    T_INT   shift, and go to state 1
-    T_VOID  shift, and go to state 2
-
-    STATEMENT       go to state 11
-    ASSIGN_DECLARE  go to state 12
-    TYPE            go to state 13
+    '{'  shift, and go to state 10
 
 
 State 9
 
-    4 FUNCTION_NAME_ARGS: T_IDENTIFIER • '(' ')'
+    3 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' • ')'
 
-    '('  shift, and go to state 14
+    ')'  shift, and go to state 11
 
 
 State 10
 
-    3 FUNCTION_DEFINITION: TYPE FUNCTION_NAME_ARGS •
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' • STATEMENT_LINES '}'
 
-    $default  reduce using rule 3 (FUNCTION_DEFINITION)
+    T_INT   shift, and go to state 1
+    T_VOID  shift, and go to state 2
+
+    STATEMENT_LINES  go to state 12
+    LINE             go to state 13
+    ASSIGN_DECLARE   go to state 14
+    TYPE             go to state 15
 
 
 State 11
 
-    2 EXPR: FUNCTION_DEFINITION '{' STATEMENT • '}'
+    3 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')' •
 
-    '}'  shift, and go to state 15
+    $default  reduce using rule 3 (FUNCTION_NAME_ARGS)
 
 
 State 12
 
-    5 STATEMENT: ASSIGN_DECLARE • ';'
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES • '}'
+    5 STATEMENT_LINES: STATEMENT_LINES • LINE ';'
 
-    ';'  shift, and go to state 16
+    T_INT   shift, and go to state 1
+    T_VOID  shift, and go to state 2
+    '}'     shift, and go to state 16
+
+    LINE            go to state 17
+    ASSIGN_DECLARE  go to state 14
+    TYPE            go to state 15
 
 
 State 13
 
-    6 ASSIGN_DECLARE: TYPE • ASSIGN
+    4 STATEMENT_LINES: LINE • ';'
 
-    T_IDENTIFIER  shift, and go to state 17
-
-    ASSIGN  go to state 18
+    ';'  shift, and go to state 18
 
 
 State 14
 
-    4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' • ')'
+    6 LINE: ASSIGN_DECLARE •
 
-    ')'  shift, and go to state 19
+    $default  reduce using rule 6 (LINE)
 
 
 State 15
 
-    2 EXPR: FUNCTION_DEFINITION '{' STATEMENT '}' •
+    7 ASSIGN_DECLARE: TYPE • ASSIGN
 
-    $default  reduce using rule 2 (EXPR)
+    T_IDENTIFIER  shift, and go to state 19
+
+    ASSIGN  go to state 20
 
 
 State 16
 
-    5 STATEMENT: ASSIGN_DECLARE ';' •
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}' •
 
-    $default  reduce using rule 5 (STATEMENT)
+    $default  reduce using rule 2 (TOPLEVEL)
 
 
 State 17
 
-    7 ASSIGN: T_IDENTIFIER • '=' T_NUMBER
+    5 STATEMENT_LINES: STATEMENT_LINES LINE • ';'
 
-    '='  shift, and go to state 20
+    ';'  shift, and go to state 21
 
 
 State 18
 
-    6 ASSIGN_DECLARE: TYPE ASSIGN •
+    4 STATEMENT_LINES: LINE ';' •
 
-    $default  reduce using rule 6 (ASSIGN_DECLARE)
+    $default  reduce using rule 4 (STATEMENT_LINES)
 
 
 State 19
 
-    4 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')' •
+    8 ASSIGN: T_IDENTIFIER • assignment_operator T_NUMBER
 
-    $default  reduce using rule 4 (FUNCTION_NAME_ARGS)
+    MUL_ASSIGN         shift, and go to state 22
+    DIV_ASSIGN         shift, and go to state 23
+    MOD_ASSIGN         shift, and go to state 24
+    ADD_ASSIGN         shift, and go to state 25
+    SUB_ASSIGN         shift, and go to state 26
+    LEFTSHIFT_ASSIGN   shift, and go to state 27
+    RIGHTSHIFT_ASSIGN  shift, and go to state 28
+    AND_ASSIGN         shift, and go to state 29
+    XOR_ASSIGN         shift, and go to state 30
+    OR_ASSIGN          shift, and go to state 31
+    '='                shift, and go to state 32
+
+    assignment_operator  go to state 33
 
 
 State 20
 
-    7 ASSIGN: T_IDENTIFIER '=' • T_NUMBER
+    7 ASSIGN_DECLARE: TYPE ASSIGN •
 
-    T_NUMBER  shift, and go to state 21
+    $default  reduce using rule 7 (ASSIGN_DECLARE)
 
 
 State 21
 
-    7 ASSIGN: T_IDENTIFIER '=' T_NUMBER •
+    5 STATEMENT_LINES: STATEMENT_LINES LINE ';' •
 
-    $default  reduce using rule 7 (ASSIGN)
+    $default  reduce using rule 5 (STATEMENT_LINES)
+
+
+State 22
+
+   10 assignment_operator: MUL_ASSIGN •
+
+    $default  reduce using rule 10 (assignment_operator)
+
+
+State 23
+
+   11 assignment_operator: DIV_ASSIGN •
+
+    $default  reduce using rule 11 (assignment_operator)
+
+
+State 24
+
+   12 assignment_operator: MOD_ASSIGN •
+
+    $default  reduce using rule 12 (assignment_operator)
+
+
+State 25
+
+   13 assignment_operator: ADD_ASSIGN •
+
+    $default  reduce using rule 13 (assignment_operator)
+
+
+State 26
+
+   14 assignment_operator: SUB_ASSIGN •
+
+    $default  reduce using rule 14 (assignment_operator)
+
+
+State 27
+
+   15 assignment_operator: LEFTSHIFT_ASSIGN •
+
+    $default  reduce using rule 15 (assignment_operator)
+
+
+State 28
+
+   16 assignment_operator: RIGHTSHIFT_ASSIGN •
+
+    $default  reduce using rule 16 (assignment_operator)
+
+
+State 29
+
+   17 assignment_operator: AND_ASSIGN •
+
+    $default  reduce using rule 17 (assignment_operator)
+
+
+State 30
+
+   18 assignment_operator: XOR_ASSIGN •
+
+    $default  reduce using rule 18 (assignment_operator)
+
+
+State 31
+
+   19 assignment_operator: OR_ASSIGN •
+
+    $default  reduce using rule 19 (assignment_operator)
+
+
+State 32
+
+    9 assignment_operator: '=' •
+
+    $default  reduce using rule 9 (assignment_operator)
+
+
+State 33
+
+    8 ASSIGN: T_IDENTIFIER assignment_operator • T_NUMBER
+
+    T_NUMBER  shift, and go to state 34
+
+
+State 34
+
+    8 ASSIGN: T_IDENTIFIER assignment_operator T_NUMBER •
+
+    $default  reduce using rule 8 (ASSIGN)

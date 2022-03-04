@@ -96,26 +96,49 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_3_ = 3,                         /* ';'  */
-  YYSYMBOL_4_ = 4,                         /* '{'  */
-  YYSYMBOL_5_ = 5,                         /* '}'  */
-  YYSYMBOL_T_INT = 6,                      /* T_INT  */
-  YYSYMBOL_T_VOID = 7,                     /* T_VOID  */
-  YYSYMBOL_T_IDENTIFIER = 8,               /* T_IDENTIFIER  */
-  YYSYMBOL_T_NUMBER = 9,                   /* T_NUMBER  */
-  YYSYMBOL_T_VARIABLE = 10,                /* T_VARIABLE  */
-  YYSYMBOL_11_ = 11,                       /* '('  */
-  YYSYMBOL_12_ = 12,                       /* ')'  */
-  YYSYMBOL_13_ = 13,                       /* '='  */
-  YYSYMBOL_YYACCEPT = 14,                  /* $accept  */
-  YYSYMBOL_ROOT = 15,                      /* ROOT  */
-  YYSYMBOL_EXPR = 16,                      /* EXPR  */
-  YYSYMBOL_FUNCTION_DEFINITION = 17,       /* FUNCTION_DEFINITION  */
-  YYSYMBOL_FUNCTION_NAME_ARGS = 18,        /* FUNCTION_NAME_ARGS  */
-  YYSYMBOL_STATEMENT = 19,                 /* STATEMENT  */
-  YYSYMBOL_ASSIGN_DECLARE = 20,            /* ASSIGN_DECLARE  */
-  YYSYMBOL_ASSIGN = 21,                    /* ASSIGN  */
-  YYSYMBOL_TYPE = 22                       /* TYPE  */
+  YYSYMBOL_T_INT = 3,                      /* T_INT  */
+  YYSYMBOL_T_VOID = 4,                     /* T_VOID  */
+  YYSYMBOL_T_IDENTIFIER = 5,               /* T_IDENTIFIER  */
+  YYSYMBOL_T_RETURN = 6,                   /* T_RETURN  */
+  YYSYMBOL_T_NUMBER = 7,                   /* T_NUMBER  */
+  YYSYMBOL_T_VARIABLE = 8,                 /* T_VARIABLE  */
+  YYSYMBOL_MUL_ASSIGN = 9,                 /* MUL_ASSIGN  */
+  YYSYMBOL_DIV_ASSIGN = 10,                /* DIV_ASSIGN  */
+  YYSYMBOL_MOD_ASSIGN = 11,                /* MOD_ASSIGN  */
+  YYSYMBOL_ADD_ASSIGN = 12,                /* ADD_ASSIGN  */
+  YYSYMBOL_SUB_ASSIGN = 13,                /* SUB_ASSIGN  */
+  YYSYMBOL_LEFTSHIFT_ASSIGN = 14,          /* LEFTSHIFT_ASSIGN  */
+  YYSYMBOL_RIGHTSHIFT_ASSIGN = 15,         /* RIGHTSHIFT_ASSIGN  */
+  YYSYMBOL_AND_ASSIGN = 16,                /* AND_ASSIGN  */
+  YYSYMBOL_XOR_ASSIGN = 17,                /* XOR_ASSIGN  */
+  YYSYMBOL_OR_ASSIGN = 18,                 /* OR_ASSIGN  */
+  YYSYMBOL_INC_OP = 19,                    /* INC_OP  */
+  YYSYMBOL_DEC_OP = 20,                    /* DEC_OP  */
+  YYSYMBOL_LEFTSHIFT_OP = 21,              /* LEFTSHIFT_OP  */
+  YYSYMBOL_RIGHTSHIFT_OP = 22,             /* RIGHTSHIFT_OP  */
+  YYSYMBOL_LE_OP = 23,                     /* LE_OP  */
+  YYSYMBOL_GE_OP = 24,                     /* GE_OP  */
+  YYSYMBOL_EQ_OP = 25,                     /* EQ_OP  */
+  YYSYMBOL_NE_OP = 26,                     /* NE_OP  */
+  YYSYMBOL_AND_OP = 27,                    /* AND_OP  */
+  YYSYMBOL_OR_OP = 28,                     /* OR_OP  */
+  YYSYMBOL_PTR_OP = 29,                    /* PTR_OP  */
+  YYSYMBOL_30_ = 30,                       /* '{'  */
+  YYSYMBOL_31_ = 31,                       /* '}'  */
+  YYSYMBOL_32_ = 32,                       /* '('  */
+  YYSYMBOL_33_ = 33,                       /* ')'  */
+  YYSYMBOL_34_ = 34,                       /* ';'  */
+  YYSYMBOL_35_ = 35,                       /* '='  */
+  YYSYMBOL_YYACCEPT = 36,                  /* $accept  */
+  YYSYMBOL_ROOT = 37,                      /* ROOT  */
+  YYSYMBOL_TOPLEVEL = 38,                  /* TOPLEVEL  */
+  YYSYMBOL_FUNCTION_NAME_ARGS = 39,        /* FUNCTION_NAME_ARGS  */
+  YYSYMBOL_STATEMENT_LINES = 40,           /* STATEMENT_LINES  */
+  YYSYMBOL_LINE = 41,                      /* LINE  */
+  YYSYMBOL_ASSIGN_DECLARE = 42,            /* ASSIGN_DECLARE  */
+  YYSYMBOL_ASSIGN = 43,                    /* ASSIGN  */
+  YYSYMBOL_assignment_operator = 44,       /* assignment_operator  */
+  YYSYMBOL_TYPE = 45                       /* TYPE  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -435,21 +458,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  7
+#define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   16
+#define YYLAST   29
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  14
+#define YYNTOKENS  36
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  9
+#define YYNNTS  10
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  10
+#define YYNRULES  22
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  22
+#define YYNSTATES  35
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   262
+#define YYMAXUTOK   284
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -467,37 +490,40 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      11,    12,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     3,
-       2,    13,     2,     2,     2,     2,     2,     2,     2,     2,
+      32,    33,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    34,
+       2,    35,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     4,     2,     5,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    30,     2,    31,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     1,     2,     6,     7,
-       8,     9,    10
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    41,    41,    45,    47,    49,    51,    53,    55,    57,
-      58
+       0,    43,    43,    45,    48,    51,    52,    55,    64,    67,
+      71,    72,    73,    74,    75,    76,    77,    78,    79,    80,
+      81,    84,    85
 };
 #endif
 
@@ -513,10 +539,15 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "';'", "'{'", "'}'",
-  "T_INT", "T_VOID", "T_IDENTIFIER", "T_NUMBER", "T_VARIABLE", "'('",
-  "')'", "'='", "$accept", "ROOT", "EXPR", "FUNCTION_DEFINITION",
-  "FUNCTION_NAME_ARGS", "STATEMENT", "ASSIGN_DECLARE", "ASSIGN", "TYPE", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "T_INT", "T_VOID",
+  "T_IDENTIFIER", "T_RETURN", "T_NUMBER", "T_VARIABLE", "MUL_ASSIGN",
+  "DIV_ASSIGN", "MOD_ASSIGN", "ADD_ASSIGN", "SUB_ASSIGN",
+  "LEFTSHIFT_ASSIGN", "RIGHTSHIFT_ASSIGN", "AND_ASSIGN", "XOR_ASSIGN",
+  "OR_ASSIGN", "INC_OP", "DEC_OP", "LEFTSHIFT_OP", "RIGHTSHIFT_OP",
+  "LE_OP", "GE_OP", "EQ_OP", "NE_OP", "AND_OP", "OR_OP", "PTR_OP", "'{'",
+  "'}'", "'('", "')'", "';'", "'='", "$accept", "ROOT", "TOPLEVEL",
+  "FUNCTION_NAME_ARGS", "STATEMENT_LINES", "LINE", "ASSIGN_DECLARE",
+  "ASSIGN", "assignment_operator", "TYPE", YY_NULLPTR
 };
 
 static const char *
@@ -531,12 +562,14 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,    59,   123,   125,   258,   259,   260,   261,
-     262,    40,    41,    61
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
+     123,   125,    40,    41,    59,    61
 };
 #endif
 
-#define YYPACT_NINF (-7)
+#define YYPACT_NINF (-18)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -550,9 +583,10 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -6,    -7,    -7,     2,    -7,    -1,    -4,    -7,    -6,    -5,
-      -7,     0,     4,     1,    -2,    -7,    -7,     3,    -7,    -7,
-       5,    -7
+      10,   -18,   -18,     2,   -18,    11,   -18,   -17,   -13,   -15,
+      10,   -18,    -3,   -14,   -18,    14,   -18,   -12,   -18,    -6,
+     -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,
+     -18,   -18,   -18,    16,   -18
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -560,21 +594,22 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     9,    10,     0,     2,     0,     0,     1,     0,     0,
-       4,     0,     0,     0,     0,     3,     6,     0,     7,     5,
-       0,     8
+       0,    21,    22,     0,     2,     0,     1,     0,     0,     0,
+       0,     4,     0,     0,     7,     0,     3,     0,     5,     0,
+       8,     6,    11,    12,    13,    14,    15,    16,    17,    18,
+      19,    20,    10,     0,     9
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,    -7,    -7,    -7,    -7,    -7,    -7,     7
+     -18,   -18,   -18,   -18,   -18,     9,   -18,   -18,   -18,    24
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     3,     4,     5,    10,    11,    12,    18,     6
+       0,     3,     4,     8,    12,    13,    14,    20,    33,    15
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -582,37 +617,42 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     2,     7,     8,     9,    15,    14,    16,     0,    17,
-      19,     0,     0,     0,    21,    13,    20
+       1,     2,     6,    22,    23,    24,    25,    26,    27,    28,
+      29,    30,    31,     1,     2,     9,     7,    10,    11,    19,
+      18,    17,    21,    34,     5,     0,     0,     0,    16,    32
 };
 
 static const yytype_int8 yycheck[] =
 {
-       6,     7,     0,     4,     8,     5,    11,     3,    -1,     8,
-      12,    -1,    -1,    -1,     9,     8,    13
+       3,     4,     0,     9,    10,    11,    12,    13,    14,    15,
+      16,    17,    18,     3,     4,    32,     5,    30,    33,     5,
+      34,    12,    34,     7,     0,    -1,    -1,    -1,    31,    35
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     6,     7,    15,    16,    17,    22,     0,     4,     8,
-      18,    19,    20,    22,    11,     5,     3,     8,    21,    12,
-      13,     9
+       0,     3,     4,    37,    38,    45,     0,     5,    39,    32,
+      30,    33,    40,    41,    42,    45,    31,    41,    34,     5,
+      43,    34,     9,    10,    11,    12,    13,    14,    15,    16,
+      17,    18,    35,    44,     7
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    14,    15,    16,    17,    18,    19,    20,    21,    22,
-      22
+       0,    36,    37,    38,    39,    40,    40,    41,    42,    43,
+      44,    44,    44,    44,    44,    44,    44,    44,    44,    44,
+      44,    45,    45
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     4,     2,     3,     2,     2,     3,     1,
-       1
+       0,     2,     1,     5,     3,     2,     3,     1,     2,     3,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1
 };
 
 
@@ -1079,62 +1119,134 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* ROOT: EXPR  */
-#line 41 "src/maths_parser.y"
-            { g_root = (yyvsp[0].expr); }
-#line 1086 "src/maths_parser.tab.cpp"
+  case 2: /* ROOT: TOPLEVEL  */
+#line 43 "src/maths_parser.y"
+                { g_root = (yyvsp[0].expr); }
+#line 1126 "src/maths_parser.tab.cpp"
     break;
 
-  case 3: /* EXPR: FUNCTION_DEFINITION '{' STATEMENT '}'  */
+  case 3: /* TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}'  */
 #line 45 "src/maths_parser.y"
-                                              { (yyval.expr) = new Full_Function((yyvsp[-3].expr), (yyvsp[-1].expr)); /*has ast_operator */}
-#line 1092 "src/maths_parser.tab.cpp"
+                                                            { (yyval.expr) = new Full_Function(new Function_Definition(*(yyvsp[-4].string), (yyvsp[-3].expr)), (yyvsp[-1].expr)); /*has ast_operator */}
+#line 1132 "src/maths_parser.tab.cpp"
     break;
 
-  case 4: /* FUNCTION_DEFINITION: TYPE FUNCTION_NAME_ARGS  */
-#line 47 "src/maths_parser.y"
-                                              { (yyval.expr) = new Function_Definition(*(yyvsp[-1].string), (yyvsp[0].expr)); /*has ast_operator */}
-#line 1098 "src/maths_parser.tab.cpp"
-    break;
-
-  case 5: /* FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')'  */
-#line 49 "src/maths_parser.y"
+  case 4: /* FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')'  */
+#line 48 "src/maths_parser.y"
                                           { (yyval.expr) = new Variable( *(yyvsp[-2].string) ); /* TODO : allow to pass argument */ }
-#line 1104 "src/maths_parser.tab.cpp"
-    break;
-
-  case 6: /* STATEMENT: ASSIGN_DECLARE ';'  */
-#line 51 "src/maths_parser.y"
-                               { (yyval.expr) = new Statement((yyvsp[-1].expr)); /* has ast_function */ }
-#line 1110 "src/maths_parser.tab.cpp"
-    break;
-
-  case 7: /* ASSIGN_DECLARE: TYPE ASSIGN  */
-#line 53 "src/maths_parser.y"
-                             { (yyval.expr) = new Assign_Declare(*(yyvsp[-1].string), (yyvsp[0].expr)); /* has ast_operator */ }
-#line 1116 "src/maths_parser.tab.cpp"
-    break;
-
-  case 8: /* ASSIGN: T_IDENTIFIER '=' T_NUMBER  */
-#line 55 "src/maths_parser.y"
-                                   { (yyval.expr) = new AssignOperator(*(yyvsp[-2].string), (yyvsp[0].number)); /* has ast_operator */ }
-#line 1122 "src/maths_parser.tab.cpp"
-    break;
-
-  case 9: /* TYPE: T_INT  */
-#line 57 "src/maths_parser.y"
-               { (yyval.string) = new std::string("int"); }
-#line 1128 "src/maths_parser.tab.cpp"
-    break;
-
-  case 10: /* TYPE: T_VOID  */
-#line 58 "src/maths_parser.y"
-               { (yyval.string) = new std::string("void"); }
-#line 1134 "src/maths_parser.tab.cpp"
-    break;
-
-
 #line 1138 "src/maths_parser.tab.cpp"
+    break;
+
+  case 5: /* STATEMENT_LINES: LINE ';'  */
+#line 51 "src/maths_parser.y"
+                                            { (yyval.expr) = (yyvsp[-1].expr); }
+#line 1144 "src/maths_parser.tab.cpp"
+    break;
+
+  case 6: /* STATEMENT_LINES: STATEMENT_LINES LINE ';'  */
+#line 52 "src/maths_parser.y"
+                                            { (yyval.expr) = (yyvsp[-1].expr); }
+#line 1150 "src/maths_parser.tab.cpp"
+    break;
+
+  case 7: /* LINE: ASSIGN_DECLARE  */
+#line 55 "src/maths_parser.y"
+                                            { (yyval.expr) = new Statement((yyvsp[0].expr)); /* has ast_function */ }
+#line 1156 "src/maths_parser.tab.cpp"
+    break;
+
+  case 8: /* ASSIGN_DECLARE: TYPE ASSIGN  */
+#line 64 "src/maths_parser.y"
+                             { (yyval.expr) = new Assign_Declare(*(yyvsp[-1].string), (yyvsp[0].expr)); /* has ast_operator */ }
+#line 1162 "src/maths_parser.tab.cpp"
+    break;
+
+  case 9: /* ASSIGN: T_IDENTIFIER assignment_operator T_NUMBER  */
+#line 67 "src/maths_parser.y"
+                                                   { (yyval.expr) = new AssignOperator(*(yyvsp[-2].string), *(yyvsp[-1].string), (yyvsp[0].number)); /* has ast_operator */ }
+#line 1168 "src/maths_parser.tab.cpp"
+    break;
+
+  case 10: /* assignment_operator: '='  */
+#line 71 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("="); }
+#line 1174 "src/maths_parser.tab.cpp"
+    break;
+
+  case 11: /* assignment_operator: MUL_ASSIGN  */
+#line 72 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("*="); }
+#line 1180 "src/maths_parser.tab.cpp"
+    break;
+
+  case 12: /* assignment_operator: DIV_ASSIGN  */
+#line 73 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("/="); }
+#line 1186 "src/maths_parser.tab.cpp"
+    break;
+
+  case 13: /* assignment_operator: MOD_ASSIGN  */
+#line 74 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("%="); }
+#line 1192 "src/maths_parser.tab.cpp"
+    break;
+
+  case 14: /* assignment_operator: ADD_ASSIGN  */
+#line 75 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("+="); }
+#line 1198 "src/maths_parser.tab.cpp"
+    break;
+
+  case 15: /* assignment_operator: SUB_ASSIGN  */
+#line 76 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("-="); }
+#line 1204 "src/maths_parser.tab.cpp"
+    break;
+
+  case 16: /* assignment_operator: LEFTSHIFT_ASSIGN  */
+#line 77 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("<<="); }
+#line 1210 "src/maths_parser.tab.cpp"
+    break;
+
+  case 17: /* assignment_operator: RIGHTSHIFT_ASSIGN  */
+#line 78 "src/maths_parser.y"
+                             { (yyval.string) = new std::string(">>="); }
+#line 1216 "src/maths_parser.tab.cpp"
+    break;
+
+  case 18: /* assignment_operator: AND_ASSIGN  */
+#line 79 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("&="); }
+#line 1222 "src/maths_parser.tab.cpp"
+    break;
+
+  case 19: /* assignment_operator: XOR_ASSIGN  */
+#line 80 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("^="); }
+#line 1228 "src/maths_parser.tab.cpp"
+    break;
+
+  case 20: /* assignment_operator: OR_ASSIGN  */
+#line 81 "src/maths_parser.y"
+                             { (yyval.string) = new std::string("|="); }
+#line 1234 "src/maths_parser.tab.cpp"
+    break;
+
+  case 21: /* TYPE: T_INT  */
+#line 84 "src/maths_parser.y"
+               { (yyval.string) = new std::string("int"); }
+#line 1240 "src/maths_parser.tab.cpp"
+    break;
+
+  case 22: /* TYPE: T_VOID  */
+#line 85 "src/maths_parser.y"
+               { (yyval.string) = new std::string("void"); }
+#line 1246 "src/maths_parser.tab.cpp"
+    break;
+
+
+#line 1250 "src/maths_parser.tab.cpp"
 
       default: break;
     }
@@ -1328,7 +1440,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 59 "src/maths_parser.y"
+#line 87 "src/maths_parser.y"
 
 
 const Expression *g_root; // Definition of variable (to match declaration earlier)

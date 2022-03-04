@@ -19,11 +19,35 @@ LETTER			  [a-zA-Z_]
 "("             { return('('); }
 ")"             { return(')'); }
 "="             { return('='); }
+">>="			            { return(RIGHTSHIFT_ASSIGN); }
+"<<="			            { return(LEFTSHIFT_ASSIGN); }
+"+="			            { return(ADD_ASSIGN); }
+"-="			            { return(SUB_ASSIGN); }
+"*="			            { return(MUL_ASSIGN); }
+"/="			            { return(DIV_ASSIGN); }
+"%="			            { return(MOD_ASSIGN); }
+"&="			            { return(AND_ASSIGN); }
+"^="			            { return(XOR_ASSIGN); }
+"|="			            { return(OR_ASSIGN); }
+">>"			            { return(RIGHTSHIFT_OP); }
+"<<"			            { return(LEFTSHIFT_OP); }
+"++"			            { return(INC_OP); }
+"--"			            { return(DEC_OP); }
+"->"			            { return(PTR_OP); }
+"&&"			            { return(AND_OP); }
+"||"			            { return(OR_OP); }
+"<="			            { return(LE_OP); }
+">="			            { return(GE_OP); }
+"=="			            { return(EQ_OP); }
+"!="			            { return(NE_OP); }
+
+
+"return"        { return('return'); }
 
 "int"			      { return T_INT; }
 "void"			    { return T_VOID; }
 
-[0-9]+ { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+[0-9]+                        { yylval.number=strtod(yytext, 0); return T_NUMBER; }
 {LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return T_IDENTIFIER; }
 
 
