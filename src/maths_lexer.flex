@@ -42,7 +42,7 @@ LETTER			  [a-zA-Z_]
 "!="			            { return(NE_OP); }
 
 
-"return"        { return('return'); }
+"return"        { return(T_RETURN); }
 
 "int"			      { return T_INT; }
 "void"			    { return T_VOID; }

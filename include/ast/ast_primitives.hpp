@@ -50,13 +50,6 @@ public:
         dst<<value;
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    {
-        // TODO-A : Run bin/eval_expr with a numeric expression to make sure you understand how this works.
-        return value;
-    }
 };
 
 
@@ -150,10 +143,10 @@ class AssignOperator
 private:
     std::string left;
     std::string middle;
-    int right;  
+    ExpressionPtr right;  
 
 public:
-    AssignOperator(std::string _left, std::string _middle, int _right)
+    AssignOperator(std::string _left, std::string _middle, ExpressionPtr _right)
         : left(_left)
         , middle(_middle)
         , right(_right)
@@ -161,7 +154,8 @@ public:
     //no member functions yet
     virtual void print(std::ostream &dst) const override
     {   
-        dst<<left<<" "<<middle<<" "<<right;
+        dst<<left<<" "<<middle<<" ";
+        right->print(dst);
     }
 };
 

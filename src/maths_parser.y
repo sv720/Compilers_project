@@ -1,6 +1,6 @@
 %code requires{
   #include "ast.hpp"
-  
+
   #include <cassert>
 
   #include <iostream>
@@ -53,10 +53,12 @@ STATEMENT_LINES : LINE ';'                  { $$ = $1; }
                 ;
 
 LINE      : ASSIGN_DECLARE                  { $$ = new Statement($1); /* has ast_function */ }
-          // | T_RETURN STATEMENT              { $$ = new Return($2);}
+          | T_RETURN STATEMENT              { $$ = new Return($2);}
           ;
 
-// STATEMENT : MATHS_STATEMENT
+STATEMENT : T_NUMBER                  { $$ = new Number($1); }
+          | T_IDENTIFIER              { $$ = new Variable(*$1); }
+// MATHS_STATEMENT
 //           | CONDITIONAL_STATEMENT
 //           | LOGIC_STATEMENT
 //           ;
@@ -64,7 +66,7 @@ LINE      : ASSIGN_DECLARE                  { $$ = new Statement($1); /* has ast
 ASSIGN_DECLARE : TYPE ASSIGN { $$ = new Assign_Declare(*$1, $2); /* has ast_operator */ } 
                ;
 
-ASSIGN : T_IDENTIFIER assignment_operator T_NUMBER { $$ = new AssignOperator(*$1, *$2, $3); /* has ast_operator */ }
+ASSIGN : T_IDENTIFIER assignment_operator STATEMENT { $$ = new AssignOperator(*$1, *$2, $3); /* has ast_operator */ }
        ;
 
 assignment_operator
