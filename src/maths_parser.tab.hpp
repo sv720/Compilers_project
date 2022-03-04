@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.7.6.  */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,9 +31,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
-   especially those whose name start with YY_ or yy_.  They are
-   private implementation details that can be changed or removed.  */
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
 
 #ifndef YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
 # define YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
@@ -61,50 +60,45 @@ extern int yydebug;
   int yylex(void);
   void yyerror(const char *);
 
-#line 65 "src/maths_parser.tab.hpp"
+#line 64 "src/maths_parser.tab.hpp"
 
-/* Token kinds.  */
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    T_INT = 258,                   /* T_INT  */
-    T_VOID = 259,                  /* T_VOID  */
-    T_IDENTIFIER = 260,            /* T_IDENTIFIER  */
-    T_RETURN = 261,                /* T_RETURN  */
-    T_NUMBER = 262,                /* T_NUMBER  */
-    T_VARIABLE = 263,              /* T_VARIABLE  */
-    MUL_ASSIGN = 264,              /* MUL_ASSIGN  */
-    DIV_ASSIGN = 265,              /* DIV_ASSIGN  */
-    MOD_ASSIGN = 266,              /* MOD_ASSIGN  */
-    ADD_ASSIGN = 267,              /* ADD_ASSIGN  */
-    SUB_ASSIGN = 268,              /* SUB_ASSIGN  */
-    LEFTSHIFT_ASSIGN = 269,        /* LEFTSHIFT_ASSIGN  */
-    RIGHTSHIFT_ASSIGN = 270,       /* RIGHTSHIFT_ASSIGN  */
-    AND_ASSIGN = 271,              /* AND_ASSIGN  */
-    XOR_ASSIGN = 272,              /* XOR_ASSIGN  */
-    OR_ASSIGN = 273,               /* OR_ASSIGN  */
-    INC_OP = 274,                  /* INC_OP  */
-    DEC_OP = 275,                  /* DEC_OP  */
-    LEFTSHIFT_OP = 276,            /* LEFTSHIFT_OP  */
-    RIGHTSHIFT_OP = 277,           /* RIGHTSHIFT_OP  */
-    LE_OP = 278,                   /* LE_OP  */
-    GE_OP = 279,                   /* GE_OP  */
-    EQ_OP = 280,                   /* EQ_OP  */
-    NE_OP = 281,                   /* NE_OP  */
-    AND_OP = 282,                  /* AND_OP  */
-    OR_OP = 283,                   /* OR_OP  */
-    PTR_OP = 284,                  /* PTR_OP  */
-    T_TIMES = 285,                 /* T_TIMES  */
-    T_DIVIDE = 286,                /* T_DIVIDE  */
-    T_PLUS = 287,                  /* T_PLUS  */
-    T_MINUS = 288                  /* T_MINUS  */
+    T_INT = 258,
+    T_VOID = 259,
+    T_IDENTIFIER = 260,
+    T_RETURN = 261,
+    T_NUMBER = 262,
+    T_VARIABLE = 263,
+    MUL_ASSIGN = 264,
+    DIV_ASSIGN = 265,
+    MOD_ASSIGN = 266,
+    ADD_ASSIGN = 267,
+    SUB_ASSIGN = 268,
+    LEFTSHIFT_ASSIGN = 269,
+    RIGHTSHIFT_ASSIGN = 270,
+    AND_ASSIGN = 271,
+    XOR_ASSIGN = 272,
+    OR_ASSIGN = 273,
+    INC_OP = 274,
+    DEC_OP = 275,
+    LEFTSHIFT_OP = 276,
+    RIGHTSHIFT_OP = 277,
+    LE_OP = 278,
+    GE_OP = 279,
+    EQ_OP = 280,
+    NE_OP = 281,
+    AND_OP = 282,
+    OR_OP = 283,
+    PTR_OP = 284,
+    T_TIMES = 285,
+    T_DIVIDE = 286,
+    T_PLUS = 287,
+    T_MINUS = 288
   };
-  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
@@ -117,7 +111,7 @@ union YYSTYPE
   double number;
   std::string *string;
 
-#line 121 "src/maths_parser.tab.hpp"
+#line 115 "src/maths_parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

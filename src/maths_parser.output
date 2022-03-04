@@ -168,7 +168,7 @@ Nonterminals, with rules where they appear
 
 State 0
 
-    0 $accept: • ROOT $end
+    0 $accept: . ROOT $end
 
     T_INT   shift, and go to state 1
     T_VOID  shift, and go to state 2
@@ -180,35 +180,35 @@ State 0
 
 State 1
 
-   22 TYPE: T_INT •
+   22 TYPE: T_INT .
 
     $default  reduce using rule 22 (TYPE)
 
 
 State 2
 
-   23 TYPE: T_VOID •
+   23 TYPE: T_VOID .
 
     $default  reduce using rule 23 (TYPE)
 
 
 State 3
 
-    0 $accept: ROOT • $end
+    0 $accept: ROOT . $end
 
     $end  shift, and go to state 6
 
 
 State 4
 
-    1 ROOT: TOPLEVEL •
+    1 ROOT: TOPLEVEL .
 
     $default  reduce using rule 1 (ROOT)
 
 
 State 5
 
-    2 TOPLEVEL: TYPE • FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}'
+    2 TOPLEVEL: TYPE . FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}'
 
     T_IDENTIFIER  shift, and go to state 7
 
@@ -217,35 +217,35 @@ State 5
 
 State 6
 
-    0 $accept: ROOT $end •
+    0 $accept: ROOT $end .
 
     $default  accept
 
 
 State 7
 
-    3 FUNCTION_NAME_ARGS: T_IDENTIFIER • '(' ')'
+    3 FUNCTION_NAME_ARGS: T_IDENTIFIER . '(' ')'
 
     '('  shift, and go to state 9
 
 
 State 8
 
-    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS • '{' STATEMENT_LINES '}'
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS . '{' STATEMENT_LINES '}'
 
     '{'  shift, and go to state 10
 
 
 State 9
 
-    3 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' • ')'
+    3 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' . ')'
 
     ')'  shift, and go to state 11
 
 
 State 10
 
-    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' • STATEMENT_LINES '}'
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' . STATEMENT_LINES '}'
 
     T_INT     shift, and go to state 1
     T_VOID    shift, and go to state 2
@@ -259,14 +259,14 @@ State 10
 
 State 11
 
-    3 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')' •
+    3 FUNCTION_NAME_ARGS: T_IDENTIFIER '(' ')' .
 
     $default  reduce using rule 3 (FUNCTION_NAME_ARGS)
 
 
 State 12
 
-    7 LINE: T_RETURN • STATEMENT
+    7 LINE: T_RETURN . STATEMENT
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -282,8 +282,8 @@ State 12
 
 State 13
 
-    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES • '}'
-    5 STATEMENT_LINES: STATEMENT_LINES • LINE ';'
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES . '}'
+    5 STATEMENT_LINES: STATEMENT_LINES . LINE ';'
 
     T_INT     shift, and go to state 1
     T_VOID    shift, and go to state 2
@@ -297,21 +297,21 @@ State 13
 
 State 14
 
-    4 STATEMENT_LINES: LINE • ';'
+    4 STATEMENT_LINES: LINE . ';'
 
     ';'  shift, and go to state 28
 
 
 State 15
 
-    6 LINE: ASSIGN_DECLARE •
+    6 LINE: ASSIGN_DECLARE .
 
     $default  reduce using rule 6 (LINE)
 
 
 State 16
 
-    9 ASSIGN_DECLARE: TYPE • ASSIGN
+    9 ASSIGN_DECLARE: TYPE . ASSIGN
 
     T_IDENTIFIER  shift, and go to state 29
 
@@ -320,21 +320,21 @@ State 16
 
 State 17
 
-   32 FACTOR: T_IDENTIFIER •
+   32 FACTOR: T_IDENTIFIER .
 
     $default  reduce using rule 32 (FACTOR)
 
 
 State 18
 
-   33 FACTOR: T_NUMBER •
+   33 FACTOR: T_NUMBER .
 
     $default  reduce using rule 33 (FACTOR)
 
 
 State 19
 
-   34 FACTOR: '(' • MATHS_STATEMENT ')'
+   34 FACTOR: '(' . MATHS_STATEMENT ')'
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -349,7 +349,7 @@ State 19
 
 State 20
 
-   30 UNARY: '-' • FACTOR
+   30 UNARY: '-' . FACTOR
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -360,16 +360,16 @@ State 20
 
 State 21
 
-    7 LINE: T_RETURN STATEMENT •
+    7 LINE: T_RETURN STATEMENT .
 
     $default  reduce using rule 7 (LINE)
 
 
 State 22
 
-    8 STATEMENT: MATHS_STATEMENT •
-   24 MATHS_STATEMENT: MATHS_STATEMENT • '+' TERM
-   25                | MATHS_STATEMENT • '-' TERM
+    8 STATEMENT: MATHS_STATEMENT .
+   24 MATHS_STATEMENT: MATHS_STATEMENT . '+' TERM
+   25                | MATHS_STATEMENT . '-' TERM
 
     '+'  shift, and go to state 33
     '-'  shift, and go to state 34
@@ -379,9 +379,9 @@ State 22
 
 State 23
 
-   26 MATHS_STATEMENT: TERM •
-   27 TERM: TERM • '*' UNARY
-   28     | TERM • '/' UNARY
+   26 MATHS_STATEMENT: TERM .
+   27 TERM: TERM . '*' UNARY
+   28     | TERM . '/' UNARY
 
     '*'  shift, and go to state 35
     '/'  shift, and go to state 36
@@ -391,42 +391,42 @@ State 23
 
 State 24
 
-   29 TERM: UNARY •
+   29 TERM: UNARY .
 
     $default  reduce using rule 29 (TERM)
 
 
 State 25
 
-   31 UNARY: FACTOR •
+   31 UNARY: FACTOR .
 
     $default  reduce using rule 31 (UNARY)
 
 
 State 26
 
-    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}' •
+    2 TOPLEVEL: TYPE FUNCTION_NAME_ARGS '{' STATEMENT_LINES '}' .
 
     $default  reduce using rule 2 (TOPLEVEL)
 
 
 State 27
 
-    5 STATEMENT_LINES: STATEMENT_LINES LINE • ';'
+    5 STATEMENT_LINES: STATEMENT_LINES LINE . ';'
 
     ';'  shift, and go to state 37
 
 
 State 28
 
-    4 STATEMENT_LINES: LINE ';' •
+    4 STATEMENT_LINES: LINE ';' .
 
     $default  reduce using rule 4 (STATEMENT_LINES)
 
 
 State 29
 
-   10 ASSIGN: T_IDENTIFIER • assignment_operator STATEMENT
+   10 ASSIGN: T_IDENTIFIER . assignment_operator STATEMENT
 
     MUL_ASSIGN         shift, and go to state 38
     DIV_ASSIGN         shift, and go to state 39
@@ -445,16 +445,16 @@ State 29
 
 State 30
 
-    9 ASSIGN_DECLARE: TYPE ASSIGN •
+    9 ASSIGN_DECLARE: TYPE ASSIGN .
 
     $default  reduce using rule 9 (ASSIGN_DECLARE)
 
 
 State 31
 
-   24 MATHS_STATEMENT: MATHS_STATEMENT • '+' TERM
-   25                | MATHS_STATEMENT • '-' TERM
-   34 FACTOR: '(' MATHS_STATEMENT • ')'
+   24 MATHS_STATEMENT: MATHS_STATEMENT . '+' TERM
+   25                | MATHS_STATEMENT . '-' TERM
+   34 FACTOR: '(' MATHS_STATEMENT . ')'
 
     ')'  shift, and go to state 50
     '+'  shift, and go to state 33
@@ -463,14 +463,14 @@ State 31
 
 State 32
 
-   30 UNARY: '-' FACTOR •
+   30 UNARY: '-' FACTOR .
 
     $default  reduce using rule 30 (UNARY)
 
 
 State 33
 
-   24 MATHS_STATEMENT: MATHS_STATEMENT '+' • TERM
+   24 MATHS_STATEMENT: MATHS_STATEMENT '+' . TERM
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -484,7 +484,7 @@ State 33
 
 State 34
 
-   25 MATHS_STATEMENT: MATHS_STATEMENT '-' • TERM
+   25 MATHS_STATEMENT: MATHS_STATEMENT '-' . TERM
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -498,7 +498,7 @@ State 34
 
 State 35
 
-   27 TERM: TERM '*' • UNARY
+   27 TERM: TERM '*' . UNARY
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -511,7 +511,7 @@ State 35
 
 State 36
 
-   28 TERM: TERM '/' • UNARY
+   28 TERM: TERM '/' . UNARY
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -524,91 +524,91 @@ State 36
 
 State 37
 
-    5 STATEMENT_LINES: STATEMENT_LINES LINE ';' •
+    5 STATEMENT_LINES: STATEMENT_LINES LINE ';' .
 
     $default  reduce using rule 5 (STATEMENT_LINES)
 
 
 State 38
 
-   12 assignment_operator: MUL_ASSIGN •
+   12 assignment_operator: MUL_ASSIGN .
 
     $default  reduce using rule 12 (assignment_operator)
 
 
 State 39
 
-   13 assignment_operator: DIV_ASSIGN •
+   13 assignment_operator: DIV_ASSIGN .
 
     $default  reduce using rule 13 (assignment_operator)
 
 
 State 40
 
-   14 assignment_operator: MOD_ASSIGN •
+   14 assignment_operator: MOD_ASSIGN .
 
     $default  reduce using rule 14 (assignment_operator)
 
 
 State 41
 
-   15 assignment_operator: ADD_ASSIGN •
+   15 assignment_operator: ADD_ASSIGN .
 
     $default  reduce using rule 15 (assignment_operator)
 
 
 State 42
 
-   16 assignment_operator: SUB_ASSIGN •
+   16 assignment_operator: SUB_ASSIGN .
 
     $default  reduce using rule 16 (assignment_operator)
 
 
 State 43
 
-   17 assignment_operator: LEFTSHIFT_ASSIGN •
+   17 assignment_operator: LEFTSHIFT_ASSIGN .
 
     $default  reduce using rule 17 (assignment_operator)
 
 
 State 44
 
-   18 assignment_operator: RIGHTSHIFT_ASSIGN •
+   18 assignment_operator: RIGHTSHIFT_ASSIGN .
 
     $default  reduce using rule 18 (assignment_operator)
 
 
 State 45
 
-   19 assignment_operator: AND_ASSIGN •
+   19 assignment_operator: AND_ASSIGN .
 
     $default  reduce using rule 19 (assignment_operator)
 
 
 State 46
 
-   20 assignment_operator: XOR_ASSIGN •
+   20 assignment_operator: XOR_ASSIGN .
 
     $default  reduce using rule 20 (assignment_operator)
 
 
 State 47
 
-   21 assignment_operator: OR_ASSIGN •
+   21 assignment_operator: OR_ASSIGN .
 
     $default  reduce using rule 21 (assignment_operator)
 
 
 State 48
 
-   11 assignment_operator: '=' •
+   11 assignment_operator: '=' .
 
     $default  reduce using rule 11 (assignment_operator)
 
 
 State 49
 
-   10 ASSIGN: T_IDENTIFIER assignment_operator • STATEMENT
+   10 ASSIGN: T_IDENTIFIER assignment_operator . STATEMENT
 
     T_IDENTIFIER  shift, and go to state 17
     T_NUMBER      shift, and go to state 18
@@ -624,16 +624,16 @@ State 49
 
 State 50
 
-   34 FACTOR: '(' MATHS_STATEMENT ')' •
+   34 FACTOR: '(' MATHS_STATEMENT ')' .
 
     $default  reduce using rule 34 (FACTOR)
 
 
 State 51
 
-   24 MATHS_STATEMENT: MATHS_STATEMENT '+' TERM •
-   27 TERM: TERM • '*' UNARY
-   28     | TERM • '/' UNARY
+   24 MATHS_STATEMENT: MATHS_STATEMENT '+' TERM .
+   27 TERM: TERM . '*' UNARY
+   28     | TERM . '/' UNARY
 
     '*'  shift, and go to state 35
     '/'  shift, and go to state 36
@@ -643,9 +643,9 @@ State 51
 
 State 52
 
-   25 MATHS_STATEMENT: MATHS_STATEMENT '-' TERM •
-   27 TERM: TERM • '*' UNARY
-   28     | TERM • '/' UNARY
+   25 MATHS_STATEMENT: MATHS_STATEMENT '-' TERM .
+   27 TERM: TERM . '*' UNARY
+   28     | TERM . '/' UNARY
 
     '*'  shift, and go to state 35
     '/'  shift, and go to state 36
@@ -655,20 +655,20 @@ State 52
 
 State 53
 
-   27 TERM: TERM '*' UNARY •
+   27 TERM: TERM '*' UNARY .
 
     $default  reduce using rule 27 (TERM)
 
 
 State 54
 
-   28 TERM: TERM '/' UNARY •
+   28 TERM: TERM '/' UNARY .
 
     $default  reduce using rule 28 (TERM)
 
 
 State 55
 
-   10 ASSIGN: T_IDENTIFIER assignment_operator STATEMENT •
+   10 ASSIGN: T_IDENTIFIER assignment_operator STATEMENT .
 
     $default  reduce using rule 10 (ASSIGN)

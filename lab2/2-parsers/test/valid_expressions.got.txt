@@ -1,0 +1,3 @@
+void f(){ int a = 0; },( void f Full_function statement( int a = 0 ) ),,
+void f(){ int a = 0; },( void f Full_function statement( int a = 0 ) ),,
+void f(){ int a = 0; },( void f Full_function statement( int a = 0 ) ),,
