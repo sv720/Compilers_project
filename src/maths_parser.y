@@ -54,8 +54,8 @@ TOPLEVEL : TYPE FUNCTION_NAME_ARGS  '{' STATEMENT_LINES '}' { $$ = new Full_Func
 FUNCTION_NAME_ARGS : T_IDENTIFIER '(' ')' { $$ = new Variable( *$1 ); /* TODO : allow to pass argument */ }
                    ;
 
-STATEMENT_LINES : LINE ';'                  { $$ = $1; }
-                | STATEMENT_LINES LINE ';'  { $$ = $2; }
+STATEMENT_LINES : LINE ';'                  { $$ = new ExpressionList($1); }
+                | STATEMENT_LINES LINE ';'  { $$ = new ExpressionList($1, $2); }
                 ;
 
 LINE      : ASSIGN_DECLARE                  { $$ = new Statement($1); /* has ast_function */ }

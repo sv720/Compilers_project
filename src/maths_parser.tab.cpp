@@ -1405,13 +1405,13 @@ yyreduce:
 
   case 5:
 #line 57 "src/maths_parser.y"
-                                            { (yyval.expr) = (yyvsp[-1].expr); }
+                                            { (yyval.expr) = new ExpressionList((yyvsp[-1].expr)); }
 #line 1410 "src/maths_parser.tab.cpp"
     break;
 
   case 6:
 #line 58 "src/maths_parser.y"
-                                            { (yyval.expr) = (yyvsp[-1].expr); }
+                                            { (yyval.expr) = new ExpressionList((yyvsp[-2].expr), (yyvsp[-1].expr)); }
 #line 1416 "src/maths_parser.tab.cpp"
     break;
 

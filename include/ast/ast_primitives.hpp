@@ -130,7 +130,9 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
+        std::cout << "DEBUG : printing in AssignDeclare left" <<std::endl;
         dst<<left<<" ";
+        std::cout << "DEBUG : printing in AssignDeclare right" <<std::endl;
         right->print(dst);
     }
 };
