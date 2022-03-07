@@ -50,7 +50,6 @@ extern int yydebug;
   #include "ast.hpp"
 
   #include <cassert>
-
   #include <iostream>
 
   extern const Expression *g_root; // A way of getting the AST out
@@ -61,7 +60,7 @@ extern int yydebug;
   int yylex(void);
   void yyerror(const char *);
 
-#line 65 "src/parser.tab.hpp"
+#line 64 "src/parser.tab.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -72,37 +71,64 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    T_INT = 258,                   /* T_INT  */
-    T_VOID = 259,                  /* T_VOID  */
-    T_IDENTIFIER = 260,            /* T_IDENTIFIER  */
-    T_RETURN = 261,                /* T_RETURN  */
-    T_NUMBER = 262,                /* T_NUMBER  */
-    T_VARIABLE = 263,              /* T_VARIABLE  */
-    MUL_ASSIGN = 264,              /* MUL_ASSIGN  */
-    DIV_ASSIGN = 265,              /* DIV_ASSIGN  */
-    MOD_ASSIGN = 266,              /* MOD_ASSIGN  */
-    ADD_ASSIGN = 267,              /* ADD_ASSIGN  */
-    SUB_ASSIGN = 268,              /* SUB_ASSIGN  */
-    LEFTSHIFT_ASSIGN = 269,        /* LEFTSHIFT_ASSIGN  */
-    RIGHTSHIFT_ASSIGN = 270,       /* RIGHTSHIFT_ASSIGN  */
-    AND_ASSIGN = 271,              /* AND_ASSIGN  */
-    XOR_ASSIGN = 272,              /* XOR_ASSIGN  */
-    OR_ASSIGN = 273,               /* OR_ASSIGN  */
-    INC_OP = 274,                  /* INC_OP  */
-    DEC_OP = 275,                  /* DEC_OP  */
-    LEFTSHIFT_OP = 276,            /* LEFTSHIFT_OP  */
-    RIGHTSHIFT_OP = 277,           /* RIGHTSHIFT_OP  */
-    LE_OP = 278,                   /* LE_OP  */
-    GE_OP = 279,                   /* GE_OP  */
-    EQ_OP = 280,                   /* EQ_OP  */
-    NE_OP = 281,                   /* NE_OP  */
-    AND_OP = 282,                  /* AND_OP  */
-    OR_OP = 283,                   /* OR_OP  */
-    PTR_OP = 284,                  /* PTR_OP  */
-    T_TIMES = 285,                 /* T_TIMES  */
-    T_DIVIDE = 286,                /* T_DIVIDE  */
-    T_PLUS = 287,                  /* T_PLUS  */
-    T_MINUS = 288                  /* T_MINUS  */
+    IDENTIFIER = 258,              /* IDENTIFIER  */
+    INT_LITERAL = 259,             /* INT_LITERAL  */
+    STRING_LITERAL = 260,          /* STRING_LITERAL  */
+    SIZEOF = 261,                  /* SIZEOF  */
+    POINTER_OP = 262,              /* POINTER_OP  */
+    INCREMENT_OP = 263,            /* INCREMENT_OP  */
+    DECREMENT_OP = 264,            /* DECREMENT_OP  */
+    LEFTSHIFT_OP = 265,            /* LEFTSHIFT_OP  */
+    RIGHTSHIFT_OP = 266,           /* RIGHTSHIFT_OP  */
+    LE_OP = 267,                   /* LE_OP  */
+    GE_OP = 268,                   /* GE_OP  */
+    EQ_OP = 269,                   /* EQ_OP  */
+    NE_OP = 270,                   /* NE_OP  */
+    AND_OP = 271,                  /* AND_OP  */
+    OR_OP = 272,                   /* OR_OP  */
+    MUL_ASSIGN = 273,              /* MUL_ASSIGN  */
+    DIV_ASSIGN = 274,              /* DIV_ASSIGN  */
+    MOD_ASSIGN = 275,              /* MOD_ASSIGN  */
+    ADD_ASSIGN = 276,              /* ADD_ASSIGN  */
+    SUB_ASSIGN = 277,              /* SUB_ASSIGN  */
+    LEFTSHIFT_ASSIGN = 278,        /* LEFTSHIFT_ASSIGN  */
+    RIGHTSHIFT_ASSIGN = 279,       /* RIGHTSHIFT_ASSIGN  */
+    AND_ASSIGN = 280,              /* AND_ASSIGN  */
+    XOR_ASSIGN = 281,              /* XOR_ASSIGN  */
+    OR_ASSIGN = 282,               /* OR_ASSIGN  */
+    TYPE_NAME = 283,               /* TYPE_NAME  */
+    TYPEDEF = 284,                 /* TYPEDEF  */
+    EXTERN = 285,                  /* EXTERN  */
+    STATIC = 286,                  /* STATIC  */
+    AUTO = 287,                    /* AUTO  */
+    REGISTER = 288,                /* REGISTER  */
+    CHAR = 289,                    /* CHAR  */
+    SHORT = 290,                   /* SHORT  */
+    INT = 291,                     /* INT  */
+    LONG = 292,                    /* LONG  */
+    SIGNED = 293,                  /* SIGNED  */
+    UNSIGNED = 294,                /* UNSIGNED  */
+    FLOAT = 295,                   /* FLOAT  */
+    DOUBLE = 296,                  /* DOUBLE  */
+    CONST = 297,                   /* CONST  */
+    VOLATILE = 298,                /* VOLATILE  */
+    VOID = 299,                    /* VOID  */
+    STRUCT = 300,                  /* STRUCT  */
+    UNION = 301,                   /* UNION  */
+    ENUM = 302,                    /* ENUM  */
+    ELLIPSIS = 303,                /* ELLIPSIS  */
+    CASE = 304,                    /* CASE  */
+    DEFAULT = 305,                 /* DEFAULT  */
+    IF = 306,                      /* IF  */
+    ELSE = 307,                    /* ELSE  */
+    SWITCH = 308,                  /* SWITCH  */
+    WHILE = 309,                   /* WHILE  */
+    DO = 310,                      /* DO  */
+    FOR = 311,                     /* FOR  */
+    GOTO = 312,                    /* GOTO  */
+    CONTINUE = 313,                /* CONTINUE  */
+    BREAK = 314,                   /* BREAK  */
+    RETURN = 315                   /* RETURN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -111,14 +137,16 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "src/parser.y"
+#line 17 "src/parser.y"
 
   const Expression *expr;
   ExpressionList *exprList;
-  double number;
+  int number;
+  double numberFloat;
   std::string *string;
+  yytokentype token;
 
-#line 122 "src/parser.tab.hpp"
+#line 150 "src/parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

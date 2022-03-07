@@ -49,9 +49,9 @@ LETTER			  [a-zA-Z_]
 "|="			            { return(OR_ASSIGN); }
 ">>"			            { return(RIGHTSHIFT_OP); }
 "<<"			            { return(LEFTSHIFT_OP); }
-"++"			            { return(INC_OP); }
-"--"			            { return(DEC_OP); }
-"->"			            { return(PTR_OP); }
+"++"			            { return(INCREMENT_OP); }
+"--"			            { return(DECREMENT_OP); }
+"->"			            { return(POINTER_OP); }
 "&&"			            { return(AND_OP); }
 "||"			            { return(OR_OP); }
 "<="			            { return(LE_OP); }
@@ -60,13 +60,13 @@ LETTER			  [a-zA-Z_]
 "!="			            { return(NE_OP); }
 
 
-"return"        { return(T_RETURN); }
+"return"        { return(RETURN); }
 
-"int"			      { return T_INT; }
-"void"			    { return T_VOID; }
+"int"			      { return INT; }
+"void"			    { return VOID; }
 
-[0-9]+                        { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-{LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return T_IDENTIFIER; }
+[0-9]+                        { yylval.number=strtod(yytext, 0); return INT_LITERAL; }
+{LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return IDENTIFIER; }
 
 
 

@@ -33,6 +33,46 @@ public:
     }    
 };
 
+class Declarator
+    : public Expression
+{
+private:
+    std::string id;
+public:
+    Declarator(const std::string &_id)
+        : id(_id)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<id;
+    }
+    
+};
+
+class FunctionDeclarator
+    : public Expression
+{
+private:
+    ExpressionPtr id;
+public:
+    FunctionDeclarator(ExpressionPtr _id)
+        : id(_id)
+    {}
+
+    ExpressionPtr getId() const
+    { return id; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        id->print(dst);
+    }
+    
+};
+
 class Number
     : public Expression
 {
@@ -63,9 +103,9 @@ class Full_Function
 {
 private:
     ExpressionPtr left;
-    ExpressionListPtr right;  
+    ExpressionPtr right;  
 public:
-    Full_Function(ExpressionPtr _left, ExpressionListPtr _right)
+    Full_Function(ExpressionPtr _left, ExpressionPtr _right)
         : left(_left)
         , right(_right)
     {}
@@ -73,7 +113,7 @@ public:
     ExpressionPtr getLeft() const
     { return left; }
 
-    ExpressionListPtr getRight() const
+    ExpressionPtr getRight() const
     { return right; }
     //no member functions yet
 
@@ -82,9 +122,10 @@ public:
         dst<<"( ";
         left->print(dst);
         dst<<" ";
-        for (ExpressionPtr e : *right) {
-            e->print(dst);
-        }
+        right->print(dst);
+        // for (ExpressionPtr e : *right) {
+        //     e->print(dst);
+        // }
         dst<<" )";
     }
 };
@@ -112,6 +153,34 @@ public:
     {
         dst<<left<<" ";
         right->print(dst);
+    }
+};
+
+class Scope
+    : public Expression
+{
+private:
+    ExpressionListPtr right;  
+public:
+    Scope()
+        
+    {}
+
+    Scope(ExpressionListPtr _right)
+        : right(_right)
+    {}
+
+    ExpressionListPtr getRight() const
+    { return right; }
+    //no member functions yet
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"( ";
+        for (ExpressionPtr e : *right) {
+            e->print(dst);
+        }
+        dst<<" )";
     }
 };
 //________________________________________________
@@ -172,18 +241,69 @@ public:
     }
 };
 
+class Declare
+    : public Expression
+{
+private:
+    std::string left;
+    ExpressionPtr right;  
+public:
+    Declare(const std::string _left, ExpressionPtr _right)
+        : left(_left)
+        , right(_right)
+    {}
+
+    virtual ~Declare()
+    {
+        delete right;
+    }
+    //no member functions yet
+    const std::string getLeft() const
+    { return left; }
+
+    ExpressionPtr getRight() const
+    { return right; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<left<<" ";
+        right->print(dst);
+    }
+};
+
 //________________________________________________
+
+class InitDeclarator
+    : public Expression
+{
+private:
+    ExpressionPtr left;
+    ExpressionPtr right;  
+
+public:
+    InitDeclarator(ExpressionPtr _left, ExpressionPtr _right)
+        : left(_left)
+        , right(_right)
+    {}
+    //no member functions yet
+    virtual void print(std::ostream &dst) const override
+    {   
+        left->print(dst);
+        dst<<"=";
+        right->print(dst);
+    }
+};
 
 class AssignOperator
     : public Expression
 {
 private:
-    std::string left;
+    ExpressionPtr left;
     std::string middle;
     ExpressionPtr right;  
 
 public:
-    AssignOperator(std::string _left, std::string _middle, ExpressionPtr _right)
+    AssignOperator(ExpressionPtr _left, std::string _middle, ExpressionPtr _right)
         : left(_left)
         , middle(_middle)
         , right(_right)
@@ -191,9 +311,12 @@ public:
     //no member functions yet
     virtual void print(std::ostream &dst) const override
     {   
-        dst<<left<<" "<<middle<<" ";
+        left->print(dst);
+        dst<<" "<<middle<<" ";
         right->print(dst);
     }
 };
+
+
 
 #endif
