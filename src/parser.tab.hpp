@@ -34,8 +34,8 @@
 /* Undocumented macros, especially those whose name start with YY_,
    are private implementation details.  Do not rely on them.  */
 
-#ifndef YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
-# define YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
+#ifndef YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
+# define YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -44,7 +44,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "src/maths_parser.y"
+#line 1 "src/parser.y"
 
   #include "ast.hpp"
 
@@ -60,7 +60,7 @@ extern int yydebug;
   int yylex(void);
   void yyerror(const char *);
 
-#line 64 "src/maths_parser.tab.hpp"
+#line 64 "src/parser.tab.hpp"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -100,19 +100,51 @@ extern int yydebug;
     T_MINUS = 288
   };
 #endif
+/* Tokens.  */
+#define T_INT 258
+#define T_VOID 259
+#define T_IDENTIFIER 260
+#define T_RETURN 261
+#define T_NUMBER 262
+#define T_VARIABLE 263
+#define MUL_ASSIGN 264
+#define DIV_ASSIGN 265
+#define MOD_ASSIGN 266
+#define ADD_ASSIGN 267
+#define SUB_ASSIGN 268
+#define LEFTSHIFT_ASSIGN 269
+#define RIGHTSHIFT_ASSIGN 270
+#define AND_ASSIGN 271
+#define XOR_ASSIGN 272
+#define OR_ASSIGN 273
+#define INC_OP 274
+#define DEC_OP 275
+#define LEFTSHIFT_OP 276
+#define RIGHTSHIFT_OP 277
+#define LE_OP 278
+#define GE_OP 279
+#define EQ_OP 280
+#define NE_OP 281
+#define AND_OP 282
+#define OR_OP 283
+#define PTR_OP 284
+#define T_TIMES 285
+#define T_DIVIDE 286
+#define T_PLUS 287
+#define T_MINUS 288
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "src/maths_parser.y"
+#line 19 "src/parser.y"
 
   const Expression *expr;
   ExpressionList *exprList;
   double number;
   std::string *string;
 
-#line 116 "src/maths_parser.tab.hpp"
+#line 148 "src/parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -125,4 +157,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED  */
+#endif /* !YY_YY_SRC_PARSER_TAB_HPP_INCLUDED  */

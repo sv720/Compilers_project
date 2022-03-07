@@ -1,25 +1,35 @@
-CPPFLAGS += -std=c++11 -W -Wall -g -Wno-unused-parameter
-CPPFLAGS += -I include
+CPPFLAGS += -std=c++17 -W -Wall -g -Wno-unused-parameter
+CPPFLAGS += -I include -I src
 
-all : bin/print_canonical bin/eval_expr
+OBJS = $(patsubst %.cpp,%.o,$(CPPFILES))
 
-src/maths_parser.tab.cpp src/maths_parser.tab.hpp : src/maths_parser.y
-	bison -v -d src/maths_parser.y -o src/maths_parser.tab.cpp
+all: bin/c_compiler
 
-src/maths_lexer.yy.cpp : src/maths_lexer.flex src/maths_parser.tab.hpp
-	flex -o src/maths_lexer.yy.cpp  src/maths_lexer.flex
+src/parser.tab.cpp src/parser.tab.hpp: src/parser.y
+	yacc -v -d src/parser.y -o src/parser.tab.cpp
+	mkdir -p bin;
 
-bin/print_canonical : src/print_canonical.o src/maths_parser.tab.o src/maths_lexer.yy.o src/maths_parser.tab.o
+src/lexer.yy.cpp : src/lexer.flex src/parser.tab.hpp
+	flex -o src/lexer.yy.cpp src/lexer.flex
+	# g++ -W -Wall -g -c src/lexer.yy.cpp -o src/lexer.yy.o
+
+parser: src/parser.tab.cpp src/parser.tab.hpp
+
+lexer : src/lexer.yy.cpp
+
+
+
+bin/c_compiler : src/parser.tab.o src/lexer.yy.o $(OBJS)
 	mkdir -p bin
-	g++ $(CPPFLAGS) -o bin/print_canonical $^
+	g++ $(CPPFLAGS) -c -o bin/c_compiler $^
+	chmod u+x bin/c_compiler
+
+
 	
-bin/eval_expr : src/eval_expr.o src/maths_parser.tab.o src/maths_lexer.yy.o src/maths_parser.tab.o
-	mkdir -p bin
-	g++ $(CPPFLAGS) -o bin/eval_expr $^
-
-
 clean :
-	rm src/*.o
-	rm bin/*
+	rm -f src/*.o
+	rm -f bin/*
 	rm src/*.tab.cpp
 	rm src/*.yy.cpp
+	rm -r test/working/*/*.s
+	rm -r test/working/*/*.o

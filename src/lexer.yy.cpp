@@ -1,6 +1,6 @@
-#line 2 "src/maths_lexer.yy.cpp"
+#line 2 "src/lexer.yy.cpp"
 
-#line 4 "src/maths_lexer.yy.cpp"
+#line 4 "src/lexer.yy.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -490,14 +490,14 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "src/maths_lexer.flex"
-#line 4 "src/maths_lexer.flex"
+#line 1 "src/lexer.flex"
+#line 4 "src/lexer.flex"
 // Avoid error "error: `fileno' was not declared in this scope"
 extern "C" int fileno(FILE *stream);
 
-#include "maths_parser.tab.hpp"
-#line 500 "src/maths_lexer.yy.cpp"
-#line 501 "src/maths_lexer.yy.cpp"
+#include "parser.tab.hpp"
+#line 500 "src/lexer.yy.cpp"
+#line 501 "src/lexer.yy.cpp"
 
 #define INITIAL 0
 
@@ -714,10 +714,10 @@ YY_DECL
 		}
 
 	{
-#line 13 "src/maths_lexer.flex"
+#line 13 "src/lexer.flex"
 
 
-#line 721 "src/maths_lexer.yy.cpp"
+#line 721 "src/lexer.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -776,271 +776,271 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 15 "src/maths_lexer.flex"
+#line 15 "src/lexer.flex"
 { return(';'); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 16 "src/maths_lexer.flex"
+#line 16 "src/lexer.flex"
 { return('{'); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 17 "src/maths_lexer.flex"
+#line 17 "src/lexer.flex"
 { return('}'); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 18 "src/maths_lexer.flex"
+#line 18 "src/lexer.flex"
 { return(','); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 19 "src/maths_lexer.flex"
+#line 19 "src/lexer.flex"
 { return(':'); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 20 "src/maths_lexer.flex"
+#line 20 "src/lexer.flex"
 { return('='); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 21 "src/maths_lexer.flex"
+#line 21 "src/lexer.flex"
 { return('('); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 22 "src/maths_lexer.flex"
+#line 22 "src/lexer.flex"
 { return(')'); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 23 "src/maths_lexer.flex"
+#line 23 "src/lexer.flex"
 { return('['); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 24 "src/maths_lexer.flex"
+#line 24 "src/lexer.flex"
 { return(']'); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 25 "src/maths_lexer.flex"
+#line 25 "src/lexer.flex"
 { return('.'); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 26 "src/maths_lexer.flex"
+#line 26 "src/lexer.flex"
 { return('&'); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 27 "src/maths_lexer.flex"
+#line 27 "src/lexer.flex"
 { return('!'); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 28 "src/maths_lexer.flex"
+#line 28 "src/lexer.flex"
 { return('~'); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 29 "src/maths_lexer.flex"
+#line 29 "src/lexer.flex"
 { return('-'); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "src/maths_lexer.flex"
+#line 30 "src/lexer.flex"
 { return('+'); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 31 "src/maths_lexer.flex"
+#line 31 "src/lexer.flex"
 { return('*'); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 32 "src/maths_lexer.flex"
+#line 32 "src/lexer.flex"
 { return('/'); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 33 "src/maths_lexer.flex"
+#line 33 "src/lexer.flex"
 { return('%'); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 34 "src/maths_lexer.flex"
+#line 34 "src/lexer.flex"
 { return('<'); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 35 "src/maths_lexer.flex"
+#line 35 "src/lexer.flex"
 { return('>'); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 36 "src/maths_lexer.flex"
+#line 36 "src/lexer.flex"
 { return('^'); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 37 "src/maths_lexer.flex"
+#line 37 "src/lexer.flex"
 { return('|'); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 38 "src/maths_lexer.flex"
+#line 38 "src/lexer.flex"
 { return('?'); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 40 "src/maths_lexer.flex"
+#line 40 "src/lexer.flex"
 { return(RIGHTSHIFT_ASSIGN); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 41 "src/maths_lexer.flex"
+#line 41 "src/lexer.flex"
 { return(LEFTSHIFT_ASSIGN); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 42 "src/maths_lexer.flex"
+#line 42 "src/lexer.flex"
 { return(ADD_ASSIGN); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 43 "src/maths_lexer.flex"
+#line 43 "src/lexer.flex"
 { return(SUB_ASSIGN); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 44 "src/maths_lexer.flex"
+#line 44 "src/lexer.flex"
 { return(MUL_ASSIGN); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 45 "src/maths_lexer.flex"
+#line 45 "src/lexer.flex"
 { return(DIV_ASSIGN); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 46 "src/maths_lexer.flex"
+#line 46 "src/lexer.flex"
 { return(MOD_ASSIGN); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 47 "src/maths_lexer.flex"
+#line 47 "src/lexer.flex"
 { return(AND_ASSIGN); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 48 "src/maths_lexer.flex"
+#line 48 "src/lexer.flex"
 { return(XOR_ASSIGN); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 49 "src/maths_lexer.flex"
+#line 49 "src/lexer.flex"
 { return(OR_ASSIGN); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 50 "src/maths_lexer.flex"
+#line 50 "src/lexer.flex"
 { return(RIGHTSHIFT_OP); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 51 "src/maths_lexer.flex"
+#line 51 "src/lexer.flex"
 { return(LEFTSHIFT_OP); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 52 "src/maths_lexer.flex"
+#line 52 "src/lexer.flex"
 { return(INC_OP); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 53 "src/maths_lexer.flex"
+#line 53 "src/lexer.flex"
 { return(DEC_OP); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 54 "src/maths_lexer.flex"
+#line 54 "src/lexer.flex"
 { return(PTR_OP); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 55 "src/maths_lexer.flex"
+#line 55 "src/lexer.flex"
 { return(AND_OP); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 56 "src/maths_lexer.flex"
+#line 56 "src/lexer.flex"
 { return(OR_OP); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 57 "src/maths_lexer.flex"
+#line 57 "src/lexer.flex"
 { return(LE_OP); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 58 "src/maths_lexer.flex"
+#line 58 "src/lexer.flex"
 { return(GE_OP); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 59 "src/maths_lexer.flex"
+#line 59 "src/lexer.flex"
 { return(EQ_OP); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 60 "src/maths_lexer.flex"
+#line 60 "src/lexer.flex"
 { return(NE_OP); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 63 "src/maths_lexer.flex"
+#line 63 "src/lexer.flex"
 { return(T_RETURN); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 65 "src/maths_lexer.flex"
+#line 65 "src/lexer.flex"
 { return T_INT; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 66 "src/maths_lexer.flex"
+#line 66 "src/lexer.flex"
 { return T_VOID; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 68 "src/maths_lexer.flex"
+#line 68 "src/lexer.flex"
 { yylval.number=strtod(yytext, 0); return T_NUMBER; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 69 "src/maths_lexer.flex"
+#line 69 "src/lexer.flex"
 { yylval.string=new std::string(yytext); return T_IDENTIFIER; }
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 73 "src/maths_lexer.flex"
+#line 73 "src/lexer.flex"
 {;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 75 "src/maths_lexer.flex"
+#line 75 "src/lexer.flex"
 { fprintf(stderr, "Invalid token\n"); exit(1); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 76 "src/maths_lexer.flex"
+#line 76 "src/lexer.flex"
 ECHO;
 	YY_BREAK
-#line 1044 "src/maths_lexer.yy.cpp"
+#line 1044 "src/lexer.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2045,7 +2045,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 76 "src/maths_lexer.flex"
+#line 76 "src/lexer.flex"
 
 
 void yyerror (char const *s)

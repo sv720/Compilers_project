@@ -85,10 +85,10 @@ Terminals, with rules where they appear
     '{' (123) 2
     '}' (125) 2
     error (256)
-    T_INT <string> (258) 22
-    T_VOID <string> (259) 23
+    T_INT (258) 22
+    T_VOID (259) 23
     T_IDENTIFIER <string> (260) 3 10 32
-    T_RETURN <expr> (261) 7
+    T_RETURN (261) 7
     T_NUMBER <number> (262) 33
     T_VARIABLE (263)
     MUL_ASSIGN (264) 12

@@ -39,11 +39,11 @@
 // %nonassoc %left or %right
 
 // declare non-terminals
-%type <expr> TOPLEVEL LINE ASSIGN_DECLARE ASSIGN FUNCTION_NAME_ARGS T_RETURN 
+%type <expr> TOPLEVEL LINE ASSIGN_DECLARE ASSIGN FUNCTION_NAME_ARGS 
 %type <expr> STATEMENT MATHS_STATEMENT TERM UNARY FACTOR
 %type <exprList> STATEMENT_LINES
 %type <number> T_NUMBER
-%type <string> T_VOID T_INT T_IDENTIFIER TYPE assignment_operator
+%type <string>  T_IDENTIFIER TYPE assignment_operator
 
 %start ROOT
 

@@ -97,8 +97,8 @@
 
 /* Use api.header.include to #include this header
    instead of duplicating it here.  */
-#ifndef YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
-# define YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED
+#ifndef YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
+# define YY_YY_SRC_PARSER_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -107,7 +107,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "src/maths_parser.y"
+#line 1 "src/parser.y"
 
   #include "ast.hpp"
 
@@ -123,7 +123,7 @@ extern int yydebug;
   int yylex(void);
   void yyerror(const char *);
 
-#line 127 "src/maths_parser.tab.cpp"
+#line 127 "src/parser.tab.cpp"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -163,19 +163,51 @@ extern int yydebug;
     T_MINUS = 288
   };
 #endif
+/* Tokens.  */
+#define T_INT 258
+#define T_VOID 259
+#define T_IDENTIFIER 260
+#define T_RETURN 261
+#define T_NUMBER 262
+#define T_VARIABLE 263
+#define MUL_ASSIGN 264
+#define DIV_ASSIGN 265
+#define MOD_ASSIGN 266
+#define ADD_ASSIGN 267
+#define SUB_ASSIGN 268
+#define LEFTSHIFT_ASSIGN 269
+#define RIGHTSHIFT_ASSIGN 270
+#define AND_ASSIGN 271
+#define XOR_ASSIGN 272
+#define OR_ASSIGN 273
+#define INC_OP 274
+#define DEC_OP 275
+#define LEFTSHIFT_OP 276
+#define RIGHTSHIFT_OP 277
+#define LE_OP 278
+#define GE_OP 279
+#define EQ_OP 280
+#define NE_OP 281
+#define AND_OP 282
+#define OR_OP 283
+#define PTR_OP 284
+#define T_TIMES 285
+#define T_DIVIDE 286
+#define T_PLUS 287
+#define T_MINUS 288
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "src/maths_parser.y"
+#line 19 "src/parser.y"
 
   const Expression *expr;
   ExpressionList *exprList;
   double number;
   std::string *string;
 
-#line 179 "src/maths_parser.tab.cpp"
+#line 211 "src/parser.tab.cpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -188,7 +220,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_SRC_MATHS_PARSER_TAB_HPP_INCLUDED  */
+#endif /* !YY_YY_SRC_PARSER_TAB_HPP_INCLUDED  */
 
 
 
@@ -1387,211 +1419,211 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 51 "src/maths_parser.y"
+#line 51 "src/parser.y"
                 { g_root = (yyvsp[0].expr); }
-#line 1393 "src/maths_parser.tab.cpp"
+#line 1425 "src/parser.tab.cpp"
     break;
 
   case 3:
-#line 53 "src/maths_parser.y"
+#line 53 "src/parser.y"
                                                             { (yyval.expr) = new Full_Function(new Function_Definition(*(yyvsp[-4].string), (yyvsp[-3].expr)), (yyvsp[-1].exprList)); /*has ast_operator */}
-#line 1399 "src/maths_parser.tab.cpp"
+#line 1431 "src/parser.tab.cpp"
     break;
 
   case 4:
-#line 56 "src/maths_parser.y"
+#line 56 "src/parser.y"
                                           { (yyval.expr) = new Variable( *(yyvsp[-2].string) ); /* TODO : allow to pass argument */ }
-#line 1405 "src/maths_parser.tab.cpp"
+#line 1437 "src/parser.tab.cpp"
     break;
 
   case 5:
-#line 59 "src/maths_parser.y"
+#line 59 "src/parser.y"
                                             { (yyval.exprList) = initExprList((yyvsp[-1].expr)); }
-#line 1411 "src/maths_parser.tab.cpp"
+#line 1443 "src/parser.tab.cpp"
     break;
 
   case 6:
-#line 60 "src/maths_parser.y"
+#line 60 "src/parser.y"
                                             { (yyval.exprList) = appendToExprList((yyvsp[-2].exprList), (yyvsp[-1].expr)); }
-#line 1417 "src/maths_parser.tab.cpp"
+#line 1449 "src/parser.tab.cpp"
     break;
 
   case 7:
-#line 63 "src/maths_parser.y"
+#line 63 "src/parser.y"
                                             { (yyval.expr) = new Statement((yyvsp[0].expr)); /* has ast_function */ }
-#line 1423 "src/maths_parser.tab.cpp"
+#line 1455 "src/parser.tab.cpp"
     break;
 
   case 8:
-#line 64 "src/maths_parser.y"
+#line 64 "src/parser.y"
                                             { (yyval.expr) = new Return((yyvsp[0].expr));}
-#line 1429 "src/maths_parser.tab.cpp"
+#line 1461 "src/parser.tab.cpp"
     break;
 
   case 9:
-#line 67 "src/maths_parser.y"
+#line 67 "src/parser.y"
                                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 1435 "src/maths_parser.tab.cpp"
+#line 1467 "src/parser.tab.cpp"
     break;
 
   case 10:
-#line 72 "src/maths_parser.y"
+#line 72 "src/parser.y"
                              { (yyval.expr) = new Assign_Declare(*(yyvsp[-1].string), (yyvsp[0].expr)); /* has ast_operator */ }
-#line 1441 "src/maths_parser.tab.cpp"
+#line 1473 "src/parser.tab.cpp"
     break;
 
   case 11:
-#line 75 "src/maths_parser.y"
+#line 75 "src/parser.y"
                                                     { (yyval.expr) = new AssignOperator(*(yyvsp[-2].string), *(yyvsp[-1].string), (yyvsp[0].expr)); /* has ast_operator */ }
-#line 1447 "src/maths_parser.tab.cpp"
+#line 1479 "src/parser.tab.cpp"
     break;
 
   case 12:
-#line 79 "src/maths_parser.y"
+#line 79 "src/parser.y"
                              { (yyval.string) = new std::string("="); }
-#line 1453 "src/maths_parser.tab.cpp"
+#line 1485 "src/parser.tab.cpp"
     break;
 
   case 13:
-#line 80 "src/maths_parser.y"
+#line 80 "src/parser.y"
                              { (yyval.string) = new std::string("*="); }
-#line 1459 "src/maths_parser.tab.cpp"
+#line 1491 "src/parser.tab.cpp"
     break;
 
   case 14:
-#line 81 "src/maths_parser.y"
+#line 81 "src/parser.y"
                              { (yyval.string) = new std::string("/="); }
-#line 1465 "src/maths_parser.tab.cpp"
+#line 1497 "src/parser.tab.cpp"
     break;
 
   case 15:
-#line 82 "src/maths_parser.y"
+#line 82 "src/parser.y"
                              { (yyval.string) = new std::string("%="); }
-#line 1471 "src/maths_parser.tab.cpp"
+#line 1503 "src/parser.tab.cpp"
     break;
 
   case 16:
-#line 83 "src/maths_parser.y"
+#line 83 "src/parser.y"
                              { (yyval.string) = new std::string("+="); }
-#line 1477 "src/maths_parser.tab.cpp"
+#line 1509 "src/parser.tab.cpp"
     break;
 
   case 17:
-#line 84 "src/maths_parser.y"
+#line 84 "src/parser.y"
                              { (yyval.string) = new std::string("-="); }
-#line 1483 "src/maths_parser.tab.cpp"
+#line 1515 "src/parser.tab.cpp"
     break;
 
   case 18:
-#line 85 "src/maths_parser.y"
+#line 85 "src/parser.y"
                              { (yyval.string) = new std::string("<<="); }
-#line 1489 "src/maths_parser.tab.cpp"
+#line 1521 "src/parser.tab.cpp"
     break;
 
   case 19:
-#line 86 "src/maths_parser.y"
+#line 86 "src/parser.y"
                              { (yyval.string) = new std::string(">>="); }
-#line 1495 "src/maths_parser.tab.cpp"
+#line 1527 "src/parser.tab.cpp"
     break;
 
   case 20:
-#line 87 "src/maths_parser.y"
+#line 87 "src/parser.y"
                              { (yyval.string) = new std::string("&="); }
-#line 1501 "src/maths_parser.tab.cpp"
+#line 1533 "src/parser.tab.cpp"
     break;
 
   case 21:
-#line 88 "src/maths_parser.y"
+#line 88 "src/parser.y"
                              { (yyval.string) = new std::string("^="); }
-#line 1507 "src/maths_parser.tab.cpp"
+#line 1539 "src/parser.tab.cpp"
     break;
 
   case 22:
-#line 89 "src/maths_parser.y"
+#line 89 "src/parser.y"
                              { (yyval.string) = new std::string("|="); }
-#line 1513 "src/maths_parser.tab.cpp"
+#line 1545 "src/parser.tab.cpp"
     break;
 
   case 23:
-#line 92 "src/maths_parser.y"
+#line 92 "src/parser.y"
                { (yyval.string) = new std::string("int"); }
-#line 1519 "src/maths_parser.tab.cpp"
+#line 1551 "src/parser.tab.cpp"
     break;
 
   case 24:
-#line 93 "src/maths_parser.y"
+#line 93 "src/parser.y"
                { (yyval.string) = new std::string("void"); }
-#line 1525 "src/maths_parser.tab.cpp"
+#line 1557 "src/parser.tab.cpp"
     break;
 
   case 25:
-#line 96 "src/maths_parser.y"
+#line 96 "src/parser.y"
                                            { (yyval.expr) = new AddOperator((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1531 "src/maths_parser.tab.cpp"
+#line 1563 "src/parser.tab.cpp"
     break;
 
   case 26:
-#line 97 "src/maths_parser.y"
+#line 97 "src/parser.y"
                                            { (yyval.expr) = new SubOperator((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1537 "src/maths_parser.tab.cpp"
+#line 1569 "src/parser.tab.cpp"
     break;
 
   case 27:
-#line 98 "src/maths_parser.y"
+#line 98 "src/parser.y"
                                  { (yyval.expr) = (yyvsp[0].expr); }
-#line 1543 "src/maths_parser.tab.cpp"
+#line 1575 "src/parser.tab.cpp"
     break;
 
   case 28:
-#line 100 "src/maths_parser.y"
+#line 100 "src/parser.y"
                       { (yyval.expr) = new MulOperator((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1549 "src/maths_parser.tab.cpp"
+#line 1581 "src/parser.tab.cpp"
     break;
 
   case 29:
-#line 101 "src/maths_parser.y"
+#line 101 "src/parser.y"
                        { (yyval.expr) = new DivOperator((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1555 "src/maths_parser.tab.cpp"
+#line 1587 "src/parser.tab.cpp"
     break;
 
   case 30:
-#line 102 "src/maths_parser.y"
+#line 102 "src/parser.y"
                        { (yyval.expr) = (yyvsp[0].expr); }
-#line 1561 "src/maths_parser.tab.cpp"
+#line 1593 "src/parser.tab.cpp"
     break;
 
   case 31:
-#line 104 "src/maths_parser.y"
+#line 104 "src/parser.y"
                               { (yyval.expr) = new NegOperator((yyvsp[0].expr)); }
-#line 1567 "src/maths_parser.tab.cpp"
+#line 1599 "src/parser.tab.cpp"
     break;
 
   case 32:
-#line 105 "src/maths_parser.y"
+#line 105 "src/parser.y"
                       { (yyval.expr) = (yyvsp[0].expr); }
-#line 1573 "src/maths_parser.tab.cpp"
+#line 1605 "src/parser.tab.cpp"
     break;
 
   case 33:
-#line 107 "src/maths_parser.y"
+#line 107 "src/parser.y"
                           { (yyval.expr) = new Variable( *(yyvsp[0].string) ); }
-#line 1579 "src/maths_parser.tab.cpp"
+#line 1611 "src/parser.tab.cpp"
     break;
 
   case 34:
-#line 108 "src/maths_parser.y"
+#line 108 "src/parser.y"
                     { (yyval.expr) = new Number( (yyvsp[0].number) ); }
-#line 1585 "src/maths_parser.tab.cpp"
+#line 1617 "src/parser.tab.cpp"
     break;
 
   case 35:
-#line 109 "src/maths_parser.y"
+#line 109 "src/parser.y"
                                  { (yyval.expr) = (yyvsp[-1].expr); }
-#line 1591 "src/maths_parser.tab.cpp"
+#line 1623 "src/parser.tab.cpp"
     break;
 
 
-#line 1595 "src/maths_parser.tab.cpp"
+#line 1627 "src/parser.tab.cpp"
 
       default: break;
     }
@@ -1823,7 +1855,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 111 "src/maths_parser.y"
+#line 111 "src/parser.y"
 
 
 const Expression *g_root; // Definition of variable (to match declaration earlier)
