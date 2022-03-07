@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 class Variable
     : public Expression
@@ -54,6 +55,40 @@ public:
 
 
 //FUNCTION______________________________________
+typedef std::vector<ExpressionPtr> ExpressionList;
+typedef ExpressionList *ExpressionListPtr;
+
+class Full_Function
+    : public Expression
+{
+private:
+    ExpressionPtr left;
+    ExpressionListPtr right;  
+public:
+    Full_Function(ExpressionPtr _left, ExpressionListPtr _right)
+        : left(_left)
+        , right(_right)
+    {}
+
+    ExpressionPtr getLeft() const
+    { return left; }
+
+    ExpressionListPtr getRight() const
+    { return right; }
+    //no member functions yet
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"( ";
+        left->print(dst);
+        dst<<" ";
+        for (ExpressionPtr e : *right) {
+            e->print(dst);
+        }
+        dst<<" )";
+    }
+};
+
 class Function_Definition
     : public Expression
 {
@@ -61,7 +96,7 @@ private:
     std::string left;
     ExpressionPtr right;  
 public:
-    Function_Definition(const std::string &_left, ExpressionPtr &_right)
+    Function_Definition(const std::string &_left, ExpressionPtr _right)
         : left(_left)
         , right(_right)
     {}
@@ -130,9 +165,9 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
-        std::cout << "DEBUG : printing in AssignDeclare left" <<std::endl;
+        // std::cout << "DEBUG : printing in AssignDeclare left" <<std::endl;
         dst<<left<<" ";
-        std::cout << "DEBUG : printing in AssignDeclare right" <<std::endl;
+        // std::cout << "DEBUG : printing in AssignDeclare right" <<std::endl;
         right->print(dst);
     }
 };

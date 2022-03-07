@@ -131,7 +131,7 @@ Nonterminals, with rules where they appear
     FUNCTION_NAME_ARGS <expr> (47)
         on left: 3
         on right: 2
-    STATEMENT_LINES <expr> (48)
+    STATEMENT_LINES <exprList> (48)
         on left: 4 5
         on right: 2 5
     LINE <expr> (49)

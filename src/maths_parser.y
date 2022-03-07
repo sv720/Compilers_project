@@ -18,6 +18,7 @@
 // AST node.
 %union{
   const Expression *expr;
+  ExpressionList *exprList;
   double number;
   std::string *string;
 }
@@ -39,7 +40,8 @@
 
 // declare non-terminals
 %type <expr> TOPLEVEL LINE ASSIGN_DECLARE ASSIGN FUNCTION_NAME_ARGS T_RETURN 
-%type <expr> STATEMENT_LINES STATEMENT MATHS_STATEMENT TERM UNARY FACTOR
+%type <expr> STATEMENT MATHS_STATEMENT TERM UNARY FACTOR
+%type <exprList> STATEMENT_LINES
 %type <number> T_NUMBER
 %type <string> T_VOID T_INT T_IDENTIFIER TYPE assignment_operator
 
@@ -54,8 +56,8 @@ TOPLEVEL : TYPE FUNCTION_NAME_ARGS  '{' STATEMENT_LINES '}' { $$ = new Full_Func
 FUNCTION_NAME_ARGS : T_IDENTIFIER '(' ')' { $$ = new Variable( *$1 ); /* TODO : allow to pass argument */ }
                    ;
 
-STATEMENT_LINES : LINE ';'                  { $$ = new ExpressionList($1); }
-                | STATEMENT_LINES LINE ';'  { $$ = new ExpressionList($1, $2); }
+STATEMENT_LINES : LINE ';'                  { $$ = initExprList($1); }
+                | STATEMENT_LINES LINE ';'  { $$ = appendToExprList($1, $2); }
                 ;
 
 LINE      : ASSIGN_DECLARE                  { $$ = new Statement($1); /* has ast_function */ }
