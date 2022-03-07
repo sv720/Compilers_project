@@ -140,7 +140,7 @@ union YYSTYPE
 #line 17 "src/parser.y"
 
   const Expression *expr;
-  ExpressionList *exprList;
+  ExprList *exprList;
   int number;
   double numberFloat;
   std::string *string;

@@ -60,7 +60,7 @@ for testcase in compiler_tests/local_var/*_driver.c; do
     echo " "
     echo " ------------"
     echo "OUTPUT PRINT: "
-    cat ${file} | bin/c_compiler 2> test/err/local_var/$name.err
+    cat ${file} | bin/c_compiler 2> test/err/local_var/${name}.err
 
     if (cmp -s test/err/local_var/${name}.err test/ErrorMSG.txt); then # 0 when equal
         CHECKED=$(( ${CHECKED}+1 ));

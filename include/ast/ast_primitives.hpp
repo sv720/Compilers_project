@@ -95,25 +95,29 @@ public:
 
 
 //FUNCTION______________________________________
-typedef std::vector<ExpressionPtr> ExpressionList;
-typedef ExpressionList *ExpressionListPtr;
+typedef std::vector<ExpressionPtr> ExprList;
+typedef ExprList *ExprListPtr;
 
 class Full_Function
     : public Expression
 {
 private:
     ExpressionPtr left;
-    ExpressionPtr right;  
+    ExprListPtr right;  
 public:
-    Full_Function(ExpressionPtr _left, ExpressionPtr _right)
+    Full_Function(ExpressionPtr _left, ExprListPtr _right)
         : left(_left)
         , right(_right)
+    {}
+
+    Full_Function(ExpressionPtr _left)
+        : left(_left)
     {}
 
     ExpressionPtr getLeft() const
     { return left; }
 
-    ExpressionPtr getRight() const
+    ExprListPtr getRight() const
     { return right; }
     //no member functions yet
 
@@ -122,10 +126,10 @@ public:
         dst<<"( ";
         left->print(dst);
         dst<<" ";
-        right->print(dst);
-        // for (ExpressionPtr e : *right) {
-        //     e->print(dst);
-        // }
+        // right->print(dst);
+        for (ExpressionPtr e : *right) {
+            e->print(dst);
+        }
         dst<<" )";
     }
 };
@@ -156,33 +160,35 @@ public:
     }
 };
 
-class Scope
-    : public Expression
-{
-private:
-    ExpressionListPtr right;  
-public:
-    Scope()
+
+// class Scope
+//     : public Expression
+// {
+// private:
+//     ExprListPtr right;  
+// public:
+//     Scope()
         
-    {}
+//     {}
 
-    Scope(ExpressionListPtr _right)
-        : right(_right)
-    {}
+//     Scope(ExprListPtr _right)
+//         : right(_right)
+//     {}
 
-    ExpressionListPtr getRight() const
-    { return right; }
-    //no member functions yet
+//     ExprListPtr getRight() const
+//     { return right; }
+//     //no member functions yet
 
-    virtual void print(std::ostream &dst) const override
-    {
-        dst<<"( ";
-        for (ExpressionPtr e : *right) {
-            e->print(dst);
-        }
-        dst<<" )";
-    }
-};
+//     virtual void print(std::ostream &dst) const override
+//     {
+//         dst<<"( ";
+//         for (int i = 0; i < right->size(); i++) {
+//             (*right)[i]->print(dst);
+//         }
+//         dst<<" )";
+//     }
+// };
+
 //________________________________________________
 
 

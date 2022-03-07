@@ -5,14 +5,21 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include "ast/ast_expression.hpp"
+
+class ExpressionList;
+
+typedef std::vector<ExpressionPtr> ExprList;
+typedef ExprList *ExprListPtr;
+typedef ExpressionList *ExpressionListPtr;
 
 class ExpressionList
     : public Expression
 {
-private:
+protected:
     std::vector<ExpressionPtr> list;
-
 public:
+    
     //TODO: think about making constructors protected (was causing issue - not too sure why)
     /*Personal reasoning:
         My understanding of what a protected function or data is that it is private from outside of the class
@@ -21,17 +28,28 @@ public:
         - for now left this classes constructors public as was causing issues when protected
         */
     //CONSTRUCTORS
+    ExpressionList() 
+    {}
+
     ExpressionList(ExpressionPtr first_elem) //this seems ok
     {
         //std::cout<<"DEBUG: single input constructor" << std::endl;
         list.push_back(first_elem);
     }
 
-    ExpressionList(ExpressionList in_list, ExpressionPtr new_elem)
+    ExpressionList(ExprListPtr in_list) //this seems ok
+    {
+        for (ExpressionPtr i : *in_list)
+        {
+            list.push_back(i);
+        }
+    }
+
+    ExpressionList(ExprListPtr in_list, ExpressionPtr new_elem)
     {
         std::cout<<"DEBUG: dual input constructor" << std::endl;
 
-        for (ExpressionPtr i : in_list.getListVector())
+        for (ExpressionPtr i : *in_list)
         {
             list.push_back(i);
         }
@@ -63,26 +81,34 @@ public:
     virtual void print(std::ostream &dst) const override
     {
 
-        // std::cout<<"DEBUG: printexpressionlist" << std::endl;
-        // std::cout<<"DEBUG: list[0] address: "<<list[0]<<std::endl;
-        /*
-            Current guess - unable to find the print member function from the expression printers passed in through the constructor (in_list)
-            new_elem prints fine but no the other
-
-            proof : we are not reaching AssignDeclare print statment when doing multiline
-
-        */
-    
         std::cout<<"DEBUG in print; list.size() = " << list.size() << std::endl;
         for (ExpressionPtr i : list){
-            //std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
+            std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
             dst<<"( ";
             i->print(dst);
             dst<<" )";
         }
-
-        //std::cout<<"DEBUG: passed printexpressionlist" << std::endl;
     }
 };
+
+
+class Scope
+    : public ExpressionList
+{ 
+public:
+    // Does everything the same for constructor/destructor 
+    using ExpressionList::ExpressionList;
+
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"( ";
+        for (int i = 0; i < list.size(); i++) {
+            list[i]->print(dst);
+        }
+        dst<<" )";
+    }
+};
+
 
 #endif

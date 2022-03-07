@@ -16,7 +16,7 @@
 // Represents the value associated with any kind of AST node.
 %union{
   const Expression *expr;
-  ExpressionList *exprList;
+  ExprList *exprList;
   int number;
   double numberFloat;
   std::string *string;
@@ -82,7 +82,11 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator compound_statement { $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
+	// : declaration_specifiers declarator compound_statement { $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
+	: declaration_specifiers declarator '{' statement_list '}'		{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
+	| declaration_specifiers declarator '{' declaration_list '}'	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
+	| declaration_specifiers declarator '{' declaration_list statement_list '}'	{;}
+	| declaration_specifiers declarator '{' '}'						{$$ = new Full_Function(new Function_Definition(*$1, $2));}
 	| declarator 
 	;
 
@@ -135,14 +139,14 @@ init_declarator
 
 /* from init_declarator */
 initializer
-	: assignment_expression
-	| '{' initializer_list '}'
-	| '{' initializer_list ',' '}'
+	: assignment_expression			{ $$ = $1; }
+	| '{' initializer_list '}'		{ ; /*list to expr, need a class for creating an exprPtr to list */}
+	| '{' initializer_list ',' '}'	{ ; /* same */ }
 	;
 
 initializer_list
-	: initializer
-	| initializer_list ',' initializer
+	: initializer						{ $$ = initExprList($1); } 
+	| initializer_list ',' initializer	{ $$ = appendToExprList($1, $3); }
 	;
 
 abstract_declarator
@@ -152,22 +156,22 @@ abstract_declarator
 	;
 
 direct_abstract_declarator
-	: '(' abstract_declarator ')'
-	| '[' ']'
-	| '[' constant_expression ']'
-	| direct_abstract_declarator '[' ']'
-	| direct_abstract_declarator '[' constant_expression ']'
-	| '(' ')'
-	| '(' parameter_list ')'
-	| direct_abstract_declarator '(' ')'
-	| direct_abstract_declarator '(' parameter_list ')'
+	: '(' abstract_declarator ')'						{ $$ = $2; }
+	| '[' ']'													{ ; }
+	| '[' constant_expression ']'								{ ; }
+	| direct_abstract_declarator '[' ']'						{ ; }
+	| direct_abstract_declarator '[' constant_expression ']'	{ ; }
+	| '(' ')'													{ ; }
+	| '(' parameter_list ')'									{ ; }
+	| direct_abstract_declarator '(' ')'						{ ; }
+	| direct_abstract_declarator '(' parameter_list ')'			{ ; }
 	;
 
 /* from function_definition */
 compound_statement
-	: '{' '}'										{ $$ = new Scope();}
-	| '{' statement_list '}'						{ $$ = new Scope($2);}
-	| '{' declaration_list '}'						{ $$ = new Scope($2);}
+	: '{' '}'										{ ;}
+	| '{' statement_list '}'						{ ;}
+	| '{' declaration_list '}'						{ ;}
 	| '{' declaration_list statement_list '}'		{ ;}
 	;
 
@@ -188,7 +192,11 @@ statement
 	| selection_statement	{ $$ = $1; }
 	| iteration_statement	{ $$ = $1; }
 	| jump_statement		{ $$ = $1; }
-	| compound_statement	{ $$ = $1; }
+	// | compound_statement	{ $$ = $1; /*at the moment compound_statement is avoided so we can add its versions below*/} 
+	| '{' '}'										{ ; /*same problem converting an ExprList into Expression*/}
+	| '{' statement_list '}'						{ $$ = new Scope($2);}
+	| '{' declaration_list '}'						{ $$ = new Scope($2);}
+	| '{' declaration_list statement_list '}'		{ ;}
 	;
 
 /* from statement */
@@ -235,7 +243,7 @@ primary_expression
 	;
 
 postfix_expression
-	: primary_expression
+	: primary_expression									{ $$ = $1; }
 	| postfix_expression '[' expression ']'
 	| postfix_expression '(' ')'
 	| postfix_expression '(' argument_expression_list ')'
@@ -246,15 +254,16 @@ postfix_expression
 	;
 
 argument_expression_list
-	: assignment_expression
-	| argument_expression_list ',' assignment_expression
+	: assignment_expression									{ $$ = initExprList($1); } 
+	| argument_expression_list ',' assignment_expression	{ $$ = appendToExprList($1, $3); }
 	;
 
 unary_expression
-	: postfix_expression
+	: postfix_expression				{ $$ = $1; }
 	| INCREMENT_OP unary_expression
 	| DECREMENT_OP unary_expression
 	| unary_operator cast_expression
+	| '-' unary_expression				{ $$ = new NegOperator($2); }
 	| SIZEOF unary_expression
 	| SIZEOF '(' type_name ')'
 	;
@@ -269,31 +278,31 @@ unary_operator
 	;
 
 cast_expression
-	: unary_expression
+	: unary_expression					{ $$ = $1; }
 	| '(' type_name ')' cast_expression
 	;
 
 multiplicative_expression
-	: cast_expression
-	| multiplicative_expression '*' cast_expression
-	| multiplicative_expression '/' cast_expression
-	| multiplicative_expression '%' cast_expression
+	: cast_expression									{ $$ = $1; }
+	| multiplicative_expression '*' cast_expression		{ $$ = new MulOperator($1, $3); }
+	| multiplicative_expression '/' cast_expression		{ $$ = new DivOperator($1, $3); }
+	| multiplicative_expression '%' cast_expression		{;}
 	;
 
 additive_expression
-	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
+	: multiplicative_expression								{ $$ = $1; }
+	| additive_expression '+' multiplicative_expression		{ $$ = new AddOperator($1, $3); }
+	| additive_expression '-' multiplicative_expression		{ $$ = new SubOperator($1, $3); }
 	;
 
 shift_expression
-	: additive_expression
+	: additive_expression									{ $$ = $1; }
 	| shift_expression LEFTSHIFT_OP additive_expression
 	| shift_expression RIGHTSHIFT_OP additive_expression
 	;
 
 relational_expression
-	: shift_expression
+	: shift_expression									{ $$ = $1; }
 	| relational_expression '<' shift_expression
 	| relational_expression '>' shift_expression
 	| relational_expression LE_OP shift_expression
@@ -301,43 +310,43 @@ relational_expression
 	;
 
 equality_expression
-	: relational_expression
+	: relational_expression								{ $$ = $1; }
 	| equality_expression EQ_OP relational_expression
 	| equality_expression NE_OP relational_expression
 	;
 
 and_expression
-	: equality_expression
+	: equality_expression						{ $$ = $1; }
 	| and_expression '&' equality_expression
 	;
 
 exclusive_or_expression
-	: and_expression
+	: and_expression								{ $$ = $1; }
 	| exclusive_or_expression '^' and_expression
 	;
 
 inclusive_or_expression
-	: exclusive_or_expression
+	: exclusive_or_expression								{ $$ = $1; }
 	| inclusive_or_expression '|' exclusive_or_expression
 	;
 
 logical_and_expression
-	: inclusive_or_expression
+	: inclusive_or_expression									{ $$ = $1; }
 	| logical_and_expression AND_OP inclusive_or_expression
 	;
 
 logical_or_expression
-	: logical_and_expression
+	: logical_and_expression								{ $$ = $1; }
 	| logical_or_expression OR_OP logical_and_expression
 	;
 
 conditional_expression
-	: logical_or_expression
+	: logical_or_expression												{ $$ = $1; }
 	| logical_or_expression '?' expression ':' conditional_expression
 	;
 
 assignment_expression
-	: conditional_expression        
+	: conditional_expression     { $$ = $1; }   
 	| unary_expression assignment_operator assignment_expression    { $$ = new AssignOperator($1, *$2, $3);  }
 	;
 
@@ -356,8 +365,8 @@ assignment_operator
 	;
 
 expression
-	: assignment_expression
-	| expression ',' assignment_expression
+	: assignment_expression						{$$ = $1; /*{ $$ = initExprList($1); }*/} 
+	| expression ',' assignment_expression		{ /*$$ = appendToExprList($1, $2); */}
 	;
 
 constant_expression
