@@ -35,30 +35,56 @@ if [[ "$?" -ne 0 ]]; then
 fi
 echo ""
 echo "========================================"
-echo "Compiling to MIPS..."
+echo "Compiling OUTPUTS..."
 # echo $2 | bin/compiler 
-# cat $2 | ./bin/compiler 2> $4
+# cat $2 | ./bin/compiler 2> /dev/null 1> $4
 
 mkdir -p test/working/local_var/
+mkdir -p test/err/local_var/
 
 # -------------------------
-for i in compiler_tests/local_var/*_driver.c; do
-    b=$(basename ${i});
-    n=${b%_driver.c}
-    f=${i%_driver.c}.c
-    
-    echo "==========================="
-    echo ""
-    echo "Input file : ${f}"
-    echo "Testing ${n}"
+index=1
+CHECKED=0
 
-    bin/c_compiler $f > test/working/local_var/$n.o 
-    # bin/c_compiler -S test_program.c -o test_program.s
+for testcase in compiler_tests/local_var/*_driver.c; do
+    base=$(basename ${testcase});
+    name=${base%_driver.c}
+    file=${testcase%_driver.c}.c
+    
+    
+    echo "=============TESTCASE ${index}=============="
+    echo ""
+    echo "Input file : ${file}"
+    echo "Testing ${name}:"
+    cat ${file}
+    echo " "
+    echo " ------------"
+    echo "OUTPUT PRINT: "
+    cat ${file} | bin/c_compiler 2> test/err/local_var/$name.err
+
+    if (cmp -s test/err/local_var/${name}.err test/ErrorMSG.txt); then # 0 when equal
+        CHECKED=$(( ${CHECKED}+1 ));
+    else
+        echo -n " ERROR"
+    fi
+    index=$((${index}+1));
+    # cat ${file} | bin/c_compiler 2> test/err/local_var/$name.err 1> test/working/local_var/$name.o
+    # cat ${file} | bin/c_compiler 1> test/working/local_var/$name.o
+
+    # AIM:
+    # cat $2 | ./bin/compiler 2> /dev/null 1> $4
+    # bin/c_compiler -S ${file} -o test/working/local_var/${name}.s
+                        # $2          $4
 
     # MIPS conversion 
     # mips-linux-gnu-gcc -mfp32 -o test/working/local_var/$n.o \
     #                             -c test/working/local_var/$n.s
+    echo " "
 done
+
+echo "########################################"
+echo " Nb of files COMPILED succesfully: ${CHECKED} out of ${index}"
+echo ""
 
 
 # -------------------------
