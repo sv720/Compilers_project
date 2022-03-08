@@ -16,10 +16,9 @@ typedef ExpressionList *ExpressionListPtr;
 class ExpressionList
     : public Expression
 {
-// protected:
-//     std::vector<ExpressionPtr> list;
+   
 public:
-    
+    std::vector<ExpressionPtr> list;
     //TODO: think about making constructors protected (was causing issue - not too sure why)
     /*Personal reasoning:
         My understanding of what a protected function or data is that it is private from outside of the class
@@ -34,22 +33,23 @@ public:
 
     // ExpressionList(ExpressionPtr first_elem)
     // {
-    //     std::cout<<"DEBUG: create list" << std::endl;
+    //     std::cout<<"DEBUG: create list" << std::endl;std::vector<ExpressionPtr>
     //     list = {};
     //     std::cout<<"DEBUG: single input constructor" << std::endl;
     //     list.push_back(first_elem);
     //     std::cout<<"DEBUG: size of list after adding first_elem = "<< list.size() <<'\n'<< std::endl;
     // }
 
-    ExpressionList(std::vector<ExpressionPtr> in_list)
+    ExpressionList(ExpressionListPtr in_list)
+        : list (in_list->list)
     {
         std::cout<<"DEBUG: add in_list ";
-        list.push_back(in_list[0]);
-        // for (int i =0; i < in_list.size(); i++)
-        // {
-        //     std::cout<< in_list[i] << std::endl;
-        //     list.push_back(in_list[i]);
-        // }
+        // list.push_back(in_list[0]);
+        for (int i =0; i < in_list->list.size(); i++)
+        {
+            std::cout<< in_list->list[i] << std::endl;
+            list.push_back(in_list->list[i]);
+        }
         std::cout<<"DEBUG: size of list after copying in_list = "<< list.size() << std::endl; 
     }
 

@@ -1,5 +1,6 @@
 Nonterminals useless in grammar
 
+    long_coumpound_statement
     init_declarator_list
     translation_unit
     struct_or_union_specifier
@@ -119,8 +120,8 @@ Grammar
    43                           | direct_abstract_declarator '(' parameter_list ')'
 
    44 compound_statement: '{' '}'
-   45                   | '{' statement_list '}'
-   46                   | '{' declaration_list '}'
+   45                   | '{' declaration_list '}'
+   46                   | '{' statement_list '}'
    47                   | '{' declaration_list statement_list '}'
 
    48 declaration_list: declaration
@@ -404,7 +405,7 @@ Nonterminals, with rules where they appear
     direct_declarator <expr> (90)
         on left: 8 9 10 11 12 13
         on right: 6 7 10 11 12 13
-    parameter_list <vectorList> (91)
+    parameter_list <expressionList> (91)
         on left: 14 15
         on right: 11 15 41 43
     parameter_declaration <expr> (92)
@@ -422,7 +423,7 @@ Nonterminals, with rules where they appear
     initializer <expr> (96)
         on left: 27 28 29
         on right: 26 30 31
-    initializer_list <vectorList> (97)
+    initializer_list <expressionList> (97)
         on left: 30 31
         on right: 28 29 31
     abstract_declarator <expr> (98)
@@ -431,15 +432,15 @@ Nonterminals, with rules where they appear
     direct_abstract_declarator <expr> (99)
         on left: 35 36 37 38 39 40 41 42 43
         on right: 33 34 38 39 42 43
-    compound_statement <expr> (100)
+    compound_statement <expressionList> (100)
         on left: 44 45 46 47
         on right: 4 57
-    declaration_list <vectorList> (101)
+    declaration_list <expressionList> (101)
         on left: 48 49
-        on right: 46 47 49
-    statement_list <vectorList> (102)
+        on right: 45 47 49
+    statement_list <expressionList> (102)
         on left: 50 51
-        on right: 45 47 51
+        on right: 46 47 51
     statement <expr> (103)
         on left: 52 53 54 55 56 57
         on right: 50 51 58 59 60 63 64 65 66 67 68 69
@@ -464,7 +465,7 @@ Nonterminals, with rules where they appear
     postfix_expression <expr> (110)
         on left: 78 79 80 81 82 83 84 85
         on right: 79 80 81 82 83 84 85 88
-    argument_expression_list <vectorList> (111)
+    argument_expression_list <expressionList> (111)
         on left: 86 87
         on right: 81 87
     unary_expression <expr> (112)
@@ -524,13 +525,13 @@ Nonterminals, with rules where they appear
     type_specifier <string> (130)
         on left: 149 150 151 152 153 154 155 156 157 158
         on right: 21 22 159 160
-    specifier_qualifier_list <vectorList> (131)
+    specifier_qualifier_list <expressionList> (131)
         on left: 159 160 161 162
         on right: 159 161 180 181
     enum_specifier <expr> (132)
         on left: 163 164 165
         on right: 158
-    enumerator_list <vectorList> (133)
+    enumerator_list <expressionList> (133)
         on left: 166 167
         on right: 163 164 167
     enumerator <expr> (134)
@@ -545,7 +546,7 @@ Nonterminals, with rules where they appear
     type_qualifier_list (137)
         on left: 176 177
         on right: 173 175 177
-    identifier_list <vectorList> (138)
+    identifier_list <expressionList> (138)
         on left: 178 179
         on right: 12 179
     type_name <expr> (139)
@@ -1590,8 +1591,8 @@ State 84
 State 85
 
    44 compound_statement: '{' • '}'
-   45                   | '{' • statement_list '}'
-   46                   | '{' • declaration_list '}'
+   45                   | '{' • declaration_list '}'
+   46                   | '{' • statement_list '}'
    47                   | '{' • declaration_list statement_list '}'
 
     IDENTIFIER    shift, and go to state 146
@@ -3089,7 +3090,7 @@ State 162
 
 State 163
 
-   46 compound_statement: '{' declaration_list • '}'
+   45 compound_statement: '{' declaration_list • '}'
    47                   | '{' declaration_list • statement_list '}'
    49 declaration_list: declaration_list • declaration
 
@@ -3165,7 +3166,7 @@ State 163
 
 State 164
 
-   45 compound_statement: '{' statement_list • '}'
+   46 compound_statement: '{' statement_list • '}'
    51 statement_list: statement_list • statement
 
     IDENTIFIER    shift, and go to state 146
@@ -4281,9 +4282,9 @@ State 246
 
 State 247
 
-   46 compound_statement: '{' declaration_list '}' •
+   45 compound_statement: '{' declaration_list '}' •
 
-    $default  reduce using rule 46 (compound_statement)
+    $default  reduce using rule 45 (compound_statement)
 
 
 State 248
@@ -4354,9 +4355,9 @@ State 249
 
 State 250
 
-   45 compound_statement: '{' statement_list '}' •
+   46 compound_statement: '{' statement_list '}' •
 
-    $default  reduce using rule 45 (compound_statement)
+    $default  reduce using rule 46 (compound_statement)
 
 
 State 251

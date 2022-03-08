@@ -54,14 +54,14 @@
 %type <expr> parameter_declaration type_name abstract_declarator direct_abstract_declarator
 %type <expr> initializer statement labeled_statement
 %type <expr> expression_statement selection_statement iteration_statement
-%type <expr> jump_statement external_declaration function_definition compound_statement
+%type <expr> jump_statement external_declaration function_definition
 
-// %type <expressionList> compound_statement
+%type <expressionList> compound_statement long_coumpound_statement
 
-%type <vectorList> translation_unit struct_declaration_list argument_expression_list
-%type <vectorList> specifier_qualifier_list struct_declarator_list
-%type <vectorList> enumerator_list parameter_list init_declarator_list
-%type <vectorList> identifier_list initializer_list declaration_list statement_list
+%type <expressionList> translation_unit struct_declaration_list argument_expression_list
+%type <expressionList> specifier_qualifier_list struct_declarator_list
+%type <expressionList> enumerator_list parameter_list init_declarator_list
+%type <expressionList> identifier_list initializer_list declaration_list statement_list
 
 %type <number> INT_LITERAL // CHAR_LITERAL
 // %type <numberFloat> FLOAT_LITERAL
@@ -109,8 +109,8 @@ direct_declarator
 
 /* from direct_declarator */
 parameter_list
-	: parameter_declaration						{ $$ = initExprList($1); } 
-	| parameter_list ',' parameter_declaration	{ $$ = appendToExprList($1, $3); }
+	: parameter_declaration						{  $$ = initExprList($1); } 
+	| parameter_list ',' parameter_declaration	{ appendToExprList($1, $3); }
 	;
 	
 parameter_declaration
@@ -148,8 +148,8 @@ initializer
 	;
 
 initializer_list
-	: initializer						{ $$ = initExprList($1); } 
-	| initializer_list ',' initializer	{ $$ = appendToExprList($1, $3); }
+	: initializer						{  $$ = initExprList($1); } 
+	| initializer_list ',' initializer	{ appendToExprList($1, $3); }
 	;
 
 abstract_declarator
@@ -173,20 +173,24 @@ direct_abstract_declarator
 /* from function_definition */
 compound_statement
 	: '{' '}'										{ $$ = new ExpressionList();}
-	| '{' statement_list '}'						{ $$ = new ExpressionList(*$2); }
-	| '{' declaration_list '}'						{ $$ = new ExpressionList(*$2); }
-	| '{' declaration_list statement_list '}'		{ ;}
+	| '{' declaration_list '}'						{ $$ = new ExpressionList($2); }
+	| '{' statement_list '}'						{ $$ = new ExpressionList($2); }
+	// | long_coumpound_statement						{ $$ = $1; }
+	| '{' declaration_list statement_list '}'		{ $$ = new ExpressionList(); appendToExprList($$, $2); appendToExprList($$, $3); }
+	;
+
+// long_coumpound_statement	: '{' declaration_list statement_list '}'		{ std::cerr << "HEREEE looong" << std::endl; $$ = new ExpressionList(); appendToExprList($$, $2); appendToExprList($$, $3); }
 	;
 
 declaration_list
 	: declaration					{ $$ = initExprList($1); } 
-	| declaration_list declaration	{ $$ = appendToExprList($1, $2); }
+	| declaration_list declaration	{ appendToExprList($1, $2); }
 	;
 
 /* from compound_statement */
 statement_list
-	: statement					{ $$ = initExprList($1); } 
-	| statement_list statement	{ $$ = appendToExprList($1, $2); }
+	: statement					{  $$ = initExprList($1); } 
+	| statement_list statement	{ appendToExprList($1, $2); }
 	;
 
 statement
@@ -258,7 +262,7 @@ postfix_expression
 
 argument_expression_list
 	: assignment_expression									{ $$ = initExprList($1); } 
-	| argument_expression_list ',' assignment_expression	{ $$ = appendToExprList($1, $3); }
+	| argument_expression_list ',' assignment_expression	{ appendToExprList($1, $3); }
 	;
 
 unary_expression
@@ -369,7 +373,7 @@ assignment_operator
 
 expression
 	: assignment_expression						{$$ = $1; /*{ $$ = initExprList($1); }*/} 
-	| expression ',' assignment_expression		{ /*$$ = appendToExprList($1, $2); */}
+	| expression ',' assignment_expression		{ /* appendToExprList($1, $2); */ }
 	;
 
 constant_expression

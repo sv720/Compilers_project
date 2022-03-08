@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "ast/ast_expressionlist.hpp"
 
 class Variable
     : public Expression
@@ -103,21 +104,21 @@ class Full_Function
 {
 private:
     ExpressionPtr left;
-    ExpressionPtr right;  
+    ExpressionListPtr right;  
 public:
-    Full_Function(ExpressionPtr _left, ExpressionPtr _right)
+    Full_Function(ExpressionPtr _left, ExpressionListPtr _right)
         : left(_left)
         , right(_right)
-    { list = {}; }
+    {}
 
     Full_Function(ExpressionPtr _left)
         : left(_left)
-    { list = {}; }
+    {}
 
     ExpressionPtr getLeft() const
     { return left; }
 
-    ExpressionPtr getRight() const
+    ExpressionListPtr getRight() const
     { return right; }
     //no member functions yet
 
@@ -126,10 +127,10 @@ public:
         dst<<"( ";
         left->print(dst);
         dst<<" ";
-        right->print(dst);
-        // for (ExpressionPtr e : *right) {
-        //     e->print(dst);
-        // }
+        // right->print(dst);
+        for (ExpressionPtr e : right->list) {
+            e->print(dst);
+        }
         dst<<" )";
     }
 };
