@@ -103,21 +103,21 @@ class Full_Function
 {
 private:
     ExpressionPtr left;
-    ExprListPtr right;  
+    ExpressionPtr right;  
 public:
-    Full_Function(ExpressionPtr _left, ExprListPtr _right)
+    Full_Function(ExpressionPtr _left, ExpressionPtr _right)
         : left(_left)
         , right(_right)
-    {}
+    { list = {}; }
 
     Full_Function(ExpressionPtr _left)
         : left(_left)
-    {}
+    { list = {}; }
 
     ExpressionPtr getLeft() const
     { return left; }
 
-    ExprListPtr getRight() const
+    ExpressionPtr getRight() const
     { return right; }
     //no member functions yet
 
@@ -126,10 +126,10 @@ public:
         dst<<"( ";
         left->print(dst);
         dst<<" ";
-        // right->print(dst);
-        for (ExpressionPtr e : *right) {
-            e->print(dst);
-        }
+        right->print(dst);
+        // for (ExpressionPtr e : *right) {
+        //     e->print(dst);
+        // }
         dst<<" )";
     }
 };

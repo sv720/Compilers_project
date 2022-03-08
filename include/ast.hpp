@@ -17,11 +17,13 @@ typedef ExprList *ExprListPtr;
 inline ExprListPtr initExprList(ExpressionPtr first_elem){
     ExprListPtr list = new ExprList();
     list->push_back(first_elem);
+    std::cout<<"DEBUG: parser:initialise size list = "<< list->size() <<" with elem: " << first_elem<< std::endl;
     return list;
 }
 
 inline ExprListPtr appendToExprList(ExprListPtr in_list, ExpressionPtr new_elem){
     in_list->push_back(new_elem);
+    std::cout<<"DEBUG: parser:size list = "<< in_list->size() << " with elem: " << new_elem << std::endl;
     return in_list;
 }
 

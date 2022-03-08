@@ -6,6 +6,7 @@
 #include <map>
 
 #include <memory>
+#include <vector>
 
 class Expression;
 
@@ -13,7 +14,12 @@ typedef const Expression *ExpressionPtr;
 
 class Expression
 {
+protected:
+    std::vector<ExpressionPtr> list;
 public:
+    Expression()
+    {}
+
     virtual ~Expression()
     {}
 

@@ -10,14 +10,14 @@
 class ExpressionList;
 
 typedef std::vector<ExpressionPtr> ExprList;
-typedef ExprList *ExprListPtr;
+// typedef ExprList *ExprListPtr;
 typedef ExpressionList *ExpressionListPtr;
 
 class ExpressionList
     : public Expression
 {
-protected:
-    std::vector<ExpressionPtr> list;
+// protected:
+//     std::vector<ExpressionPtr> list;
 public:
     
     //TODO: think about making constructors protected (was causing issue - not too sure why)
@@ -29,35 +29,43 @@ public:
         */
     //CONSTRUCTORS
     ExpressionList() 
-    {}
+    {   std::cout<<"DEBUG: create list CONSTRUCTOR" << std::endl;
+        list = {}; }
 
-    ExpressionList(ExpressionPtr first_elem) //this seems ok
+    // ExpressionList(ExpressionPtr first_elem)
+    // {
+    //     std::cout<<"DEBUG: create list" << std::endl;
+    //     list = {};
+    //     std::cout<<"DEBUG: single input constructor" << std::endl;
+    //     list.push_back(first_elem);
+    //     std::cout<<"DEBUG: size of list after adding first_elem = "<< list.size() <<'\n'<< std::endl;
+    // }
+
+    ExpressionList(std::vector<ExpressionPtr> in_list)
     {
-        //std::cout<<"DEBUG: single input constructor" << std::endl;
-        list.push_back(first_elem);
+        std::cout<<"DEBUG: add in_list ";
+        list.push_back(in_list[0]);
+        // for (int i =0; i < in_list.size(); i++)
+        // {
+        //     std::cout<< in_list[i] << std::endl;
+        //     list.push_back(in_list[i]);
+        // }
+        std::cout<<"DEBUG: size of list after copying in_list = "<< list.size() << std::endl; 
     }
 
-    ExpressionList(ExprListPtr in_list) //this seems ok
-    {
-        for (ExpressionPtr i : *in_list)
-        {
-            list.push_back(i);
-        }
-    }
+    // ExpressionList( in_list, ExpressionPtr new_elem)
+    // {
+    //     std::cout<<"DEBUG: dual input constructor" << std::endl;
+    //     std::cout<<"DEBUG: size of in_list in dual input constructor = " << in_list->getListVector().size() << std::endl; 
+    //     for (int i = 0; i < in_list->getListVector().size(); i++)
+    //     {
+    //         list.push_back(in_list->getListVector()[i]);
+    //     }
+    //     list.push_back(new_elem);
 
-    ExpressionList(ExprListPtr in_list, ExpressionPtr new_elem)
-    {
-        std::cout<<"DEBUG: dual input constructor" << std::endl;
+    //     std::cout<<"DEBUG: list.size() " << list.size()<<'\n' << std::endl;
 
-        for (ExpressionPtr i : *in_list)
-        {
-            list.push_back(i);
-        }
-        list.push_back(new_elem);
-
-        std::cout<<"DEBUG: list.size() " << list.size() << std::endl;
-
-    }
+    // }
 
 
 
@@ -82,12 +90,12 @@ public:
     {
 
         std::cout<<"DEBUG in print; list.size() = " << list.size() << std::endl;
-        for (ExpressionPtr i : list){
-            std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
-            dst<<"( ";
-            i->print(dst);
-            dst<<" )";
-        }
+        // for (ExpressionPtr i : list){
+        //     std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
+        //     dst<<"( ";
+        //     i->print(dst);
+        //     dst<<" )";
+        // }
     }
 };
 
@@ -103,9 +111,9 @@ public:
     virtual void print(std::ostream &dst) const override
     {
         dst<<"( ";
-        for (int i = 0; i < list.size(); i++) {
-            list[i]->print(dst);
-        }
+        // for (int i = 0; i < list.size(); i++) {
+        //     list[i]->print(dst);
+        // }
         dst<<" )";
     }
 };

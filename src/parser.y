@@ -16,7 +16,8 @@
 // Represents the value associated with any kind of AST node.
 %union{
   const Expression *expr;
-  ExprList *exprList;
+  ExprList *vectorList;
+  ExpressionList *expressionList;
   int number;
   double numberFloat;
   std::string *string;
@@ -51,14 +52,16 @@
 %type <expr> enum_specifier enumerator direct_declarator pointer
 
 %type <expr> parameter_declaration type_name abstract_declarator direct_abstract_declarator
-%type <expr> initializer statement labeled_statement compound_statement
+%type <expr> initializer statement labeled_statement
 %type <expr> expression_statement selection_statement iteration_statement
-%type <expr> jump_statement external_declaration function_definition
+%type <expr> jump_statement external_declaration function_definition compound_statement
 
-%type <exprList> translation_unit struct_declaration_list argument_expression_list
-%type <exprList> specifier_qualifier_list struct_declarator_list
-%type <exprList> enumerator_list parameter_list init_declarator_list
-%type <exprList> identifier_list initializer_list declaration_list statement_list
+// %type <expressionList> compound_statement
+
+%type <vectorList> translation_unit struct_declaration_list argument_expression_list
+%type <vectorList> specifier_qualifier_list struct_declarator_list
+%type <vectorList> enumerator_list parameter_list init_declarator_list
+%type <vectorList> identifier_list initializer_list declaration_list statement_list
 
 %type <number> INT_LITERAL // CHAR_LITERAL
 // %type <numberFloat> FLOAT_LITERAL
@@ -82,11 +85,11 @@ external_declaration
 	;
 
 function_definition
-	// : declaration_specifiers declarator compound_statement { $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
-	: declaration_specifiers declarator '{' statement_list '}'		{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
-	| declaration_specifiers declarator '{' declaration_list '}'	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
-	| declaration_specifiers declarator '{' declaration_list statement_list '}'	{;}
-	| declaration_specifiers declarator '{' '}'						{$$ = new Full_Function(new Function_Definition(*$1, $2));}
+	: declaration_specifiers declarator compound_statement { $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
+	// : declaration_specifiers declarator '{' statement_list '}'		{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
+	// | declaration_specifiers declarator '{' declaration_list '}'	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
+	// | declaration_specifiers declarator '{' declaration_list statement_list '}'	{;}
+	// | declaration_specifiers declarator '{' '}'						{$$ = new Full_Function(new Function_Definition(*$1, $2));}
 	| declarator 
 	;
 
@@ -169,9 +172,9 @@ direct_abstract_declarator
 
 /* from function_definition */
 compound_statement
-	: '{' '}'										{ ;}
-	| '{' statement_list '}'						{ ;}
-	| '{' declaration_list '}'						{ ;}
+	: '{' '}'										{ $$ = new ExpressionList();}
+	| '{' statement_list '}'						{ $$ = new ExpressionList(*$2); }
+	| '{' declaration_list '}'						{ $$ = new ExpressionList(*$2); }
 	| '{' declaration_list statement_list '}'		{ ;}
 	;
 
@@ -192,11 +195,11 @@ statement
 	| selection_statement	{ $$ = $1; }
 	| iteration_statement	{ $$ = $1; }
 	| jump_statement		{ $$ = $1; }
-	// | compound_statement	{ $$ = $1; /*at the moment compound_statement is avoided so we can add its versions below*/} 
-	| '{' '}'										{ ; /*same problem converting an ExprList into Expression*/}
-	| '{' statement_list '}'						{ $$ = new Scope($2);}
-	| '{' declaration_list '}'						{ $$ = new Scope($2);}
-	| '{' declaration_list statement_list '}'		{ ;}
+	| compound_statement	{ $$ = $1; /*at the moment compound_statement is avoided so we can add its versions below*/} 
+	// | '{' '}'										{ ; /*same problem converting an ExprList into Expression*/}
+	// | '{' statement_list '}'						{ $$ = new Scope($2);}
+	// | '{' declaration_list '}'						{ $$ = new Scope($2);}
+	// | '{' declaration_list statement_list '}'		{ ;}
 	;
 
 /* from statement */

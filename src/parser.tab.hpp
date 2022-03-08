@@ -140,13 +140,14 @@ union YYSTYPE
 #line 17 "src/parser.y"
 
   const Expression *expr;
-  ExprList *exprList;
+  ExprList *vectorList;
+  ExpressionList *expressionList;
   int number;
   double numberFloat;
   std::string *string;
   yytokentype token;
 
-#line 150 "src/parser.tab.hpp"
+#line 151 "src/parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
