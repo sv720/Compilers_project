@@ -83,7 +83,7 @@ for testcase in compiler_tests/local_var/*_driver.c; do
 done
 
 echo "########################################"
-echo " Nb of files COMPILED succesfully: ${CHECKED} out of ${index}"
+echo " Nb of files COMPILED succesfully: ${CHECKED} out of $((${index}-1))"
 echo ""
 
 

@@ -28,7 +28,7 @@ public:
         */
     //CONSTRUCTORS
     ExpressionList() 
-    {   std::cout<<"DEBUG: create list CONSTRUCTOR" << std::endl;
+    {   //std::cout<<"DEBUG: create list CONSTRUCTOR" << std::endl;
         list = {}; }
 
     // ExpressionList(ExpressionPtr first_elem)
@@ -89,13 +89,13 @@ public:
     virtual void print(std::ostream &dst) const override
     {
 
-        std::cout<<"DEBUG in print; list.size() = " << list.size() << std::endl;
-        // for (ExpressionPtr i : list){
-        //     std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
-        //     dst<<"( ";
-        //     i->print(dst);
-        //     dst<<" )";
-        // }
+        //std::cout<<"DEBUG in print; list.size() = " << list.size() << std::endl;
+        for (ExpressionPtr i : list){
+            //std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
+            dst<<"( ";
+            i->print(dst);
+            dst<<" )";
+        }
     }
 };
 
