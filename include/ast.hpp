@@ -21,10 +21,10 @@ inline ExpressionListPtr initExprList(ExpressionPtr first_elem){
     return list;
 }
 
-inline ExpressionListPtr appendToExprList(ExpressionListPtr in_list, ExpressionPtr new_elem){
+inline void appendToExprList(ExpressionListPtr &in_list, ExpressionPtr new_elem){
     in_list->list.push_back(new_elem);
     std::cout<<"DEBUG: parser:size list = "<< in_list->list.size() << " with elem: " << new_elem << std::endl;
-    return in_list;
+    // return in_list;
 }
 
 // inline ExpressionPtr initExprListPtr(ExprListPtr in_list){
