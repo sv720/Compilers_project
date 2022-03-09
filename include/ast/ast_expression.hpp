@@ -23,13 +23,7 @@ public:
     virtual ~Expression()
     {}
 
-    // virtual void cloneList(std::vector<ExpressionPtr> in_list) const 
-    // {
-    //     for (int i =0; i < *in_list.size(); i++)
-    //     {
-    //         list.push_back(in_list[i]);
-    //     }
-    // }
+
     //! Tell and expression to print itself to the given stream
     virtual void print(std::ostream &dst) const =0;
 

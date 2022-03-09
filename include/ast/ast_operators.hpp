@@ -130,25 +130,193 @@ public:
     }
 };
 
-class ExpOperator
+class ModOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "%"; }
+public:
+    ModOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+};
+
+// SHIFTS -----------------------------------
+
+class LeftShiftOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<<"; }
+public:
+    LeftShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class RightShiftOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return ">>"; }
+public:
+    RightShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+// COMPARISONS -----------------------------------
+
+class SmallerOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<"; }
+public:
+    SmallerOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class GreaterOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return ">"; }
+public:
+    GreaterOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class LEOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<="; }
+public:
+    LEOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class GEOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return ">="; }
+public:
+    GEOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class EQOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "=="; }
+public:
+    EQOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class NEOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "!="; }
+public:
+    NEOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+// BITWISE -----------------------------------
+
+class ANDOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "&"; }
+public:
+    ANDOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class XOROperator
     : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
     { return "^"; }
 public:
-    ExpOperator(ExpressionPtr _left, ExpressionPtr _right)
+    XOROperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    {
-        double vl=getLeft()->evaluate(bindings);
-        double vr=getRight()->evaluate(bindings);
-        return pow(vl,vr);
-    }
+};
+
+class OROperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "|"; }
+public:
+    OROperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+// LOGICAL -----------------------------------
+
+class LogicalANDOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "&&"; }
+public:
+    LogicalANDOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+};
+
+class LogicalOROperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "||"; }
+public:
+    LogicalOROperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
 };
 
 

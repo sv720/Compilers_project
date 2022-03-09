@@ -19,13 +19,7 @@ class ExpressionList
    
 public:
     std::vector<ExpressionPtr> list;
-    //TODO: think about making constructors protected (was causing issue - not too sure why)
-    /*Personal reasoning:
-        My understanding of what a protected function or data is that it is private from outside of the class
-        or its children but public for itself or its children. Hence; I don't understand how we can consistently
-        use protected constuctors in parser.y when these calls are not being made from withing a child of the class
-        - for now left this classes constructors public as was causing issues when protected
-        */
+
     //CONSTRUCTORS
     ExpressionList() 
     {   //std::cout<<"DEBUG: create list CONSTRUCTOR" << std::endl;

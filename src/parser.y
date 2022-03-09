@@ -85,10 +85,6 @@ external_declaration
 
 function_definition
 	: declaration_specifiers declarator compound_statement { $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
-	// : declaration_specifiers declarator '{' statement_list '}'		{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
-	// | declaration_specifiers declarator '{' declaration_list '}'	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
-	// | declaration_specifiers declarator '{' declaration_list statement_list '}'	{;}
-	// | declaration_specifiers declarator '{' '}'						{$$ = new Full_Function(new Function_Definition(*$1, $2));}
 	| declarator 
 	;
 
@@ -198,11 +194,7 @@ statement
 	| selection_statement	{ $$ = $1; }
 	| iteration_statement	{ $$ = $1; }
 	| jump_statement		{ $$ = $1; }
-	| compound_statement	{ $$ = $1; /*at the moment compound_statement is avoided so we can add its versions below*/} 
-	// | '{' '}'										{ ; /*same problem converting an ExprList into Expression*/}
-	// | '{' statement_list '}'						{ $$ = new Scope($2);}
-	// | '{' declaration_list '}'						{ $$ = new Scope($2);}
-	// | '{' declaration_list statement_list '}'		{ ;}
+	| compound_statement	{ $$ = $1; } 
 	;
 
 /* from statement */
@@ -213,8 +205,8 @@ labeled_statement
 	;
 /* from statement */
 expression_statement
-	: ';'
-	| expression ';'
+	: ';'				{ ; }
+	| expression ';'	{ $$ = $1; }
 	;
 /* from statement */
 selection_statement
@@ -268,7 +260,7 @@ unary_expression
 	: postfix_expression				{ $$ = $1; }
 	| INCREMENT_OP unary_expression
 	| DECREMENT_OP unary_expression
-	| unary_operator cast_expression
+	| unary_operator cast_expression	{ /* HOW */ }
 	| '-' unary_expression				{ $$ = new NegOperator($2); }
 	| SIZEOF unary_expression
 	| SIZEOF '(' type_name ')'
@@ -292,7 +284,7 @@ multiplicative_expression
 	: cast_expression									{ $$ = $1; }
 	| multiplicative_expression '*' cast_expression		{ $$ = new MulOperator($1, $3); }
 	| multiplicative_expression '/' cast_expression		{ $$ = new DivOperator($1, $3); }
-	| multiplicative_expression '%' cast_expression		{;}
+	| multiplicative_expression '%' cast_expression		{ $$ = new ModOperator($1, $3);}
 	;
 
 additive_expression
@@ -303,47 +295,47 @@ additive_expression
 
 shift_expression
 	: additive_expression									{ $$ = $1; }
-	| shift_expression LEFTSHIFT_OP additive_expression
-	| shift_expression RIGHTSHIFT_OP additive_expression
+	| shift_expression LEFTSHIFT_OP additive_expression		{ $$ = new LeftShiftOperator($1, $3); }
+	| shift_expression RIGHTSHIFT_OP additive_expression	{ $$ = new RightShiftOperator($1, $3); }
 	;
 
 relational_expression
 	: shift_expression									{ $$ = $1; }
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	| relational_expression '<' shift_expression		{ $$ = new SmallerOperator($1, $3); }
+	| relational_expression '>' shift_expression		{ $$ = new GreaterOperator($1, $3); }
+	| relational_expression LE_OP shift_expression		{ $$ = new LEOperator($1, $3); }
+	| relational_expression GE_OP shift_expression		{ $$ = new GEOperator($1, $3); }
 	;
 
 equality_expression
 	: relational_expression								{ $$ = $1; }
-	| equality_expression EQ_OP relational_expression
-	| equality_expression NE_OP relational_expression
+	| equality_expression EQ_OP relational_expression	{ $$ = new EQOperator($1, $3); }
+	| equality_expression NE_OP relational_expression	{ $$ = new NEOperator($1, $3); }
 	;
 
 and_expression
 	: equality_expression						{ $$ = $1; }
-	| and_expression '&' equality_expression
+	| and_expression '&' equality_expression	{ $$ = new ANDOperator($1, $3); }
 	;
 
 exclusive_or_expression
 	: and_expression								{ $$ = $1; }
-	| exclusive_or_expression '^' and_expression
+	| exclusive_or_expression '^' and_expression	{ $$ = new XOROperator($1, $3); }
 	;
 
 inclusive_or_expression
 	: exclusive_or_expression								{ $$ = $1; }
-	| inclusive_or_expression '|' exclusive_or_expression
+	| inclusive_or_expression '|' exclusive_or_expression	{ $$ = new OROperator($1, $3); }
 	;
 
 logical_and_expression
 	: inclusive_or_expression									{ $$ = $1; }
-	| logical_and_expression AND_OP inclusive_or_expression
+	| logical_and_expression AND_OP inclusive_or_expression		{ $$ = new LogicalANDOperator($1, $3); }
 	;
 
 logical_or_expression
 	: logical_and_expression								{ $$ = $1; }
-	| logical_or_expression OR_OP logical_and_expression
+	| logical_or_expression OR_OP logical_and_expression	{ $$ = new LogicalOROperator($1, $3); }
 	;
 
 conditional_expression
