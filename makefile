@@ -22,5 +22,5 @@ clean :
 	rm bin/*
 	rm src/*.tab.cpp
 	rm src/*.yy.cpp
-	rm -r test/working/
 	rm -r test/err/
+	rm -r test/working/

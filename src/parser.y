@@ -16,7 +16,6 @@
 // Represents the value associated with any kind of AST node.
 %union{
   const Expression *expr;
-  ExprList *vectorList;
   ExpressionList *expressionList;
   int number;
   double numberFloat;
@@ -56,7 +55,7 @@
 %type <expr> expression_statement selection_statement iteration_statement
 %type <expr> jump_statement external_declaration function_definition
 
-%type <expressionList> compound_statement long_coumpound_statement
+%type <expressionList> compound_statement
 
 %type <expressionList> translation_unit struct_declaration_list argument_expression_list
 %type <expressionList> specifier_qualifier_list struct_declarator_list
@@ -76,7 +75,7 @@ ROOT : external_declaration			{ g_root = $1; /*translation_unit*/ }
 
 translation_unit
 	: external_declaration     					{ $$ = initExprList($1); }               
-	| translation_unit external_declaration   	{ $$ = appendToExprList($1, $2); }
+	| translation_unit external_declaration   	{ appendToExprList($1, $2); }
 	;
 
 external_declaration
@@ -102,9 +101,9 @@ direct_declarator
 	: IDENTIFIER										{ $$ = new Declarator(*$1);}
 	| '(' declarator ')'								{ $$ = $2; }
 	| direct_declarator '[' constant_expression ']'		{ ;}
-	| direct_declarator '(' parameter_list ')'			{ ;}
-	| direct_declarator '(' identifier_list ')'			{ ;}
-	| direct_declarator '(' ')'							{ $$ = new FunctionDeclarator($1);;}
+	| direct_declarator '(' parameter_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
+	| direct_declarator '(' identifier_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
+	| direct_declarator '(' ')'							{ $$ = new FunctionDeclarator($1);}
 	;
 
 /* from direct_declarator */

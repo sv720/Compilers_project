@@ -43,12 +43,13 @@ public:
     ExpressionList(ExpressionListPtr in_list)
         : list (in_list->list)
     {
+        //DEBUG PRINT OUTS
         std::cout<<"DEBUG: add in_list ";
         // list.push_back(in_list[0]);
         for (int i =0; i < in_list->list.size(); i++)
         {
             std::cout<< in_list->list[i] << std::endl;
-            list.push_back(in_list->list[i]);
+            // list.push_back(in_list->list[i]);
         }
         std::cout<<"DEBUG: size of list after copying in_list = "<< list.size() << std::endl; 
     }
@@ -96,25 +97,6 @@ public:
             i->print(dst);
             dst<<" )";
         }
-    }
-};
-
-
-class Scope
-    : public ExpressionList
-{ 
-public:
-    // Does everything the same for constructor/destructor 
-    using ExpressionList::ExpressionList;
-
-
-    virtual void print(std::ostream &dst) const override
-    {
-        dst<<"( ";
-        // for (int i = 0; i < list.size(); i++) {
-        //     list[i]->print(dst);
-        // }
-        dst<<" )";
     }
 };
 
