@@ -22,7 +22,7 @@ echo "========================================"
 echo " Cleaning the temporaries and outputs"
 make clean
 echo " Force building bin/print_canonical"
-make bin/print_canonical bin/eval_expr -B
+make bin/c_compiler -B
 if [[ "$?" -ne 0 ]]; then
     echo "Build failed.";
 fi
@@ -41,7 +41,7 @@ while IFS=, read -r INPUT_LINE REF_LINE BINDINGS REF_VALUE; do
     echo "==========================="
     echo ""
     echo "Input : ${INPUT_LINE}"
-    GOT_LINE=$( echo -n "${INPUT_LINE}" | bin/print_canonical )
+    GOT_LINE=$( echo -n "${INPUT_LINE}" | bin/c_compiler )
     echo "Output : ${GOT_LINE}" 
     echo "${GOT_LINE}" >> test/checked_expressions.got.txt
     # if [[ "${GOT_LINE}" != "${REF_LINE}" ]]; then
