@@ -9,12 +9,15 @@ class Operator
     : public Expression
 {
 private:
-    ExpressionPtr left;
     ExpressionPtr right;
 protected:
+    ExpressionPtr left;
     Operator(ExpressionPtr _left, ExpressionPtr _right)
         : left(_left)
         , right(_right)
+    {}
+    Operator(ExpressionPtr _arg)
+        : left(_arg)
     {}
 public:
     virtual ~Operator()
@@ -316,6 +319,92 @@ public:
     LogicalOROperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+
+};
+
+// INCREMENT/DECREMENT -----------------------------------
+
+class PostIncrementOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "post++"; }
+public:
+    PostIncrementOperator(ExpressionPtr _left)
+        : Operator(_left)
+    {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"( ";
+        left->print(dst);
+        dst<<" ++";
+        dst<<" )";
+    }
+
+};
+
+class PostDecrementOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "post--"; }
+public:
+    PostDecrementOperator(ExpressionPtr _left)
+        : Operator(_left)
+    {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"( ";
+        left->print(dst);
+        dst<<" --";
+        dst<<" )";
+    }
+
+};
+
+class PreIncrementOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "pre++"; }
+public:
+    PreIncrementOperator(ExpressionPtr _left)
+        : Operator(_left)
+    {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"( ";
+        dst<<"++ ";
+        left->print(dst);
+        dst<<" )";
+    }
+
+};
+
+class PreDecrementOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "pre--"; }
+public:
+    PreDecrementOperator(ExpressionPtr _left)
+        : Operator(_left)
+    {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"( ";
+        dst<<"-- ";
+        left->print(dst);
+        dst<<" )";
+    }
 
 };
 

@@ -8,6 +8,8 @@
 
 #include "ast/ast_operators.hpp"
 #include "ast/ast_unary.hpp"
+#include "ast/ast_selection_statements.hpp"
+#include "ast/ast_iteration_statements.hpp"
 
 #include "ast/ast_function.hpp"
 #include "ast/ast_assign_declare.hpp"

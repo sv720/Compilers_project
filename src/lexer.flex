@@ -62,8 +62,30 @@ LETTER			  [a-zA-Z_]
 
 "return"        { return(RETURN); }
 
-"int"			      { return INT; }
-"void"			    { return VOID; }
+"for"			      { return(FOR); }
+"while"			    { return(WHILE); }
+"if"			      { return(IF); }
+"else"			    { return(ELSE); }
+"switch"		    { return(SWITCH); }
+"case"			    { return(CASE); }
+"break"			    { return(BREAK); }
+"continue"		  { return(CONTINUE); }
+"default"		    { return(DEFAULT); }
+"do"			      { return(DO); }
+
+"int"			      { return(INT); }
+"void"			    { return(VOID); }
+"double"		    { return(DOUBLE); }
+"char"			    { return(CHAR); }
+"unsigned"		  { return(UNSIGNED); }
+"float"			    { return(FLOAT); }
+"enum"			    { return(ENUM); }
+
+"sizeof"		    { return(SIZEOF); }
+"struct"		    { return(STRUCT); }
+"typedef"		    { return(TYPEDEF); }
+
+
 
 [0-9]+                        { yylval.number=strtod(yytext, 0); return INT_LITERAL; }
 {LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return IDENTIFIER; }

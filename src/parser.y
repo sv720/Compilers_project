@@ -71,7 +71,7 @@
 
 %%
 
-ROOT : external_declaration			{ g_root = $1; /*translation_unit*/ }
+ROOT : translation_unit			{ g_root = $1; /*external_declaration*/ }
 
 translation_unit
 	: external_declaration     					{ $$ = initExprList($1); }               
@@ -205,21 +205,21 @@ labeled_statement
 	;
 /* from statement */
 expression_statement
-	: ';'				{ ; }
+	: ';'				{ $$ = new EmptyExpr(); }
 	| expression ';'	{ $$ = $1; }
 	;
 /* from statement */
 selection_statement
-	: IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
-	| SWITCH '(' expression ')' statement
+	: IF '(' expression ')' statement					{ $$ = new If($3, $5); }
+	| IF '(' expression ')' statement ELSE statement	{ $$ = new IfElse($3, $5, $7); /* shift/reduce conflict? */ }
+	| SWITCH '(' expression ')' statement				{ $$ = new SwitchCase($3, $5); }
 	;
 /* from statement */
 iteration_statement
-	: WHILE '(' expression ')' statement
+	: WHILE '(' expression ')' statement											{ $$ = new WhileLoop($3, $5); }
 	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
+	| FOR '(' expression_statement expression_statement ')' statement				{ $$ = new ForLoop($3, $4, new EmptyExpr(), $6); }
+	| FOR '(' expression_statement expression_statement expression ')' statement	{ $$ = new ForLoop($3, $4, $5, $7); /* interior initialisation eg. int x=0, breakes the parser*/ }
 	;
 /* from statement */
 jump_statement
@@ -247,8 +247,8 @@ postfix_expression
 	| postfix_expression '(' argument_expression_list ')'
 	| postfix_expression '.' IDENTIFIER
 	| postfix_expression POINTER_OP IDENTIFIER
-	| postfix_expression INCREMENT_OP
-	| postfix_expression DECREMENT_OP
+	| postfix_expression INCREMENT_OP						{ $$ = new PostIncrementOperator($1);}
+	| postfix_expression DECREMENT_OP						{ $$ = new PostDecrementOperator($1);}
 	;
 
 argument_expression_list
@@ -258,8 +258,8 @@ argument_expression_list
 
 unary_expression
 	: postfix_expression				{ $$ = $1; }
-	| INCREMENT_OP unary_expression
-	| DECREMENT_OP unary_expression
+	| INCREMENT_OP unary_expression		{ $$ = new PreIncrementOperator($2);}
+	| DECREMENT_OP unary_expression		{ $$ = new PreDecrementOperator($2);}
 	| unary_operator cast_expression	{ /* HOW */ }
 	| '-' unary_expression				{ $$ = new NegOperator($2); }
 	| SIZEOF unary_expression
@@ -267,12 +267,12 @@ unary_expression
 	;
 
 unary_operator
-	: '&'
-	| '*'
-	| '+'
-	| '-'
+	: '&'		{ /* pointer address */ }
+	| '*'		{ /* pointer value */ }
+	| '+'		{ /* same as $2 */ }
+	| '-'		{ /* neg */ }
 	| '~'
-	| '!'
+	| '!'		{ /* logic NOT */ }
 	;
 
 cast_expression
@@ -371,7 +371,7 @@ constant_expression
 	: conditional_expression
 	;
 
-//Start reading from hear up
+// Start reading from here up
 
 
 
@@ -397,7 +397,7 @@ struct_or_union_specifier
 
 struct_or_union
 	: STRUCT
-	| UNION
+	| UNION		{ /* NOT NEEDED */ }
 	;
 
 struct_declaration_list

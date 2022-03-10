@@ -34,5 +34,18 @@ public:
     { throw std::runtime_error("Not implemented."); }
 };
 
+class EmptyExpr
+    : public Expression
+{
+    public:
+    EmptyExpr()
+    {}
+
+    virtual ~EmptyExpr()
+    {}
+    virtual void print(std::ostream &dst) const override
+    {}
+};
+
 
 #endif

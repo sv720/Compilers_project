@@ -24,6 +24,12 @@ public:
         : left(_left)
     {}
 
+    virtual ~Full_Function()
+    {
+        delete left;
+        delete right;
+    }
+
     ExpressionPtr getLeft() const
     { return left; }
 
@@ -55,6 +61,11 @@ public:
         : left(_left)
         , right(_right)
     {}
+
+    virtual ~Function_Definition()
+    {
+        delete right;
+    }
 
     const std::string getLeft() const
     { return left; }
