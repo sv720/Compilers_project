@@ -38,14 +38,14 @@ public:
         : list (in_list->list)
     {
         //DEBUG PRINT OUTS
-        std::cout<<"DEBUG: add in_list ";
+        // std::cout<<"DEBUG: add in_list ";
         // list.push_back(in_list[0]);
-        for (int i =0; i < in_list->list.size(); i++)
-        {
-            std::cout<< in_list->list[i] << std::endl;
-            // list.push_back(in_list->list[i]);
-        }
-        std::cout<<"DEBUG: size of list after copying in_list = "<< list.size() << std::endl; 
+        // for (int i =0; i < in_list->list.size(); i++)
+        // {
+        //     std::cout<< in_list->list[i] << std::endl;
+        //     // list.push_back(in_list->list[i]);
+        // }
+        // std::cout<<"DEBUG: size of list after copying in_list = "<< list.size() << std::endl; 
     }
 
     // ExpressionList( in_list, ExpressionPtr new_elem)

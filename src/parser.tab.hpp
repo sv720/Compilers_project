@@ -128,7 +128,9 @@ extern int yydebug;
     GOTO = 312,                    /* GOTO  */
     CONTINUE = 313,                /* CONTINUE  */
     BREAK = 314,                   /* BREAK  */
-    RETURN = 315                   /* RETURN  */
+    RETURN = 315,                  /* RETURN  */
+    uminu = 316,                   /* uminu  */
+    NOELSE = 317                   /* NOELSE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -146,7 +148,7 @@ union YYSTYPE
   std::string *string;
   yytokentype token;
 
-#line 150 "src/parser.tab.hpp"
+#line 152 "src/parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

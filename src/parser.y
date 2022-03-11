@@ -66,6 +66,15 @@
 // %type <numberFloat> FLOAT_LITERAL
 %type <string> IDENTIFIER assignment_operator declaration_specifiers type_specifier
 
+// ASSOCIATIVITY
+%left '+' '-'
+%left '*' '/'
+%nonassoc uminu
+// %nonassoc %left or %right
+
+%nonassoc NOELSE
+%nonassoc ELSE
+
 
 %start ROOT
 
@@ -210,8 +219,8 @@ expression_statement
 	;
 /* from statement */
 selection_statement
-	: IF '(' expression ')' statement					{ $$ = new If($3, $5); }
-	| IF '(' expression ')' statement ELSE statement	{ $$ = new IfElse($3, $5, $7); /* shift/reduce conflict? */ }
+	: IF '(' expression ')' statement %prec NOELSE		{ $$ = new If($3, $5); }
+	| IF '(' expression ')' statement ELSE statement	{ $$ = new IfElse($3, $5, $7); /* dangling else problem */ }
 	| SWITCH '(' expression ')' statement				{ $$ = new SwitchCase($3, $5); }
 	;
 /* from statement */

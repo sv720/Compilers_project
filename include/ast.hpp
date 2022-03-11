@@ -22,13 +22,13 @@ extern const Expression *parseAST();
 inline ExpressionListPtr initExprList(ExpressionPtr first_elem){
     ExpressionListPtr exprList = new ExpressionList();
     exprList->list.push_back(first_elem);
-    std::cout<<"DEBUG: parser:initialise size list = "<< exprList->list.size() <<" with elem: " << first_elem<< std::endl;
+    // std::cout<<"DEBUG: parser:initialise size list = "<< exprList->list.size() <<" with elem: " << first_elem<< std::endl;
     return exprList;
 }
 
 inline void appendToExprList(ExpressionListPtr &in_exprList, ExpressionPtr new_elem){
     in_exprList->list.push_back(new_elem);
-    std::cout<<"DEBUG: parser:size list = "<< in_exprList->list.size() << " with elem: " << new_elem << std::endl;
+    // std::cout<<"DEBUG: parser:size list = "<< in_exprList->list.size() << " with elem: " << new_elem << std::endl;
     // return in_list;
 }
 
