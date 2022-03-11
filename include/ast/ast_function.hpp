@@ -22,6 +22,7 @@ public:
 
     Full_Function(ExpressionPtr _left)
         : left(_left)
+        , right(new ExpressionList())
     {}
 
     virtual ~Full_Function()
@@ -35,7 +36,6 @@ public:
 
     ExpressionListPtr getRight() const
     { return right; }
-    //no member functions yet
 
     virtual void print(std::ostream &dst) const override
     {
@@ -72,12 +72,88 @@ public:
 
     ExpressionPtr getRight() const
     { return right; }
-    //no member functions yet
 
     virtual void print(std::ostream &dst) const override
     {
         dst<<left<<" ";
         right->print(dst);
+    }
+};
+
+class FunctionDeclarator
+    : public Expression
+{
+private:
+    ExpressionPtr id;
+    ExpressionListPtr arg;
+public:
+    FunctionDeclarator(ExpressionPtr _id)
+        : id(_id)
+        , arg(new ExpressionList())
+    {}
+
+    FunctionDeclarator(ExpressionPtr _id, ExpressionListPtr _arg)
+        : id(_id)
+        , arg(_arg)
+    {}
+
+    ~FunctionDeclarator(){
+        delete id;
+        delete arg;
+    }
+
+    ExpressionPtr getId() const
+    { return id; }
+
+    ExpressionListPtr getArg() const
+    { return arg; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        id->print(dst);
+        arg->print(dst);
+    }
+    
+};
+
+
+class FunctionCall
+    : public Expression
+{
+private:
+    ExpressionPtr functionName;  
+    ExpressionListPtr args;
+public:
+    FunctionCall(ExpressionPtr _functionName)
+        : functionName(_functionName)
+        , args(new ExpressionList())
+    {}
+
+    FunctionCall(ExpressionPtr _functionName, ExpressionListPtr _args)
+        : functionName(_functionName)
+        , args(_args)
+    {}
+
+    virtual ~FunctionCall()
+    {
+        delete functionName;
+        delete args;
+    }
+
+    ExpressionPtr getFunctionName() const
+    { return functionName; }
+
+    ExpressionListPtr getArgs() const
+    { return args; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        functionName->print(dst);
+        dst<<"(:";
+        for (ExpressionPtr e : args->list) {
+            e->print(dst);
+        }
+        dst<<":)";
     }
 };
 

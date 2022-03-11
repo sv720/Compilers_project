@@ -23,7 +23,7 @@ public:
     {
         delete right;
     }
-    //no member functions yet
+
     const std::string getLeft() const
     { return left; }
 
@@ -55,7 +55,7 @@ public:
     {
         delete right;
     }
-    //no member functions yet
+
     const std::string getLeft() const
     { return left; }
 
@@ -83,7 +83,12 @@ public:
         : left(_left)
         , right(_right)
     {}
-    //no member functions yet
+    
+    ~InitDeclarator(){
+        delete left;
+        delete right;
+    }
+
     virtual void print(std::ostream &dst) const override
     {   
         left->print(dst);
@@ -108,37 +113,6 @@ public:
     virtual void print(std::ostream &dst) const override
     {
         dst<<id;
-    }
-    
-};
-
-class FunctionDeclarator
-    : public Expression
-{
-private:
-    ExpressionPtr id;
-    ExpressionListPtr arg;
-public:
-    FunctionDeclarator(ExpressionPtr _id)
-        : id(_id)
-        , arg(new ExpressionList())
-    {}
-
-    FunctionDeclarator(ExpressionPtr _id, ExpressionListPtr _arg)
-        : id(_id)
-        , arg(_arg)
-    {}
-
-    ExpressionPtr getId() const
-    { return id; }
-
-    ExpressionListPtr getArg() const
-    { return arg; }
-
-    virtual void print(std::ostream &dst) const override
-    {
-        id->print(dst);
-        arg->print(dst);
     }
     
 };

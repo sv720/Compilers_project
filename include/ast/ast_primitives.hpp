@@ -35,13 +35,16 @@ public:
 };
 
 
-class Number
+class Integer
     : public Expression
 {
 private:
     int value;
 public:
-    Number(int _value)
+    Integer()
+    {}
+
+    Integer(int _value)
         : value(_value)
     {}
 

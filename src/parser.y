@@ -17,13 +17,13 @@
 %union{
   const Expression *expr;
   ExpressionList *expressionList;
-  int number;
+  int integer;
   double numberFloat;
   std::string *string;
   yytokentype token;
 }
 
-%token IDENTIFIER INT_LITERAL STRING_LITERAL SIZEOF
+%token IDENTIFIER INT_LITERAL CHAR_LITERAL SIZEOF
 %token POINTER_OP INCREMENT_OP DECREMENT_OP LEFTSHIFT_OP RIGHTSHIFT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFTSHIFT_ASSIGN RIGHTSHIFT_ASSIGN AND_ASSIGN
@@ -62,7 +62,7 @@
 %type <expressionList> enumerator_list parameter_list init_declarator_list
 %type <expressionList> identifier_list initializer_list declaration_list statement_list
 
-%type <number> INT_LITERAL // CHAR_LITERAL
+%type <integer> INT_LITERAL // CHAR_LITERAL
 // %type <numberFloat> FLOAT_LITERAL
 %type <string> IDENTIFIER assignment_operator declaration_specifiers type_specifier
 
@@ -105,7 +105,8 @@ declarator
 direct_declarator
 	: IDENTIFIER										{ $$ = new Declarator(*$1);}
 	| '(' declarator ')'								{ $$ = $2; }
-	| direct_declarator '[' constant_expression ']'		{ ;}
+	| direct_declarator '[' constant_expression ']'		{ $$ = new ArrayDeclarator($1, $3); }
+	| direct_declarator '[' ']'							{ $$ = new ArrayDeclarator($1); }
 	| direct_declarator '(' parameter_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
 	| direct_declarator '(' identifier_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
 	| direct_declarator '(' ')'							{ $$ = new FunctionDeclarator($1);}
@@ -121,6 +122,10 @@ parameter_declaration
 	: declaration_specifiers declarator				{ $$ = new Declare(*$1, $2);}
 	| declaration_specifiers abstract_declarator	{ $$ = new Declare(*$1, $2);}
 	| declaration_specifiers
+	;
+
+constant_expression
+	: conditional_expression		{ $$ = $1; }
 	;
 
 /* from external_declaration */
@@ -147,8 +152,8 @@ init_declarator
 /* from init_declarator */
 initializer
 	: assignment_expression			{ $$ = $1; }
-	| '{' initializer_list '}'		{ ; /*list to expr, need a class for creating an exprPtr to list */}
-	| '{' initializer_list ',' '}'	{ ; /* same */ }
+	| '{' initializer_list '}'		{ $$ = new ArrayInit($2); }
+	| '{' initializer_list ',' '}'	{ $$ = new ArrayInit($2); }
 	;
 
 initializer_list
@@ -158,7 +163,7 @@ initializer_list
 
 abstract_declarator
 	: pointer
-	| direct_abstract_declarator
+	| direct_abstract_declarator			{ $$ = $1; }
 	| pointer direct_abstract_declarator
 	;
 
@@ -166,8 +171,8 @@ direct_abstract_declarator
 	: '(' abstract_declarator ')'						{ $$ = $2; }
 	| '[' ']'													{ ; }
 	| '[' constant_expression ']'								{ ; }
-	| direct_abstract_declarator '[' ']'						{ ; }
-	| direct_abstract_declarator '[' constant_expression ']'	{ ; }
+	| direct_abstract_declarator '[' ']'						{ $$ = new ArrayDeclarator($1); }
+	| direct_abstract_declarator '[' constant_expression ']'	{ $$ = new ArrayDeclarator($1, $3); }
 	| '(' ')'													{ ; }
 	| '(' parameter_list ')'									{ ; }
 	| direct_abstract_declarator '(' ')'						{ ; }
@@ -235,7 +240,7 @@ jump_statement
 	: GOTO IDENTIFIER ';'
 	| CONTINUE ';'
 	| BREAK ';'
-	| RETURN ';' 			{ ; }
+	| RETURN ';' 			{ $$ = new Return(new Integer()); }
 	| RETURN expression ';' { $$ = new Return($2); }
 	;
 
@@ -243,17 +248,17 @@ jump_statement
 /* new */
 primary_expression
 	: IDENTIFIER			{ $$ = new Variable( *$1 );}
-	| INT_LITERAL			{ $$ = new Number( $1 );}
+	| INT_LITERAL			{ $$ = new Integer( $1 );}
 	// | FLOAT_LITERAL			{ ;}
-	// | CHAR_LITERAL			{ ;}
+	// | CHAR_LITERAL			{ $$ = new Integer($1);}
 	| '(' expression ')'	{ $$ = $2; }
 	;
 
 postfix_expression
 	: primary_expression									{ $$ = $1; }
-	| postfix_expression '[' expression ']'
-	| postfix_expression '(' ')'
-	| postfix_expression '(' argument_expression_list ')'
+	| postfix_expression '[' expression ']'					{ $$ = new ArrayCall($1, $3);}
+	| postfix_expression '(' ')'							{ $$ = new FunctionCall($1);}
+	| postfix_expression '(' argument_expression_list ')'	{ $$ = new FunctionCall($1, $3);}
 	| postfix_expression '.' IDENTIFIER
 	| postfix_expression POINTER_OP IDENTIFIER
 	| postfix_expression INCREMENT_OP						{ $$ = new PostIncrementOperator($1);}
@@ -374,10 +379,6 @@ assignment_operator
 expression
 	: assignment_expression						{$$ = $1; /*{ $$ = initExprList($1); }*/} 
 	| expression ',' assignment_expression		{ /* appendToExprList($1, $2); */ }
-	;
-
-constant_expression
-	: conditional_expression
 	;
 
 // Start reading from here up

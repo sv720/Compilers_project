@@ -12,6 +12,7 @@
 #include "ast/ast_iteration_statements.hpp"
 
 #include "ast/ast_function.hpp"
+#include "ast/ast_array.hpp"
 #include "ast/ast_assign_declare.hpp"
 
 #include <vector>

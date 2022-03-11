@@ -73,7 +73,7 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     IDENTIFIER = 258,              /* IDENTIFIER  */
     INT_LITERAL = 259,             /* INT_LITERAL  */
-    STRING_LITERAL = 260,          /* STRING_LITERAL  */
+    CHAR_LITERAL = 260,            /* CHAR_LITERAL  */
     SIZEOF = 261,                  /* SIZEOF  */
     POINTER_OP = 262,              /* POINTER_OP  */
     INCREMENT_OP = 263,            /* INCREMENT_OP  */
@@ -143,7 +143,7 @@ union YYSTYPE
 
   const Expression *expr;
   ExpressionList *expressionList;
-  int number;
+  int integer;
   double numberFloat;
   std::string *string;
   yytokentype token;
