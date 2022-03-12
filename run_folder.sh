@@ -29,7 +29,7 @@ make clean
 # make parser
 echo "========================================"
 echo " Force building bin/compiler (all lexer, parser..)"
-make -B bin/c_compiler
+make -B bin/c_compiler 2> /dev/null
 if [[ "$?" -ne 0 ]]; then
     echo "Build failed.";
 fi
@@ -63,11 +63,16 @@ for testcase in compiler_tests/${basefolder}/*_driver.c; do
     echo " ------------"
     echo "OUTPUT PRINT: "
     cat ${file} | bin/c_compiler 2> test/err/${basefolder}/${name}.err
-
-    if (cmp -s test/err/${basefolder}/${name}.err test/ErrorMSG.txt); then # 0 when equal
-        CHECKED=$(( ${CHECKED}+1 ));
+    errMsg=$?
+    echo $errMsg    
+    if [[ $errMsg -eq "139" ]]; then
+    	echo " ERROR - seg fault"
     else
-        echo -n " ERROR"
+    	if (cmp -s test/err/${basefolder}/${name}.err test/ErrorMSG.txt); then # 0 when equal
+		CHECKED=$(( ${CHECKED}+1 )); 
+    	else
+        	echo -n " ERROR - parsing syntax"
+    	fi
     fi
     index=$((${index}+1));
     # cat ${file} | bin/c_compiler 2> test/err/local_var/$name.err 1> test/working/local_var/$name.o
