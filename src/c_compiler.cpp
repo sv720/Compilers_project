@@ -4,7 +4,7 @@
 int main()
 {
     const Expression *ast=parseAST();
-    std::map<std::string, std::vector<int>> variables_map; // key is variable id, store memory address offset (relative to frame pointer)
+    std::map<std::string, int> variables_map; // key is variable id, store memory address offset (relative to frame pointer)
     std::map<int, bool> live_variables; //maps register numbers to bool live (1) or dead (0)
 
     std::cout<<std::endl;

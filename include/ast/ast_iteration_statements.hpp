@@ -36,7 +36,7 @@ public:
         dst<<" } ";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {}
 };
 
@@ -83,7 +83,7 @@ public:
         dst<<" } ";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {}
 };
 

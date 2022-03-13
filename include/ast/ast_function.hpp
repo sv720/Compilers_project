@@ -49,7 +49,7 @@ public:
         dst<<" )";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         left->generateMIPS(dst, variables_map, live_variables);
 
@@ -92,7 +92,7 @@ public:
         label_args->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         label_args->generateMIPS(dst, variables_map, live_variables);
     }
@@ -121,9 +121,6 @@ public:
         delete arg;
     }
 
-    ExpressionPtr getId() const
-    { return id; }
-
     ExpressionListPtr getArg() const
     { return arg; }
 
@@ -133,7 +130,7 @@ public:
         arg->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         id->generateMIPS(dst, variables_map, live_variables);
         dst<<":"<<'\n';
@@ -189,7 +186,7 @@ public:
         dst<<":)";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {}
 };
 

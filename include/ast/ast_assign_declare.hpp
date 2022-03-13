@@ -36,8 +36,10 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
-    {}
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    {
+
+    }
 };
 
 //______________________DECLARATORS__________________________
@@ -67,7 +69,7 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         right->generateMIPS(dst, variables_map, live_variables);
         left->generateMIPS(dst, variables_map, live_variables);
@@ -92,8 +94,10 @@ public:
         dst<<id;
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
+        //assigning the variable to an address
+        variables_map[id] = variables_map.size()*4+4;
         dst<<id;
     }
     
@@ -124,11 +128,14 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         if (middle == "="){
+
             right->generateMIPS(dst, variables_map, live_variables); //li or lw but we need to access register number, through a function
-            dst<<"sw $4,8($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+            dst<<"sw $4";
+            dst<<variables_map[left->getId()];
+            dst<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
             left->generateMIPS(dst, variables_map, live_variables);
         }else if (middle == "*="){
 
