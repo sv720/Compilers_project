@@ -48,35 +48,53 @@ public:
         }
         dst<<" )";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        left->generateMIPS(dst);
+
+        right->generateMIPS(dst);
+
+        dst<<"move $sp,$fp"<<'\n';
+        dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
+        dst<<"addiu $sp,$sp,8"<<'\n';
+        dst<<"jr $31"<<'\n';
+        dst<<"nop"<<'\n';
+    }
 };
 
 class Function_Definition
     : public Expression
 {
 private:
-    std::string left;
-    ExpressionPtr right;  
+    std::string type;
+    ExpressionPtr label_args;  
 public:
-    Function_Definition(const std::string &_left, ExpressionPtr _right)
-        : left(_left)
-        , right(_right)
+    Function_Definition(const std::string &_type, ExpressionPtr _label_args)
+        : type(_type)
+        , label_args(_label_args)
     {}
 
     virtual ~Function_Definition()
     {
-        delete right;
+        delete label_args;
     }
 
-    const std::string getLeft() const
-    { return left; }
+    const std::string getType() const
+    { return type; }
 
-    ExpressionPtr getRight() const
-    { return right; }
+    ExpressionPtr getLabel() const
+    { return label_args; }
 
     virtual void print(std::ostream &dst) const override
     {
-        dst<<left<<" ";
-        right->print(dst);
+        dst<<type<<" ";
+        label_args->print(dst);
+    }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        label_args->generateMIPS(dst);
     }
 };
 
@@ -87,6 +105,7 @@ private:
     ExpressionPtr id;
     ExpressionListPtr arg;
 public:
+
     FunctionDeclarator(ExpressionPtr _id)
         : id(_id)
         , arg(new ExpressionList())
@@ -112,6 +131,20 @@ public:
     {
         id->print(dst);
         arg->print(dst);
+    }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        id->generateMIPS(dst);
+        dst<<":"<<'\n';
+        dst<<"addiu $sp,$sp,-8"<<'\n';
+        dst<<"sw $fp,4($sp)"<<'\n';
+        dst<<"move $fp,$sp"<<'\n';
+        int start_reg = 4;
+        for (int i = 0; i < arg->list.size(); i++){
+            dst<<"sw $"<<start_reg+i<<","<<4*(i+2)<<"($fp)"<<'\n';
+        }
+        // storing argument parameters in stack
     }
     
 };
@@ -155,6 +188,9 @@ public:
         }
         dst<<":)";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
 };
 
 

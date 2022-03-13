@@ -26,12 +26,9 @@ public:
 
     //! Tell and expression to print itself to the given stream
     virtual void print(std::ostream &dst) const =0;
+    virtual void generateMIPS(std::ostream &dst) const =0;
 
-    //! Evaluate the tree using the given mapping of variables to numbers
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const
-    { throw std::runtime_error("Not implemented."); }
+    virtual std::string getDeclarator() const {};
 };
 
 class EmptyExpr
@@ -44,6 +41,8 @@ class EmptyExpr
     virtual ~EmptyExpr()
     {}
     virtual void print(std::ostream &dst) const override
+    {}
+    virtual void generateMIPS(std::ostream &dst) const override
     {}
 };
 

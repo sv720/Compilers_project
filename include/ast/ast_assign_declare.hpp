@@ -7,38 +7,6 @@
 #include "ast_expression.hpp"
 #include "ast_expressionlist.hpp"
 
-class Assign_Declare
-    : public Expression
-{
-private:
-    std::string left;
-    ExpressionPtr right;  
-public:
-    Assign_Declare(std::string &_left, ExpressionPtr _right)
-        : left(_left)
-        , right(_right)
-    {}
-
-    virtual ~Assign_Declare()
-    {
-        delete right;
-    }
-
-    const std::string getLeft() const
-    { return left; }
-
-    ExpressionPtr getRight() const
-    { return right; }
-
-    virtual void print(std::ostream &dst) const override
-    {
-        // std::cout << "DEBUG : printing in AssignDeclare left" <<std::endl;
-        dst<<left<<" ";
-        // std::cout << "DEBUG : printing in AssignDeclare right" <<std::endl;
-        right->print(dst);
-    }
-};
-
 class Declare
     : public Expression
 {
@@ -67,6 +35,9 @@ public:
         dst<<left<<" ";
         right->print(dst);
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
 };
 
 //______________________DECLARATORS__________________________
@@ -95,6 +66,12 @@ public:
         dst<<"=";
         right->print(dst);
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        right->generateMIPS(dst);
+        left->generateMIPS(dst);
+    }
 };
 
 class Declarator
@@ -107,10 +84,15 @@ public:
         : id(_id)
     {}
 
-    const std::string getId() const
+    std::string getDeclarator() const override
     { return id; }
 
     virtual void print(std::ostream &dst) const override
+    {
+        dst<<id;
+    }
+
+    virtual void generateMIPS(std::ostream &dst) const override
     {
         dst<<id;
     }
@@ -140,6 +122,38 @@ public:
         left->print(dst);
         dst<<" "<<middle<<" ";
         right->print(dst);
+    }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        if (middle == "="){
+            right->generateMIPS(dst); //li or lw but we need to access register number, through a function
+            dst<<"sw $4,8($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+            left->generateMIPS(dst);
+        }else if (middle == "*="){
+
+        }else if (middle == "/="){
+
+        }else if (middle == "%="){
+
+        }else if (middle == "+="){
+
+        }else if (middle == "-="){
+
+        }else if (middle == "<<="){
+
+        }else if (middle == ">>="){
+
+        }else if (middle == "&="){
+
+        }else if (middle == "^="){
+
+        }else if (middle == "!="){
+
+        }else{
+            std::cerr<< "Error: operand for assignment not accepted" << std::endl;
+        }
+        
     }
 };
 

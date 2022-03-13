@@ -44,6 +44,18 @@ public:
         right->print(dst);
         dst<<" )";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        right->generateMIPS(dst);
+        left->generateMIPS(dst);
+        dst<<getOpcode()<<" $4,";
+        // left->getRegister();
+        // dst<<",";
+        dst<<"$5,$6";
+        // right->getRegister();
+        dst<<'\n';
+    }
 };
 
 
@@ -52,21 +64,12 @@ class AddOperator
 {
 protected:
     virtual const char *getOpcode() const override
-    { return "+"; }
+    { return "addu"; }
 public:
     AddOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
     
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override 
-    {
-        // TODO-C : Run bin/eval_expr with something like 5+a, where a=10, to make sure you understand how this works
-        double vl=getLeft()->evaluate(bindings);
-        double vr=getRight()->evaluate(bindings);
-        return vl+vr;
-    }
 };
 
 class SubOperator
@@ -74,20 +77,12 @@ class SubOperator
 {
 protected:
     virtual const char *getOpcode() const override
-    { return "-"; }
+    { return "subu"; }
 public:
     SubOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
     
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override 
-    {
-        double vl=getLeft()->evaluate(bindings);
-        double vr=getRight()->evaluate(bindings);
-        return vl-vr;
-    }
 };
 
 
@@ -102,14 +97,6 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    {
-        double vl=getLeft()->evaluate(bindings);
-        double vr=getRight()->evaluate(bindings);
-        return vl*vr;
-    }
 };
 
 class DivOperator
@@ -122,15 +109,6 @@ public:
     DivOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
-
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    {
-        double vl=getLeft()->evaluate(bindings);
-        double vr=getRight()->evaluate(bindings);
-        return vl/vr;
-    }
 };
 
 class ModOperator

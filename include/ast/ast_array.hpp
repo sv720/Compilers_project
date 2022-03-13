@@ -42,6 +42,9 @@ public:
         size->print(dst);
         dst<<"]";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
     
 };
 
@@ -70,6 +73,9 @@ public:
         }
         dst<<":} ";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
     
 };
 
@@ -103,6 +109,9 @@ public:
         index->print(dst);
         dst<<"]";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
     
 };
 

@@ -35,6 +35,9 @@ public:
         statement->print(dst);
         dst<<" } ";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
 };
 
 class ForLoop
@@ -79,6 +82,9 @@ public:
         statement->print(dst);
         dst<<" } ";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
 };
 
 

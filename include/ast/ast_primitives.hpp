@@ -24,14 +24,14 @@ public:
         dst<<id;
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void generateMIPS(std::ostream &dst) const override
     {
-        // TODO-B : Run bin/eval_expr with a variable binding to make sure you understand how this works.
-        // If the binding does not exist, this will throw an error
-        return bindings.at(id);
-    }    
+        // we need to access register number, through a function so we realise how far down from fp the variable is
+        dst<<"lw $2,"; // need to set other register, depending on free
+        dst<<"8($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        // dst<<id<<'\n'; //id is variable name, here we will need register assigned to that variable, a scan function in the vector of alive/used regs
+    }
+   
 };
 
 
@@ -56,6 +56,12 @@ public:
         dst<<value;
     }
 
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        dst<<"li $2,"; // need to set other register
+        dst<<value<<'\n'; 
+    }
+
 };
 
 
@@ -77,13 +83,38 @@ public:
         dst<<"return ";
         arg->print(dst);
     }
+    
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        arg->generateMIPS(dst);
+    }
 
 };
 
 
 //________________________________________________
 
+class Root
+    : public Expression
+{
+private:
+    ExpressionListPtr arg;
+public:
+    Root(ExpressionListPtr _arg)
+        : arg(_arg)
+    {}
 
+    virtual void print(std::ostream &dst) const override
+    {
+        arg->print(dst);
+    }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        arg->generateMIPS(dst);
+    }
+
+};
 
 
 

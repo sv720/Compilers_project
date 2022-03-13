@@ -92,6 +92,13 @@ public:
             dst<<" )";
         }
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {
+        for (ExpressionPtr i : list){
+            i->generateMIPS(dst);
+        }
+    }
 };
 
 

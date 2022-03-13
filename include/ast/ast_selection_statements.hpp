@@ -34,6 +34,9 @@ public:
         statement->print(dst);
         dst<<" } ";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
 };
 
 class IfElse
@@ -67,6 +70,9 @@ public:
         elseStatement->print(dst);
         dst<<" } ";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
 };
 
 class SwitchCase
@@ -95,6 +101,9 @@ public:
         statement->print(dst);
         dst<<" } ";
     }
+
+    virtual void generateMIPS(std::ostream &dst) const override
+    {}
 };
 
 #endif

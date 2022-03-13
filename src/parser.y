@@ -80,7 +80,7 @@
 
 %%
 
-ROOT : translation_unit			{ g_root = $1; /*external_declaration*/ }
+ROOT : translation_unit			{ g_root = new Root($1); /*external_declaration*/ }
 
 translation_unit
 	: external_declaration     					{ $$ = initExprList($1); }               

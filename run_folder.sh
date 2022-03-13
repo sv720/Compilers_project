@@ -29,7 +29,7 @@ make clean
 # make parser
 echo "========================================"
 echo " Force building bin/compiler (all lexer, parser..)"
-make -B bin/c_compiler 2> /dev/null
+make -B bin/c_compiler # 2> /dev/null
 if [[ "$?" -ne 0 ]]; then
     echo "Build failed.";
 fi
