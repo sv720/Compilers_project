@@ -49,11 +49,11 @@ public:
         dst<<" )";
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        left->generateMIPS(dst);
+        left->generateMIPS(dst, variables_map, live_variables);
 
-        right->generateMIPS(dst);
+        right->generateMIPS(dst, variables_map, live_variables);
 
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
@@ -92,9 +92,9 @@ public:
         label_args->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        label_args->generateMIPS(dst);
+        label_args->generateMIPS(dst, variables_map, live_variables);
     }
 };
 
@@ -133,9 +133,9 @@ public:
         arg->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        id->generateMIPS(dst);
+        id->generateMIPS(dst, variables_map, live_variables);
         dst<<":"<<'\n';
         dst<<"addiu $sp,$sp,-8"<<'\n';
         dst<<"sw $fp,4($sp)"<<'\n';
@@ -189,7 +189,7 @@ public:
         dst<<":)";
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {}
 };
 

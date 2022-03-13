@@ -26,7 +26,7 @@ public:
 
     //! Tell and expression to print itself to the given stream
     virtual void print(std::ostream &dst) const =0;
-    virtual void generateMIPS(std::ostream &dst) const =0;
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const =0;
 
     virtual std::string getDeclarator() const {};
 };
@@ -42,7 +42,7 @@ class EmptyExpr
     {}
     virtual void print(std::ostream &dst) const override
     {}
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {}
 };
 

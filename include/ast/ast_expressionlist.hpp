@@ -93,10 +93,10 @@ public:
         }
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
         for (ExpressionPtr i : list){
-            i->generateMIPS(dst);
+            i->generateMIPS(dst, variables_map, live_variables);
         }
     }
 };

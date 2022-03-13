@@ -45,10 +45,10 @@ public:
         dst<<" )";
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        right->generateMIPS(dst);
-        left->generateMIPS(dst);
+        right->generateMIPS(dst, variables_map, live_variables);
+        left->generateMIPS(dst, variables_map, live_variables);
         dst<<getOpcode()<<" $4,";
         // left->getRegister();
         // dst<<",";

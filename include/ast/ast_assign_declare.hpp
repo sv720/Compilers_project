@@ -36,7 +36,7 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {}
 };
 
@@ -67,10 +67,10 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        right->generateMIPS(dst);
-        left->generateMIPS(dst);
+        right->generateMIPS(dst, variables_map, live_variables);
+        left->generateMIPS(dst, variables_map, live_variables);
     }
 };
 
@@ -92,7 +92,7 @@ public:
         dst<<id;
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
         dst<<id;
     }
@@ -124,12 +124,12 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, std::vector<int>> &variables_map, std::map<int, bool> &live_variables) const override
     {
         if (middle == "="){
-            right->generateMIPS(dst); //li or lw but we need to access register number, through a function
+            right->generateMIPS(dst, variables_map, live_variables); //li or lw but we need to access register number, through a function
             dst<<"sw $4,8($fp)"<<'\n'; //store output register of the calculations in  respective stack location
-            left->generateMIPS(dst);
+            left->generateMIPS(dst, variables_map, live_variables);
         }else if (middle == "*="){
 
         }else if (middle == "/="){
