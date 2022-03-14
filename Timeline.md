@@ -31,3 +31,10 @@ https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y
 - applied our current process onto the official grammar 
 - solved the problem of multi ExpressionPtr vectors converted in ExpressionListPtr for coumpound_statement
 
+### 9-13 Mar 2022:
+- resolved ast files for if,for,while, unary statements and solved some other small edge cases (dangling else probem and math associativity)
+- working multiple functions in the c file and them calling each other (ast file), and arrays
+- talked with TAs and understood the requirements needed for the output mips file and the requirements(regiter names, instructions) for the stack pointer and frame pointer
+- introduce genrateMIPS function for all classes
+- mips working for vars&function declarations, addu and subu (only int)
+

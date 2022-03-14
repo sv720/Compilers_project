@@ -19,13 +19,7 @@ class ExpressionList
    
 public:
     std::vector<ExpressionPtr> list;
-    //TODO: think about making constructors protected (was causing issue - not too sure why)
-    /*Personal reasoning:
-        My understanding of what a protected function or data is that it is private from outside of the class
-        or its children but public for itself or its children. Hence; I don't understand how we can consistently
-        use protected constuctors in parser.y when these calls are not being made from withing a child of the class
-        - for now left this classes constructors public as was causing issues when protected
-        */
+
     //CONSTRUCTORS
     ExpressionList() 
     {   //std::cout<<"DEBUG: create list CONSTRUCTOR" << std::endl;
@@ -43,14 +37,15 @@ public:
     ExpressionList(ExpressionListPtr in_list)
         : list (in_list->list)
     {
-        std::cout<<"DEBUG: add in_list ";
+        //DEBUG PRINT OUTS
+        // std::cout<<"DEBUG: add in_list ";
         // list.push_back(in_list[0]);
-        for (int i =0; i < in_list->list.size(); i++)
-        {
-            std::cout<< in_list->list[i] << std::endl;
-            list.push_back(in_list->list[i]);
-        }
-        std::cout<<"DEBUG: size of list after copying in_list = "<< list.size() << std::endl; 
+        // for (int i =0; i < in_list->list.size(); i++)
+        // {
+        //     std::cout<< in_list->list[i] << std::endl;
+        //     // list.push_back(in_list->list[i]);
+        // }
+        // std::cout<<"DEBUG: size of list after copying in_list = "<< list.size() << std::endl; 
     }
 
     // ExpressionList( in_list, ExpressionPtr new_elem)
@@ -97,24 +92,12 @@ public:
             dst<<" )";
         }
     }
-};
 
-
-class Scope
-    : public ExpressionList
-{ 
-public:
-    // Does everything the same for constructor/destructor 
-    using ExpressionList::ExpressionList;
-
-
-    virtual void print(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        dst<<"( ";
-        // for (int i = 0; i < list.size(); i++) {
-        //     list[i]->print(dst);
-        // }
-        dst<<" )";
+        for (ExpressionPtr i : list){
+            i->generateMIPS(dst, variables_map, live_variables);
+        }
     }
 };
 

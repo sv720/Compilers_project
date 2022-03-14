@@ -32,6 +32,9 @@ public:
         expr->print(dst);
         dst << " )";
     }
+
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    {}
 };
 
 class NegOperator
@@ -45,15 +48,6 @@ public:
     virtual const char *getOpcode() const override
     { return "-"; }
 
-    virtual double evaluate(
-        const std::map<std::string, double> &bindings
-    ) const override
-    {
-        // TODO-F: Implement this similar to how AddOperator was implemented.
-        double v=getExpr()->evaluate(bindings);
-        return -v;
-        throw std::runtime_error("NegOperator::evaluate is not implemented.");
-    }
 };
 
 #endif

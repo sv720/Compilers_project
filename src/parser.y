@@ -3,9 +3,10 @@
 
   #include <cassert>
   #include <iostream>
+  #include <fstream>
 
   extern const Expression *g_root; // A way of getting the AST out
-
+  extern FILE *yyin;
   // ! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
   // that Bison generated code can call them.
@@ -15,16 +16,15 @@
 
 // Represents the value associated with any kind of AST node.
 %union{
-  const Expression *expr;
-  ExprList *vectorList;
+  Expression *expr;
   ExpressionList *expressionList;
-  int number;
+  int integer;
   double numberFloat;
   std::string *string;
   yytokentype token;
 }
 
-%token IDENTIFIER INT_LITERAL STRING_LITERAL SIZEOF
+%token IDENTIFIER INT_LITERAL CHAR_LITERAL SIZEOF
 %token POINTER_OP INCREMENT_OP DECREMENT_OP LEFTSHIFT_OP RIGHTSHIFT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFTSHIFT_ASSIGN RIGHTSHIFT_ASSIGN AND_ASSIGN
@@ -56,27 +56,36 @@
 %type <expr> expression_statement selection_statement iteration_statement
 %type <expr> jump_statement external_declaration function_definition
 
-%type <expressionList> compound_statement long_coumpound_statement
+%type <expressionList> compound_statement
 
 %type <expressionList> translation_unit struct_declaration_list argument_expression_list
 %type <expressionList> specifier_qualifier_list struct_declarator_list
 %type <expressionList> enumerator_list parameter_list init_declarator_list
 %type <expressionList> identifier_list initializer_list declaration_list statement_list
 
-%type <number> INT_LITERAL // CHAR_LITERAL
+%type <integer> INT_LITERAL // CHAR_LITERAL
 // %type <numberFloat> FLOAT_LITERAL
 %type <string> IDENTIFIER assignment_operator declaration_specifiers type_specifier
+
+// ASSOCIATIVITY
+%left '+' '-'
+%left '*' '/'
+%nonassoc uminu
+// %nonassoc %left or %right
+
+%nonassoc NOELSE
+%nonassoc ELSE
 
 
 %start ROOT
 
 %%
 
-ROOT : external_declaration			{ g_root = $1; /*translation_unit*/ }
+ROOT : translation_unit			{ g_root = new Root($1); /*external_declaration*/ }
 
 translation_unit
 	: external_declaration     					{ $$ = initExprList($1); }               
-	| translation_unit external_declaration   	{ $$ = appendToExprList($1, $2); }
+	| translation_unit external_declaration   	{ appendToExprList($1, $2); }
 	;
 
 external_declaration
@@ -86,10 +95,6 @@ external_declaration
 
 function_definition
 	: declaration_specifiers declarator compound_statement { $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
-	// : declaration_specifiers declarator '{' statement_list '}'		{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
-	// | declaration_specifiers declarator '{' declaration_list '}'	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $4); }
-	// | declaration_specifiers declarator '{' declaration_list statement_list '}'	{;}
-	// | declaration_specifiers declarator '{' '}'						{$$ = new Full_Function(new Function_Definition(*$1, $2));}
 	| declarator 
 	;
 
@@ -101,10 +106,11 @@ declarator
 direct_declarator
 	: IDENTIFIER										{ $$ = new Declarator(*$1);}
 	| '(' declarator ')'								{ $$ = $2; }
-	| direct_declarator '[' constant_expression ']'		{ ;}
-	| direct_declarator '(' parameter_list ')'			{ ;}
-	| direct_declarator '(' identifier_list ')'			{ ;}
-	| direct_declarator '(' ')'							{ $$ = new FunctionDeclarator($1);;}
+	| direct_declarator '[' constant_expression ']'		{ $$ = new ArrayDeclarator($1, $3); }
+	| direct_declarator '[' ']'							{ $$ = new ArrayDeclarator($1); }
+	| direct_declarator '(' parameter_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
+	| direct_declarator '(' identifier_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
+	| direct_declarator '(' ')'							{ $$ = new FunctionDeclarator($1);}
 	;
 
 /* from direct_declarator */
@@ -117,6 +123,10 @@ parameter_declaration
 	: declaration_specifiers declarator				{ $$ = new Declare(*$1, $2);}
 	| declaration_specifiers abstract_declarator	{ $$ = new Declare(*$1, $2);}
 	| declaration_specifiers
+	;
+
+constant_expression
+	: conditional_expression		{ $$ = $1; }
 	;
 
 /* from external_declaration */
@@ -143,8 +153,8 @@ init_declarator
 /* from init_declarator */
 initializer
 	: assignment_expression			{ $$ = $1; }
-	| '{' initializer_list '}'		{ ; /*list to expr, need a class for creating an exprPtr to list */}
-	| '{' initializer_list ',' '}'	{ ; /* same */ }
+	| '{' initializer_list '}'		{ $$ = new ArrayInit($2); }
+	| '{' initializer_list ',' '}'	{ $$ = new ArrayInit($2); }
 	;
 
 initializer_list
@@ -154,7 +164,7 @@ initializer_list
 
 abstract_declarator
 	: pointer
-	| direct_abstract_declarator
+	| direct_abstract_declarator			{ $$ = $1; }
 	| pointer direct_abstract_declarator
 	;
 
@@ -162,8 +172,8 @@ direct_abstract_declarator
 	: '(' abstract_declarator ')'						{ $$ = $2; }
 	| '[' ']'													{ ; }
 	| '[' constant_expression ']'								{ ; }
-	| direct_abstract_declarator '[' ']'						{ ; }
-	| direct_abstract_declarator '[' constant_expression ']'	{ ; }
+	| direct_abstract_declarator '[' ']'						{ $$ = new ArrayDeclarator($1); }
+	| direct_abstract_declarator '[' constant_expression ']'	{ $$ = new ArrayDeclarator($1, $3); }
 	| '(' ')'													{ ; }
 	| '(' parameter_list ')'									{ ; }
 	| direct_abstract_declarator '(' ')'						{ ; }
@@ -199,11 +209,7 @@ statement
 	| selection_statement	{ $$ = $1; }
 	| iteration_statement	{ $$ = $1; }
 	| jump_statement		{ $$ = $1; }
-	| compound_statement	{ $$ = $1; /*at the moment compound_statement is avoided so we can add its versions below*/} 
-	// | '{' '}'										{ ; /*same problem converting an ExprList into Expression*/}
-	// | '{' statement_list '}'						{ $$ = new Scope($2);}
-	// | '{' declaration_list '}'						{ $$ = new Scope($2);}
-	// | '{' declaration_list statement_list '}'		{ ;}
+	| compound_statement	{ $$ = $1; } 
 	;
 
 /* from statement */
@@ -214,28 +220,28 @@ labeled_statement
 	;
 /* from statement */
 expression_statement
-	: ';'
-	| expression ';'
+	: ';'				{ $$ = new EmptyExpr(); }
+	| expression ';'	{ $$ = $1; }
 	;
 /* from statement */
 selection_statement
-	: IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
-	| SWITCH '(' expression ')' statement
+	: IF '(' expression ')' statement %prec NOELSE		{ $$ = new If($3, $5); }
+	| IF '(' expression ')' statement ELSE statement	{ $$ = new IfElse($3, $5, $7); /* dangling else problem */ }
+	| SWITCH '(' expression ')' statement				{ $$ = new SwitchCase($3, $5); }
 	;
 /* from statement */
 iteration_statement
-	: WHILE '(' expression ')' statement
+	: WHILE '(' expression ')' statement											{ $$ = new WhileLoop($3, $5); }
 	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
+	| FOR '(' expression_statement expression_statement ')' statement				{ $$ = new ForLoop($3, $4, new EmptyExpr(), $6); }
+	| FOR '(' expression_statement expression_statement expression ')' statement	{ $$ = new ForLoop($3, $4, $5, $7); /* interior initialisation eg. int x=0, breakes the parser*/ }
 	;
 /* from statement */
 jump_statement
 	: GOTO IDENTIFIER ';'
 	| CONTINUE ';'
 	| BREAK ';'
-	| RETURN ';' 			{ ; }
+	| RETURN ';' 			{ $$ = new Return(new Integer()); }
 	| RETURN expression ';' { $$ = new Return($2); }
 	;
 
@@ -243,21 +249,21 @@ jump_statement
 /* new */
 primary_expression
 	: IDENTIFIER			{ $$ = new Variable( *$1 );}
-	| INT_LITERAL			{ $$ = new Number( $1 );}
+	| INT_LITERAL			{ $$ = new Integer( $1 );}
 	// | FLOAT_LITERAL			{ ;}
-	// | CHAR_LITERAL			{ ;}
+	// | CHAR_LITERAL			{ $$ = new Integer($1);}
 	| '(' expression ')'	{ $$ = $2; }
 	;
 
 postfix_expression
 	: primary_expression									{ $$ = $1; }
-	| postfix_expression '[' expression ']'
-	| postfix_expression '(' ')'
-	| postfix_expression '(' argument_expression_list ')'
+	| postfix_expression '[' expression ']'					{ $$ = new ArrayCall($1, $3);}
+	| postfix_expression '(' ')'							{ $$ = new FunctionCall($1);}
+	| postfix_expression '(' argument_expression_list ')'	{ $$ = new FunctionCall($1, $3);}
 	| postfix_expression '.' IDENTIFIER
 	| postfix_expression POINTER_OP IDENTIFIER
-	| postfix_expression INCREMENT_OP
-	| postfix_expression DECREMENT_OP
+	| postfix_expression INCREMENT_OP						{ $$ = new PostIncrementOperator($1);}
+	| postfix_expression DECREMENT_OP						{ $$ = new PostDecrementOperator($1);}
 	;
 
 argument_expression_list
@@ -267,21 +273,21 @@ argument_expression_list
 
 unary_expression
 	: postfix_expression				{ $$ = $1; }
-	| INCREMENT_OP unary_expression
-	| DECREMENT_OP unary_expression
-	| unary_operator cast_expression
+	| INCREMENT_OP unary_expression		{ $$ = new PreIncrementOperator($2);}
+	| DECREMENT_OP unary_expression		{ $$ = new PreDecrementOperator($2);}
+	| unary_operator cast_expression	{ /* HOW */ }
 	| '-' unary_expression				{ $$ = new NegOperator($2); }
 	| SIZEOF unary_expression
 	| SIZEOF '(' type_name ')'
 	;
 
 unary_operator
-	: '&'
-	| '*'
-	| '+'
-	| '-'
+	: '&'		{ /* pointer address */ }
+	| '*'		{ /* pointer value */ }
+	| '+'		{ /* same as $2 */ }
+	| '-'		{ /* neg */ }
 	| '~'
-	| '!'
+	| '!'		{ /* logic NOT */ }
 	;
 
 cast_expression
@@ -293,7 +299,7 @@ multiplicative_expression
 	: cast_expression									{ $$ = $1; }
 	| multiplicative_expression '*' cast_expression		{ $$ = new MulOperator($1, $3); }
 	| multiplicative_expression '/' cast_expression		{ $$ = new DivOperator($1, $3); }
-	| multiplicative_expression '%' cast_expression		{;}
+	| multiplicative_expression '%' cast_expression		{ $$ = new ModOperator($1, $3);}
 	;
 
 additive_expression
@@ -304,47 +310,47 @@ additive_expression
 
 shift_expression
 	: additive_expression									{ $$ = $1; }
-	| shift_expression LEFTSHIFT_OP additive_expression
-	| shift_expression RIGHTSHIFT_OP additive_expression
+	| shift_expression LEFTSHIFT_OP additive_expression		{ $$ = new LeftShiftOperator($1, $3); }
+	| shift_expression RIGHTSHIFT_OP additive_expression	{ $$ = new RightShiftOperator($1, $3); }
 	;
 
 relational_expression
 	: shift_expression									{ $$ = $1; }
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	| relational_expression '<' shift_expression		{ $$ = new SmallerOperator($1, $3); }
+	| relational_expression '>' shift_expression		{ $$ = new GreaterOperator($1, $3); }
+	| relational_expression LE_OP shift_expression		{ $$ = new LEOperator($1, $3); }
+	| relational_expression GE_OP shift_expression		{ $$ = new GEOperator($1, $3); }
 	;
 
 equality_expression
 	: relational_expression								{ $$ = $1; }
-	| equality_expression EQ_OP relational_expression
-	| equality_expression NE_OP relational_expression
+	| equality_expression EQ_OP relational_expression	{ $$ = new EQOperator($1, $3); }
+	| equality_expression NE_OP relational_expression	{ $$ = new NEOperator($1, $3); }
 	;
 
 and_expression
 	: equality_expression						{ $$ = $1; }
-	| and_expression '&' equality_expression
+	| and_expression '&' equality_expression	{ $$ = new ANDOperator($1, $3); }
 	;
 
 exclusive_or_expression
 	: and_expression								{ $$ = $1; }
-	| exclusive_or_expression '^' and_expression
+	| exclusive_or_expression '^' and_expression	{ $$ = new XOROperator($1, $3); }
 	;
 
 inclusive_or_expression
 	: exclusive_or_expression								{ $$ = $1; }
-	| inclusive_or_expression '|' exclusive_or_expression
+	| inclusive_or_expression '|' exclusive_or_expression	{ $$ = new OROperator($1, $3); }
 	;
 
 logical_and_expression
 	: inclusive_or_expression									{ $$ = $1; }
-	| logical_and_expression AND_OP inclusive_or_expression
+	| logical_and_expression AND_OP inclusive_or_expression		{ $$ = new LogicalANDOperator($1, $3); }
 	;
 
 logical_or_expression
 	: logical_and_expression								{ $$ = $1; }
-	| logical_or_expression OR_OP logical_and_expression
+	| logical_or_expression OR_OP logical_and_expression	{ $$ = new LogicalOROperator($1, $3); }
 	;
 
 conditional_expression
@@ -376,11 +382,7 @@ expression
 	| expression ',' assignment_expression		{ /* appendToExprList($1, $2); */ }
 	;
 
-constant_expression
-	: conditional_expression
-	;
-
-//Start reading from hear up
+// Start reading from here up
 
 
 
@@ -406,7 +408,7 @@ struct_or_union_specifier
 
 struct_or_union
 	: STRUCT
-	| UNION
+	| UNION		{ /* NOT NEEDED */ }
 	;
 
 struct_declaration_list
@@ -491,8 +493,14 @@ type_name
 
 const Expression *g_root; // Definition of variable (to match declaration earlier)
 
-const Expression *parseAST()
+const Expression *parseAST(std::string input_file)
 {
+  yyin = fopen(input_file.c_str(), "r");
+  if(yyin == NULL){
+    std::cerr << "ERROR: Couldn't open input file: " << input_file << std::endl;
+    exit(1);
+  }
+
   g_root=0;
   yyparse();
   return g_root;

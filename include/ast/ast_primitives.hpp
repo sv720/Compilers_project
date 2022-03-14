@@ -16,7 +16,7 @@ public:
         : id(_id)
     {}
 
-    const std::string getId() const
+    virtual std::string getId() const override
     { return id; }
 
     virtual void print(std::ostream &dst) const override
@@ -24,63 +24,27 @@ public:
         dst<<id;
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        // TODO-B : Run bin/eval_expr with a variable binding to make sure you understand how this works.
-        // If the binding does not exist, this will throw an error
-        return bindings.at(id);
-    }    
-};
-
-class Declarator
-    : public Expression
-{
-private:
-    std::string id;
-public:
-    Declarator(const std::string &_id)
-        : id(_id)
-    {}
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void print(std::ostream &dst) const override
-    {
-        dst<<id;
+        // we need to access register number, through a function so we realise how far down from fp the variable is
+        dst<<"lw $2,"; // need to set other register, depending on free
+        dst<<"8($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        // dst<<id<<'\n'; //id is variable name, here we will need register assigned to that variable, a scan function in the vector of alive/used regs
     }
-    
+   
 };
 
-class FunctionDeclarator
-    : public Expression
-{
-private:
-    ExpressionPtr id;
-public:
-    FunctionDeclarator(ExpressionPtr _id)
-        : id(_id)
-    {}
 
-    ExpressionPtr getId() const
-    { return id; }
-
-    virtual void print(std::ostream &dst) const override
-    {
-        id->print(dst);
-    }
-    
-};
-
-class Number
+class Integer
     : public Expression
 {
 private:
     int value;
 public:
-    Number(int _value)
+    Integer()
+    {}
+
+    Integer(int _value)
         : value(_value)
     {}
 
@@ -92,103 +56,14 @@ public:
         dst<<value;
     }
 
-};
-
-
-//FUNCTION______________________________________
-typedef std::vector<ExpressionPtr> ExprList;
-typedef ExprList *ExprListPtr;
-
-class Full_Function
-    : public Expression
-{
-private:
-    ExpressionPtr left;
-    ExpressionListPtr right;  
-public:
-    Full_Function(ExpressionPtr _left, ExpressionListPtr _right)
-        : left(_left)
-        , right(_right)
-    {}
-
-    Full_Function(ExpressionPtr _left)
-        : left(_left)
-    {}
-
-    ExpressionPtr getLeft() const
-    { return left; }
-
-    ExpressionListPtr getRight() const
-    { return right; }
-    //no member functions yet
-
-    virtual void print(std::ostream &dst) const override
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        dst<<"( ";
-        left->print(dst);
-        dst<<" ";
-        // right->print(dst);
-        for (ExpressionPtr e : right->list) {
-            e->print(dst);
-        }
-        dst<<" )";
+        dst<<"li $2,"; // need to set other register
+        dst<<value<<'\n'; 
     }
+
 };
 
-class Function_Definition
-    : public Expression
-{
-private:
-    std::string left;
-    ExpressionPtr right;  
-public:
-    Function_Definition(const std::string &_left, ExpressionPtr _right)
-        : left(_left)
-        , right(_right)
-    {}
-
-    const std::string getLeft() const
-    { return left; }
-
-    ExpressionPtr getRight() const
-    { return right; }
-    //no member functions yet
-
-    virtual void print(std::ostream &dst) const override
-    {
-        dst<<left<<" ";
-        right->print(dst);
-    }
-};
-
-
-// class Scope
-//     : public Expression
-// {
-// private:
-//     ExprListPtr right;  
-// public:
-//     Scope()
-        
-//     {}
-
-//     Scope(ExprListPtr _right)
-//         : right(_right)
-//     {}
-
-//     ExprListPtr getRight() const
-//     { return right; }
-//     //no member functions yet
-
-//     virtual void print(std::ostream &dst) const override
-//     {
-//         dst<<"( ";
-//         for (int i = 0; i < right->size(); i++) {
-//             (*right)[i]->print(dst);
-//         }
-//         dst<<" )";
-//     }
-// };
 
 //________________________________________________
 
@@ -202,126 +77,44 @@ public:
     Return(ExpressionPtr _arg)
         : arg(_arg)
     {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"return ";
+        arg->print(dst);
+    }
     
-    virtual const char *getFunction() const
-    { return "return"; }
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    {
+        arg->generateMIPS(dst, variables_map, live_variables);
+    }
+
+};
+
+
+//________________________________________________
+
+class Root
+    : public Expression
+{
+private:
+    ExpressionListPtr arg;
+public:
+    Root(ExpressionListPtr _arg)
+        : arg(_arg)
+    {}
 
     virtual void print(std::ostream &dst) const override
     {
         arg->print(dst);
     }
 
-};
-
-
-//________________________________________________
-
-class Assign_Declare
-    : public Expression
-{
-private:
-    std::string left;
-    ExpressionPtr right;  
-public:
-    Assign_Declare(std::string &_left, ExpressionPtr _right)
-        : left(_left)
-        , right(_right)
-    {}
-
-    virtual ~Assign_Declare()
+    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
-        delete right;
+        dst<<".global f"<<'\n';
+        arg->generateMIPS(dst, variables_map, live_variables);
     }
-    //no member functions yet
-    const std::string getLeft() const
-    { return left; }
 
-    ExpressionPtr getRight() const
-    { return right; }
-
-    virtual void print(std::ostream &dst) const override
-    {
-        // std::cout << "DEBUG : printing in AssignDeclare left" <<std::endl;
-        dst<<left<<" ";
-        // std::cout << "DEBUG : printing in AssignDeclare right" <<std::endl;
-        right->print(dst);
-    }
-};
-
-class Declare
-    : public Expression
-{
-private:
-    std::string left;
-    ExpressionPtr right;  
-public:
-    Declare(const std::string _left, ExpressionPtr _right)
-        : left(_left)
-        , right(_right)
-    {}
-
-    virtual ~Declare()
-    {
-        delete right;
-    }
-    //no member functions yet
-    const std::string getLeft() const
-    { return left; }
-
-    ExpressionPtr getRight() const
-    { return right; }
-
-    virtual void print(std::ostream &dst) const override
-    {
-        dst<<left<<" ";
-        right->print(dst);
-    }
-};
-
-//________________________________________________
-
-class InitDeclarator
-    : public Expression
-{
-private:
-    ExpressionPtr left;
-    ExpressionPtr right;  
-
-public:
-    InitDeclarator(ExpressionPtr _left, ExpressionPtr _right)
-        : left(_left)
-        , right(_right)
-    {}
-    //no member functions yet
-    virtual void print(std::ostream &dst) const override
-    {   
-        left->print(dst);
-        dst<<"=";
-        right->print(dst);
-    }
-};
-
-class AssignOperator
-    : public Expression
-{
-private:
-    ExpressionPtr left;
-    std::string middle;
-    ExpressionPtr right;  
-
-public:
-    AssignOperator(ExpressionPtr _left, std::string _middle, ExpressionPtr _right)
-        : left(_left)
-        , middle(_middle)
-        , right(_right)
-    {}
-    //no member functions yet
-    virtual void print(std::ostream &dst) const override
-    {   
-        left->print(dst);
-        dst<<" "<<middle<<" ";
-        right->print(dst);
-    }
 };
 
 

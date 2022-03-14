@@ -5,7 +5,7 @@ CPPFLAGS += -I include
 
 all : bin/c_compiler
 
-src/parser.tab.cpp src/parser.tab.hpp : src/parser.y
+src/parser.tab.cpp : src/parser.y
 	bison -v -d src/parser.y -o src/parser.tab.cpp
 
 src/lexer.yy.cpp : src/lexer.flex src/parser.tab.hpp
@@ -22,5 +22,6 @@ clean :
 	rm bin/*
 	rm src/*.tab.cpp
 	rm src/*.yy.cpp
-	rm -r test/working/
 	rm -r test/err/
+	rm -r test/working/
+	rm -r test/objects/

@@ -7,8 +7,12 @@ extern "C" int fileno(FILE *stream);
 #include "parser.tab.hpp"
 %}
 
-DIGIT         [0-9]
-LETTER			  [a-zA-Z_]
+DIGIT			  [0-9]
+LETTER			[a-zA-Z_]
+H			      [a-fA-F0-9]
+E			      [Ee][+-]?(D)+
+FS			    (f|F|l|L)
+IS			    (u|U|l|L)*
 
 %%
 
@@ -62,12 +66,33 @@ LETTER			  [a-zA-Z_]
 
 "return"        { return(RETURN); }
 
-"int"			      { return INT; }
-"void"			    { return VOID; }
+"for"			      { return(FOR); }
+"while"			    { return(WHILE); }
+"if"			      { return(IF); }
+"else"			    { return(ELSE); }
+"switch"		    { return(SWITCH); }
+"case"			    { return(CASE); }
+"break"			    { return(BREAK); }
+"continue"		  { return(CONTINUE); }
+"default"		    { return(DEFAULT); }
+"do"			      { return(DO); }
 
-[0-9]+                        { yylval.number=strtod(yytext, 0); return INT_LITERAL; }
+"int"			      { return(INT); }
+"void"			    { return(VOID); }
+"double"		    { return(DOUBLE); }
+"char"			    { return(CHAR); }
+"unsigned"		  { return(UNSIGNED); }
+"float"			    { return(FLOAT); }
+"enum"			    { return(ENUM); }
+
+"sizeof"		    { return(SIZEOF); }
+"struct"		    { return(STRUCT); }
+"typedef"		    { return(TYPEDEF); }
+
+
+
+[0-9]+                        { yylval.integer=strtod(yytext, 0); return INT_LITERAL; }
 {LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return IDENTIFIER; }
-
 
 
 [ \t\r\n]+		{;}
@@ -77,6 +102,7 @@ LETTER			  [a-zA-Z_]
 
 void yyerror (char const *s)
 {
+  // '(\\.|[^'\\])'          	    {yylval.number=strtod(yytext, 0); return(CHAR_LITERAL); }
   fprintf (stderr, "Parse error : %s\n", s);
   exit(1);
 }
