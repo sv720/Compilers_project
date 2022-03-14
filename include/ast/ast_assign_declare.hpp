@@ -38,7 +38,10 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
-
+        // right->generateMIPS(dst, variables_map, live_variables); //ONLY used for variable declaration
+        dst<<"DEBUG : adding to map for "<<right->getId() << '\n';
+        variables_map[right->getId()] = variables_map.size()*4+4;
+        dst<<"DEBUG : added to map "<< variables_map[right->getId()];
     }
 };
 
@@ -86,19 +89,22 @@ public:
         : id(_id)
     {}
 
-    std::string getDeclarator() const override
+    std::string getId() const override
     { return id; }
 
     virtual void print(std::ostream &dst) const override
     {
+        // dst<< "DEBUG DECALARATOR ";
         dst<<id;
     }
 
     virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         //assigning the variable to an address
-        variables_map[id] = variables_map.size()*4+4;
-        dst<<id;
+        dst<<"DEBUG : function "<<id << '\n';
+        // variables_map[id] = variables_map.size()*4+4;
+        // dst<<"DEBUG : added to map "<< variables_map[id];
+        dst<<id; //prints out labels (when we have a function definition) and gives variable name
     }
     
 };
@@ -131,8 +137,8 @@ public:
     virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         if (middle == "="){
-
             right->generateMIPS(dst, variables_map, live_variables); //li or lw but we need to access register number, through a function
+            dst<<" DEBUG : in variables_map for " << left->getId() << " " << variables_map[left->getId()] << '\n';
             dst<<"sw $4";
             dst<<variables_map[left->getId()];
             dst<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location

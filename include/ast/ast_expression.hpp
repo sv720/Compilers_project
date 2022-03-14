@@ -28,7 +28,7 @@ public:
     virtual void print(std::ostream &dst) const =0;
     virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const =0;
 
-    virtual std::string getDeclarator() const {};
+    // virtual std::string getDeclarator() const {};
 
     virtual std::string getId() const //TODO: check if this is desirable
     {
