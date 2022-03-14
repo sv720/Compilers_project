@@ -43,6 +43,7 @@ echo "Compiling OUTPUTS..."
 basefolder=$(basename $1)
 mkdir -p test/working/${basefolder}/
 mkdir -p test/err/${basefolder}/
+mkdir -p test/objects/${basefolder}/
 
 # -------------------------
 index=1
@@ -62,7 +63,9 @@ for testcase in compiler_tests/${basefolder}/*_driver.c; do
     echo " "
     echo " ------------"
     echo "OUTPUT PRINT: "
-    cat ${file} | bin/c_compiler 2> test/err/${basefolder}/${name}.err
+    bin/c_compiler -S ${file} -o test/working/${basefolder}/${name}.s 2> test/err/${basefolder}/${name}.err
+    cat test/working/${basefolder}/${name}.s
+    # cat ${file} | bin/c_compiler 2> test/err/${basefolder}/${name}.err
     errMsg=$?
     echo $errMsg    
     if [[ $errMsg -eq "139" ]]; then
@@ -83,14 +86,40 @@ for testcase in compiler_tests/${basefolder}/*_driver.c; do
     # bin/c_compiler -S ${file} -o test/working/local_var/${name}.s
                         # $2          $4
 
-    # MIPS conversion 
-    # mips-linux-gnu-gcc -mfp32 -o test/working/local_var/$n.o \
-    #                             -c test/working/local_var/$n.s
     echo " "
 done
 
 echo "########################################"
-echo " Nb of files COMPILED succesfully: ${CHECKED} out of $((${index}-1))"
+echo " Nb of files PARSING succesfully: ${CHECKED} out of $((${index}-1))"
+echo " "
+
+index=1
+PASSED=0
+for testcase in test/working/${basefolder}/*; do
+    base=$(basename ${testcase});
+    name=${base%.s}    
+    
+    echo "=============MIPS-LINUX-GNU-GCC on ${name} (${index})=============="
+    # MIPS conversion 
+    mips-linux-gnu-gcc -mfp32 -o test/objects/${basefolder}/${name}.o -c test/working/${basefolder}/${name}.s
+
+    mips-linux-gnu-gcc -mfp32 -static -o test/objects/${basefolder}/${name} test/objects/${basefolder}/${name}.o compiler_tests/${basefolder}/${name}_driver.c
+    qemu-mips test/objects/${basefolder}/${name}
+
+    errMsg=$?
+    echo "QEMU-MIPS: " $errMsg    
+    if [[ $errMsg -eq "0" ]]; then
+    	echo " QEMU-MIPS: TESTCASE + driver compiler succesfully"
+        PASSED=$(( ${PASSED}+1 )); 
+    else
+        echo " QEMU-MIPS: ERROR"
+    fi
+    echo " "
+    index=$((${index}+1));
+done
+
+echo "########################################"
+echo " Nb of files COMPILED succesfully: ${PASSED} out of $((${index}-1))"
 echo ""
 
 

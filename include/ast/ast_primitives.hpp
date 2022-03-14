@@ -111,6 +111,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
+        dst<<".global f"<<'\n';
         arg->generateMIPS(dst, variables_map, live_variables);
     }
 

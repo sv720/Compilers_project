@@ -39,9 +39,9 @@ public:
     virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         // right->generateMIPS(dst, variables_map, live_variables); //ONLY used for variable declaration
-        dst<<"DEBUG : adding to map for "<<right->getId() << '\n';
+        // dst<<"DEBUG : adding to map for "<<right->getId() << '\n';
         variables_map[right->getId()] = variables_map.size()*4+4;
-        dst<<"DEBUG : added to map "<< variables_map[right->getId()];
+        // dst<<"DEBUG : added to map "<< variables_map[right->getId()];
     }
 };
 
@@ -101,7 +101,7 @@ public:
     virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
     {
         //assigning the variable to an address
-        dst<<"DEBUG : function "<<id << '\n';
+        // dst<<"DEBUG : function "<<id << '\n';
         // variables_map[id] = variables_map.size()*4+4;
         // dst<<"DEBUG : added to map "<< variables_map[id];
         dst<<id; //prints out labels (when we have a function definition) and gives variable name
@@ -138,10 +138,10 @@ public:
     {
         if (middle == "="){
             right->generateMIPS(dst, variables_map, live_variables); //li or lw but we need to access register number, through a function
-            dst<<" DEBUG : in variables_map for " << left->getId() << " " << variables_map[left->getId()] << '\n';
-            dst<<"sw $4";
+            // dst<<" DEBUG : in variables_map for " << left->getId() << " " << variables_map[left->getId()] << '\n';
+            dst<<"sw $";
             dst<<variables_map[left->getId()];
-            dst<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+            dst<<",8($fp)"<<'\n'; //store output register of the calculations in  respective stack location
             left->generateMIPS(dst, variables_map, live_variables);
         }else if (middle == "*="){
 

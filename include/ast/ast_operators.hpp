@@ -27,6 +27,7 @@ public:
     }
 
     virtual const char *getOpcode() const =0;
+    virtual const char *getOpInstruction() const =0;
 
     ExpressionPtr getLeft() const
     { return left; }
@@ -49,12 +50,9 @@ public:
     {
         right->generateMIPS(dst, variables_map, live_variables);
         left->generateMIPS(dst, variables_map, live_variables);
-        dst<<getOpcode()<<" $4,";
-        // left->getRegister();
-        // dst<<",";
-        dst<<"$5,$6";
-        // right->getRegister();
-        dst<<'\n';
+        dst<<getOpInstruction()<<" $4,"; //destination register
+        dst<<"$"<<variables_map[left->getId()]<<",";
+        dst<<"$"<<variables_map[right->getId()]<<"\n";
     }
 };
 
@@ -64,6 +62,8 @@ class AddOperator
 {
 protected:
     virtual const char *getOpcode() const override
+    { return "+"; }
+    virtual const char *getOpInstruction() const override
     { return "addu"; }
 public:
     AddOperator(ExpressionPtr _left, ExpressionPtr _right)
@@ -77,7 +77,9 @@ class SubOperator
 {
 protected:
     virtual const char *getOpcode() const override
-    { return "subu"; }
+    { return "-"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     SubOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -92,6 +94,8 @@ class MulOperator
 protected:
     virtual const char *getOpcode() const override
     { return "*"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     MulOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -105,6 +109,8 @@ class DivOperator
 protected:
     virtual const char *getOpcode() const override
     { return "/"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     DivOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -117,6 +123,8 @@ class ModOperator
 protected:
     virtual const char *getOpcode() const override
     { return "%"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     ModOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -131,6 +139,8 @@ class LeftShiftOperator
 protected:
     virtual const char *getOpcode() const override
     { return "<<"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     LeftShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -144,6 +154,8 @@ class RightShiftOperator
 protected:
     virtual const char *getOpcode() const override
     { return ">>"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     RightShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -159,6 +171,8 @@ class SmallerOperator
 protected:
     virtual const char *getOpcode() const override
     { return "<"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     SmallerOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -172,6 +186,8 @@ class GreaterOperator
 protected:
     virtual const char *getOpcode() const override
     { return ">"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     GreaterOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -185,6 +201,8 @@ class LEOperator
 protected:
     virtual const char *getOpcode() const override
     { return "<="; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     LEOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -198,6 +216,8 @@ class GEOperator
 protected:
     virtual const char *getOpcode() const override
     { return ">="; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     GEOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -211,6 +231,8 @@ class EQOperator
 protected:
     virtual const char *getOpcode() const override
     { return "=="; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     EQOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -224,6 +246,8 @@ class NEOperator
 protected:
     virtual const char *getOpcode() const override
     { return "!="; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     NEOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -239,6 +263,8 @@ class ANDOperator
 protected:
     virtual const char *getOpcode() const override
     { return "&"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     ANDOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -252,6 +278,8 @@ class XOROperator
 protected:
     virtual const char *getOpcode() const override
     { return "^"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     XOROperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -265,6 +293,8 @@ class OROperator
 protected:
     virtual const char *getOpcode() const override
     { return "|"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     OROperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -280,6 +310,8 @@ class LogicalANDOperator
 protected:
     virtual const char *getOpcode() const override
     { return "&&"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     LogicalANDOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -293,6 +325,8 @@ class LogicalOROperator
 protected:
     virtual const char *getOpcode() const override
     { return "||"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     LogicalOROperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -308,6 +342,8 @@ class PostIncrementOperator
 protected:
     virtual const char *getOpcode() const override
     { return "post++"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     PostIncrementOperator(ExpressionPtr _left)
         : Operator(_left)
@@ -329,6 +365,8 @@ class PostDecrementOperator
 protected:
     virtual const char *getOpcode() const override
     { return "post--"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     PostDecrementOperator(ExpressionPtr _left)
         : Operator(_left)
@@ -350,6 +388,8 @@ class PreIncrementOperator
 protected:
     virtual const char *getOpcode() const override
     { return "pre++"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     PreIncrementOperator(ExpressionPtr _left)
         : Operator(_left)
@@ -371,6 +411,8 @@ class PreDecrementOperator
 protected:
     virtual const char *getOpcode() const override
     { return "pre--"; }
+    virtual const char *getOpInstruction() const override
+    { return "addu"; }
 public:
     PreDecrementOperator(ExpressionPtr _left)
         : Operator(_left)

@@ -17,7 +17,7 @@
 
 #include <vector>
 
-extern const Expression *parseAST();
+extern const Expression *parseAST(std::string input_file);
 
 
 inline ExpressionListPtr initExprList(ExpressionPtr first_elem){

@@ -3,9 +3,10 @@
 
   #include <cassert>
   #include <iostream>
+  #include <fstream>
 
   extern const Expression *g_root; // A way of getting the AST out
-
+  extern FILE *yyin;
   // ! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
   // that Bison generated code can call them.
@@ -15,7 +16,7 @@
 
 // Represents the value associated with any kind of AST node.
 %union{
-  const Expression *expr;
+  Expression *expr;
   ExpressionList *expressionList;
   int integer;
   double numberFloat;
@@ -492,8 +493,14 @@ type_name
 
 const Expression *g_root; // Definition of variable (to match declaration earlier)
 
-const Expression *parseAST()
+const Expression *parseAST(std::string input_file)
 {
+  yyin = fopen(input_file.c_str(), "r");
+  if(yyin == NULL){
+    std::cerr << "ERROR: Couldn't open input file: " << input_file << std::endl;
+    exit(1);
+  }
+
   g_root=0;
   yyparse();
   return g_root;
