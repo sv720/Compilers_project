@@ -12,8 +12,7 @@ int main(int argc, char *argv[])
     std::cout<< argv[2] << " <-> " << argv[4]<<std::endl;
 
     const Expression *ast=parseAST(argv[2]);
-    std::map<std::string, int> variables_map; // key is variable id, store memory address offset (relative to frame pointer)
-    std::map<int, bool> live_variables; //maps register numbers to bool live (1) or dead (0)
+    Context context;
 
     std::ofstream ofs(argv[4], std::ofstream::out);
     std::cout<<std::endl;
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
         
             std::cout<<std::endl;
             std::cout<<"MIPS GENERATED:"<<std::endl;
-            ast->generateMIPS(ofs, variables_map, live_variables);
+            ast->generateMIPS(ofs, context, 2);
             std::cout<<std::endl;
 
         ofs.close();

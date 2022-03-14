@@ -6,6 +6,7 @@
 #include <vector>
 #include "ast_expression.hpp"
 #include "ast_expressionlist.hpp"
+#include "context.hpp"
 
 class Declare
     : public Expression
@@ -36,11 +37,11 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        // right->generateMIPS(dst, variables_map, live_variables); //ONLY used for variable declaration
+        // right->generateMIPS(dst, context, destReg); //ONLY used for variable declaration
         // dst<<"DEBUG : adding to map for "<<right->getId() << '\n';
-        variables_map[right->getId()] = variables_map.size()*4+4;
+        context.variables_map[right->getId()].offset = context.variables_map.size()*4+4;
         // dst<<"DEBUG : added to map "<< variables_map[right->getId()];
     }
 };
@@ -72,10 +73,14 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        right->generateMIPS(dst, variables_map, live_variables);
-        left->generateMIPS(dst, variables_map, live_variables);
+        right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+        // dst<<" DEBUG : in variables_map for " << left->getId() << " " << variables_map[left->getId()] << '\n';
+        dst<<"sw $";
+        dst<<destReg;
+        dst<<","<<(context.variables_map[left->getId()].offset)<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+        left->generateMIPS(dst, context, destReg);
     }
 };
 
@@ -98,7 +103,7 @@ public:
         dst<<id;
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         //assigning the variable to an address
         // dst<<"DEBUG : function "<<id << '\n';
@@ -134,15 +139,15 @@ public:
         right->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         if (middle == "="){
-            right->generateMIPS(dst, variables_map, live_variables); //li or lw but we need to access register number, through a function
-            // dst<<" DEBUG : in variables_map for " << left->getId() << " " << variables_map[left->getId()] << '\n';
+            right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+            // dst<<" DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].reg<< '\n';
             dst<<"sw $";
-            dst<<variables_map[left->getId()];
-            dst<<",8($fp)"<<'\n'; //store output register of the calculations in  respective stack location
-            left->generateMIPS(dst, variables_map, live_variables);
+            dst<<context.variables_map[left->getId()].reg;
+            dst<<","<<(context.variables_map[left->getId()].offset)<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+            left->generateMIPS(dst, context, destReg);
         }else if (middle == "*="){
 
         }else if (middle == "/="){

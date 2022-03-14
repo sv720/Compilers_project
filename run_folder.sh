@@ -93,6 +93,7 @@ echo "########################################"
 echo " Nb of files PARSING succesfully: ${CHECKED} out of $((${index}-1))"
 echo " "
 
+
 index=1
 PASSED=0
 for testcase in test/working/${basefolder}/*; do
@@ -121,37 +122,6 @@ done
 echo "########################################"
 echo " Nb of files COMPILED succesfully: ${PASSED} out of $((${index}-1))"
 echo ""
-
-
-# -------------------------
-# PASSED=0
-# CHECKED=0
-
-# if [[ -f test/valid_expressions.got.txt ]]; then
-#     rm test/valid_expressions.got.txt
-# fi
-# while IFS=, read -r INPUT_LINE REF_LINE BINDINGS REF_VALUE; do
-#     echo "==========================="
-#     echo ""
-#     echo "Input : ${INPUT_LINE}"
-#     GOT_LINE=$( echo -n "${INPUT_LINE}" | bin/compiler )
-#     echo "Output : ${GOT_LINE}"
-#     if [[ "${GOT_LINE}" != "${REF_LINE}" ]]; then
-#         echo ""
-#         echo "ERROR"
-#     else
-#         PASSED=$(( ${PASSED}+1 ));
-#     fi
-#     CHECKED=$(( ${CHECKED}+1 ));
-
-#     echo "${INPUT_LINE},${GOT_LINE}" >> test/valid_expressions.got.txt
-
-# done < <( cat test/valid_expressions.input.txt | ${DOS2UNIX})
-
-# echo "########################################"
-# echo "Passed ${PASSED} out of ${CHECKED} checks".
-# echo ""
-# -------------------------
 
 
 RELEASE=$(lsb_release -d)

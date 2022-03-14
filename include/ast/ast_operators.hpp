@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include "context.hpp"
 
 class Operator
     : public Expression
@@ -46,13 +47,13 @@ public:
         dst<<" )";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        right->generateMIPS(dst, variables_map, live_variables);
-        left->generateMIPS(dst, variables_map, live_variables);
+        right->generateMIPS(dst, context, destReg);
+        left->generateMIPS(dst, context, destReg);
         dst<<getOpInstruction()<<" $4,"; //destination register
-        dst<<"$"<<variables_map[left->getId()]<<",";
-        dst<<"$"<<variables_map[right->getId()]<<"\n";
+        dst<<"$"<<context.variables_map[left->getId()].reg<<",";
+        dst<<"$"<<context.variables_map[right->getId()].reg<<"\n";
     }
 };
 

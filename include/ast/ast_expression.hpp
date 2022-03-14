@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include "context.hpp"
 
 class Expression;
 
@@ -26,7 +27,7 @@ public:
 
     //! Tell and expression to print itself to the given stream
     virtual void print(std::ostream &dst) const =0;
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const =0;
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const =0;
 
     // virtual std::string getDeclarator() const {};
 
@@ -47,7 +48,7 @@ class EmptyExpr
     {}
     virtual void print(std::ostream &dst) const override
     {}
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {}
 };
 

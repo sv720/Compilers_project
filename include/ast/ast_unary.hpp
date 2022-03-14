@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include "context.hpp"
 
 class Unary
     : public Expression
@@ -33,7 +34,7 @@ public:
         dst << " )";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {}
 };
 

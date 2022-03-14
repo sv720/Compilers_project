@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "ast/ast_expressionlist.hpp"
+#include "context.hpp"
 
 class Variable
     : public Expression
@@ -24,7 +25,7 @@ public:
         dst<<id;
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         // we need to access register number, through a function so we realise how far down from fp the variable is
         dst<<"lw $2,"; // need to set other register, depending on free
@@ -56,9 +57,9 @@ public:
         dst<<value;
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        dst<<"li $2,"; // need to set other register
+        dst<<"li $"<<destReg<<","; // need to set other register
         dst<<value<<'\n'; 
     }
 
@@ -84,9 +85,9 @@ public:
         arg->print(dst);
     }
     
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        arg->generateMIPS(dst, variables_map, live_variables);
+        arg->generateMIPS(dst, context, destReg);
     }
 
 };
@@ -109,10 +110,10 @@ public:
         arg->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst<<".global f"<<'\n';
-        arg->generateMIPS(dst, variables_map, live_variables);
+        arg->generateMIPS(dst, context, destReg);
     }
 
 };

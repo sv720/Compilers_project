@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "ast_expression.hpp"
+#include "context.hpp"
 
 //FUNCTION______________________________________
 
@@ -49,11 +50,11 @@ public:
         dst<<" )";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        left->generateMIPS(dst, variables_map, live_variables);
+        left->generateMIPS(dst, context, destReg);
 
-        right->generateMIPS(dst, variables_map, live_variables);
+        right->generateMIPS(dst, context, destReg);
 
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
@@ -92,9 +93,9 @@ public:
         label_args->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        label_args->generateMIPS(dst, variables_map, live_variables);
+        label_args->generateMIPS(dst, context, destReg);
     }
 };
 
@@ -130,9 +131,9 @@ public:
         arg->print(dst);
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        id->generateMIPS(dst, variables_map, live_variables);
+        id->generateMIPS(dst, context, destReg);
         dst<<":"<<'\n';
         dst<<"addiu $sp,$sp,-8"<<'\n';
         dst<<"sw $fp,4($sp)"<<'\n';
@@ -186,7 +187,7 @@ public:
         dst<<":)";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {}
 };
 
