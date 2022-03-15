@@ -127,13 +127,16 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
+        dst<<"DEBUG id = ";
         id->print(dst);
+        dst<<"end of check";
         arg->print(dst);
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         id->generateMIPS(dst, context, destReg);
+        dst<<id->getId();
         dst<<":"<<'\n';
         dst<<"addiu $sp,$sp,-8"<<'\n';
         dst<<"sw $fp,4($sp)"<<'\n';

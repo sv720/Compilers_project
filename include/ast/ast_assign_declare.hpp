@@ -33,7 +33,9 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
+        dst<<"DECLARE : ";
         dst<<left<<" ";
+        dst<<"DECLARE: right:";
         right->print(dst);
     }
 
@@ -42,6 +44,11 @@ public:
         // right->generateMIPS(dst, context, destReg); //ONLY used for variable declaration
         // dst<<"DEBUG : adding to map for "<<right->getId() << '\n';
         context.variables_map[right->getId()].offset = context.variables_map.size()*4+4;
+        dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
+        
+        right->generateMIPS(dst, context, destReg);
+        //dst<<"sw $fp,4($sp)"<<'\n';
+        //dst<<"move $fp,$sp"<<'\n'; //take that value and set the frame pointer to it aswell (bottom of stack)
         // dst<<"DEBUG : added to map "<< variables_map[right->getId()];
     }
 };
@@ -67,7 +74,7 @@ public:
     }
 
     virtual void print(std::ostream &dst) const override
-    {   
+    {   dst<<"INITDECLARATOR \n";
         left->print(dst);
         dst<<"=";
         right->print(dst);
@@ -76,6 +83,7 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+        dst<< "#DEBUG : IN INITDECLARATOR \n";
         // dst<<" DEBUG : in variables_map for " << left->getId() << " " << variables_map[left->getId()] << '\n';
         dst<<"sw $";
         dst<<destReg;
@@ -99,8 +107,8 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
-        // dst<< "DEBUG DECALARATOR ";
-        dst<<id;
+        //dst<< "DECALARATOR :";
+        //dst<<id;
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
@@ -109,7 +117,8 @@ public:
         // dst<<"DEBUG : function "<<id << '\n';
         // variables_map[id] = variables_map.size()*4+4;
         // dst<<"DEBUG : added to map "<< variables_map[id];
-        dst<<id; //prints out labels (when we have a function definition) and gives variable name
+        //dst<< "#DEBUG : IN DECLARATOR \n";
+        //dst<<id; //prints out labels (when we have a function definition) and gives variable name
     }
     
 };
@@ -133,7 +142,7 @@ public:
     {}
     //no member functions yet
     virtual void print(std::ostream &dst) const override
-    {   
+    { 
         left->print(dst);
         dst<<" "<<middle<<" ";
         right->print(dst);

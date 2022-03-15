@@ -8,10 +8,9 @@
 
 class Operator
     : public Expression
-{
-private:
-    ExpressionPtr right;
+{    
 protected:
+    ExpressionPtr right; //why was this private? (assumed was accident)
     ExpressionPtr left;
     Operator(ExpressionPtr _left, ExpressionPtr _right)
         : left(_left)
@@ -70,6 +69,17 @@ public:
     AddOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#AddOperator generateMIPS Called"<<'\n';
+        dst<<"#Calling left \n";
+        left->generateMIPS(dst, context, destReg);
+        dst<<"move $10,$"<<destReg<<'\n';
+        right->generateMIPS(dst, context, destReg); //TODO: why can't we access right here?
+        dst<<"move $11,$"<<destReg<<'\n';
+        dst<<"add $"<< destReg << ",$10,$11"<<'\n';
+    }
     
 };
 
@@ -101,6 +111,19 @@ public:
     MulOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#MulOperator generateMIPS Called"<<'\n';
+        dst<<"#Calling left \n";
+        left->generateMIPS(dst, context, destReg);
+        dst<<"move $8,$"<<destReg<<'\n';
+        right->generateMIPS(dst, context, destReg); //TODO: why can't we access right here?
+        dst<<"move $9,$"<<destReg<<'\n';
+        dst<<"mult $8,$9"<<'\n'; //remember: this goes in HI and LO registers
+        dst<<"mflo $"<<destReg<<'\n'; //TBC : LO resutls goes into destReg (usually $2)
+        dst<<"mfhi $"<<destReg+1<<'\n'; //TBC : HI result goes into destReg +1 (usually $3)
+    }
+
 
 };
 
