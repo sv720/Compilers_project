@@ -3,5 +3,6 @@ int f();
 
 int main()
 {
-    return !(f()==12345);
+    // return f();
+    return !(f()==12375);
 }

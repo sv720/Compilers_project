@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "ast_expression.hpp"
+#include "context.hpp"
 
 // ITERATION STATEMENTS ______________________________________
 
@@ -36,7 +37,7 @@ public:
         dst<<" } ";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {}
 };
 
@@ -83,7 +84,7 @@ public:
         dst<<" } ";
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {}
 };
 

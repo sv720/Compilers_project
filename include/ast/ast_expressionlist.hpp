@@ -6,6 +6,7 @@
 #include <cmath>
 #include <vector>
 #include "ast/ast_expression.hpp"
+#include "context.hpp"
 
 class ExpressionList;
 
@@ -93,10 +94,10 @@ public:
         }
     }
 
-    virtual void generateMIPS(std::ostream &dst, std::map<std::string, int> &variables_map, std::map<int, bool> &live_variables) const override
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         for (ExpressionPtr i : list){
-            i->generateMIPS(dst, variables_map, live_variables);
+            i->generateMIPS(dst, context, destReg);
         }
     }
 };

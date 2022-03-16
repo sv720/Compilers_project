@@ -15,6 +15,9 @@
 #include "ast/ast_array.hpp"
 #include "ast/ast_assign_declare.hpp"
 
+// #include "ast/ast_available_registers.hpp"
+#include "context.hpp"
+
 #include <vector>
 
 extern const Expression *parseAST(std::string input_file);
