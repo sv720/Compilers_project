@@ -29,8 +29,8 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         // we need to access register number, through a function so we realise how far down from fp the variable is
-        dst<<"lw $2,"; // need to set other register, depending on free
-        dst<<"8($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
+        dst<<context.variables_map[id].offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
         // dst<<id<<'\n'; //id is variable name, here we will need register assigned to that variable, a scan function in the vector of alive/used regs
     }
    
@@ -88,7 +88,7 @@ public:
     
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        arg->generateMIPS(dst, context, destReg);
+        arg->generateMIPS(dst, context, 2);
     }
 
 };

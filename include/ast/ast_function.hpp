@@ -142,8 +142,9 @@ public:
         dst<<"sw $fp,4($sp)"<<'\n';
         dst<<"move $fp,$sp"<<'\n';
         int start_reg = 4;
+
         for (int i = 0; i < arg->list.size(); i++){
-            dst<<"sw $"<<start_reg+i<<","<<4*(i+2)<<"($fp)"<<'\n';
+            arg->list[i]->generateMIPS(dst, context, start_reg+i);
         }
         // storing argument parameters in stack
     }

@@ -64,7 +64,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "+"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "add"; }
 public:
     AddOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -73,12 +73,11 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst<<"#AddOperator generateMIPS Called"<<'\n';
-        dst<<"#Calling left \n";
-        left->generateMIPS(dst, context, destReg);
-        dst<<"move $10,$"<<destReg<<'\n';
-        right->generateMIPS(dst, context, destReg); //TODO: why can't we access right here?
-        dst<<"move $11,$"<<destReg<<'\n';
-        dst<<"add $"<< destReg << ",$10,$11"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"add $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
     }
     
 };
@@ -90,12 +89,21 @@ protected:
     virtual const char *getOpcode() const override
     { return "-"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "sub"; }
 public:
     SubOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
     
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#SubOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB); 
+        dst<<"sub $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+    }
 };
 
 
@@ -106,24 +114,23 @@ protected:
     virtual const char *getOpcode() const override
     { return "*"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "mult"; }
 public:
     MulOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst<<"#MulOperator generateMIPS Called"<<'\n';
-        dst<<"#Calling left \n";
-        left->generateMIPS(dst, context, destReg);
-        dst<<"move $8,$"<<destReg<<'\n';
-        right->generateMIPS(dst, context, destReg); //TODO: why can't we access right here?
-        dst<<"move $9,$"<<destReg<<'\n';
-        dst<<"mult $8,$9"<<'\n'; //remember: this goes in HI and LO registers
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB); //TODO: why can't we access right here?
+        dst<<"mult $"<<regA<<",$"<<regB<<'\n'; //remember: this goes in HI and LO registers
         dst<<"mflo $"<<destReg<<'\n'; //TBC : LO resutls goes into destReg (usually $2)
         dst<<"mfhi $"<<destReg+1<<'\n'; //TBC : HI result goes into destReg +1 (usually $3)
     }
-
 
 };
 
@@ -134,11 +141,22 @@ protected:
     virtual const char *getOpcode() const override
     { return "/"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "div"; }
 public:
     DivOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#DivOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB); //TODO: why can't we access right here?
+        dst<<"div $"<<regA<<",$"<<regB<<'\n'; //remember: this goes in HI and LO registers
+        dst<<"mflo $"<<destReg<<'\n'; //TBC : LO resutls goes into destReg (usually $2)
+    }
 };
 
 class ModOperator
@@ -148,11 +166,22 @@ protected:
     virtual const char *getOpcode() const override
     { return "%"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "mod"; }
 public:
     ModOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#ModOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB); //TODO: why can't we access right here?
+        dst<<"div $"<<regA<<",$"<<regB<<'\n'; //remember: this goes in HI and LO registers
+        dst<<"mfhi $"<<destReg<<'\n'; //TBC : HI result goes into destReg +1 (usually $3)
+    }
 };
 
 // SHIFTS -----------------------------------
@@ -164,11 +193,22 @@ protected:
     virtual const char *getOpcode() const override
     { return "<<"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "sllv"; }
 public:
     LeftShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#LeftShiftOperator generateMIPS Called"<<'\n';
+        
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"sllv $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+    }
 
 };
 
@@ -179,11 +219,22 @@ protected:
     virtual const char *getOpcode() const override
     { return ">>"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "srlv"; }
 public:
     RightShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#RightShiftOperator generateMIPS Called"<<'\n';
+        
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"srlv $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+    }
 
 };
 
@@ -196,11 +247,20 @@ protected:
     virtual const char *getOpcode() const override
     { return "<"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "L"; }
 public:
     SmallerOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#SmallerOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"slt $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n'; //if left<right : set destReg to 1
+    }
 
 };
 
@@ -211,11 +271,20 @@ protected:
     virtual const char *getOpcode() const override
     { return ">"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "G"; }
 public:
     GreaterOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#GreaterOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"slt $"<< destReg << ",$"<<regB<<",$"<<regA<<'\n'; //if right<left : set destReg to 1
+    }
 
 };
 
@@ -231,6 +300,17 @@ public:
     LEOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+    
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#LEOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"addi $"<<regA<<",$"<<regA<< ",-1"<< '\n'; //shift by -1 as a <= b equivalent to a-1 < b
+        dst<<"slt $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n'; //if right<left : set destReg to 1
+    }
 
 };
 
@@ -247,6 +327,17 @@ public:
         : Operator(_left, _right)
     {}
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#GEOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"addi $"<<regB<<",$"<<regB<< ",-1"<< '\n'; //shift by -1 as b <= a equivalent to b-1 < a
+        dst<<"slt $"<< destReg << ",$"<<regB<<",$"<<regA<<'\n'; //if right<left : set destReg to 1
+    }
+
 };
 
 class EQOperator
@@ -256,12 +347,26 @@ protected:
     virtual const char *getOpcode() const override
     { return "=="; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "equal"; }
 public:
     EQOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#EQOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        int regC = context.allocate();
+        int regD = context.allocate();
+        dst<<"slt $"<< regC << ",$"<<regA<<",$"<<regB<<'\n';
+        dst<<"slt $"<< regD << ",$"<<regB<<",$"<<regA<<'\n';
+        dst<<"nor $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n'; 
+        //if a number neither smaller neither greater to its pear, it must be equal
+    }
 };
 
 class NEOperator
@@ -276,6 +381,22 @@ public:
     NEOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+    
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#NEOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        int regC = context.allocate();
+        int regD = context.allocate();
+        dst<<"slt $"<< regC << ",$"<<regA<<",$"<<regB<<'\n';
+        dst<<"slt $"<< regD << ",$"<<regB<<",$"<<regA<<'\n';
+        dst<<"or $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n'; 
+        //if either number is strictly greater than the other; they can't be equal
+    }
+
 
 };
 
@@ -294,6 +415,17 @@ public:
         : Operator(_left, _right)
     {}
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#ANDOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"and $"<< destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
+    }
+
+
 };
 
 class XOROperator
@@ -309,6 +441,16 @@ public:
         : Operator(_left, _right)
     {}
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#XOROperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"xor $"<< destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
+    }
+
 };
 
 class OROperator
@@ -323,6 +465,15 @@ public:
     OROperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#OROperator generateMIPS Called"<<'\n';
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        dst<<"or $"<< destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
+    }
 
 };
 

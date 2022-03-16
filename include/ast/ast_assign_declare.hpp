@@ -33,23 +33,26 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
-        dst<<"DECLARE : ";
+        // dst<<"DECLARE : ";
         dst<<left<<" ";
-        dst<<"DECLARE: right:";
+        // dst<<"DECLARE: right:";
         right->print(dst);
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        // right->generateMIPS(dst, context, destReg); //ONLY used for variable declaration
-        // dst<<"DEBUG : adding to map for "<<right->getId() << '\n';
-        context.variables_map[right->getId()].offset = context.variables_map.size()*4+4;
         dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
         
-        right->generateMIPS(dst, context, destReg);
-        //dst<<"sw $fp,4($sp)"<<'\n';
-        //dst<<"move $fp,$sp"<<'\n'; //take that value and set the frame pointer to it aswell (bottom of stack)
-        // dst<<"DEBUG : added to map "<< variables_map[right->getId()];
+        variable v;
+        v.reg = destReg;
+        v.offset = -((context.variables_map.size())*4 + 4);
+        context.variables_map.insert({right->getId(), v});
+        
+
+        dst<<"sw $"<<context.variables_map[right->getId()].reg<<","<<context.variables_map[right->getId()].offset<<"($fp)"<<'\n';
+        dst<<"#DEBUG: reg of argument="<<context.variables_map[right->getId()].reg<< " "<< right->getId() <<'\n';
+        right->generateMIPS(dst, context, context.variables_map[right->getId()].reg);
+
     }
 };
 
@@ -82,13 +85,20 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
         dst<< "#DEBUG : IN INITDECLARATOR \n";
-        // dst<<" DEBUG : in variables_map for " << left->getId() << " " << variables_map[left->getId()] << '\n';
+        variable v;
+        v.reg = context.allocate();
+        v.offset = -((context.variables_map.size()-1)*4 + 4);
+        context.variables_map.insert({left->getId(), v});
+
+
+        right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+        dst<<"#DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].offset << " " << v.offset << '\n';
         dst<<"sw $";
         dst<<destReg;
         dst<<","<<(context.variables_map[left->getId()].offset)<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
-        left->generateMIPS(dst, context, destReg);
+        left->generateMIPS(dst, context, context.variables_map[left->getId()].reg);
+
     }
 };
 
@@ -107,8 +117,8 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
-        //dst<< "DECALARATOR :";
-        //dst<<id;
+        dst<< "DECALARATOR :";
+        dst<<id;
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
@@ -119,6 +129,13 @@ public:
         // dst<<"DEBUG : added to map "<< variables_map[id];
         //dst<< "#DEBUG : IN DECLARATOR \n";
         //dst<<id; //prints out labels (when we have a function definition) and gives variable name
+        variable v;
+        v.reg = destReg;
+        v.offset = -((context.variables_map.size()-1)*4 + 4);
+        context.variables_map.insert({id, v});
+
+        dst<<"lw $"<<destReg<<","; 
+        dst<<context.variables_map[id].offset<<"($fp)"<<'\n'; 
     }
     
 };
@@ -151,12 +168,19 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         if (middle == "="){
+            variable v;
+            v.reg = context.allocate();
+            v.offset = -((context.variables_map.size()-1)*4 + 4);
+            context.variables_map.insert({left->getId(), v});
+
+
             right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
-            // dst<<" DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].reg<< '\n';
+            dst<<"#DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].offset << " " << v.offset << '\n';
             dst<<"sw $";
-            dst<<context.variables_map[left->getId()].reg;
+            dst<<destReg;
             dst<<","<<(context.variables_map[left->getId()].offset)<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
-            left->generateMIPS(dst, context, destReg);
+            left->generateMIPS(dst, context, context.variables_map[left->getId()].reg);
+
         }else if (middle == "*="){
 
         }else if (middle == "/="){
