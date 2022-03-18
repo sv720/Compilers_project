@@ -47,7 +47,7 @@ public:
 
         variable v;
         v.reg = destReg;
-        v.offset = -((context.variables_map.size())*4 + 4);
+        v.offset = ((context.variables_map.size())*4 + 4);
         context.variables_map.insert({right->getId(), v});
         dst<<"#DEBUG: adding to map at address " << right->getId() << " making map size = "<< context.variables_map.size() <<'\n';
         
@@ -91,7 +91,7 @@ public:
         dst<< "#DEBUG : IN INITDECLARATOR \n";
         variable v;
         v.reg = context.allocate();
-        v.offset = -((context.variables_map.size()-1)*4 + 4);
+        v.offset = (context.variables_map.size())*4;
         context.variables_map.insert({left->getId(), v});
         dst<<"#DEBUG: adding to map at address " << right->getId() << " making map size = "<< context.variables_map.size() <<'\n';
 
