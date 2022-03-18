@@ -3,6 +3,5 @@ int f();
 
 int main()
 {
-    return f();
-    //return !(f()==30);
+    return !(f()==30);
 }
