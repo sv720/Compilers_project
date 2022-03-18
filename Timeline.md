@@ -38,8 +38,9 @@ https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y
 - introduce genrateMIPS function for all classes
 - mips working for vars&function declarations, addu and subu (only int)
 
-
 ### 14 Mar 2022:
 - implemented qeru-mips and bin/c_compiler personalised command to run and test the compiler
+- discussed stack and frame pointers and implemented an acceptable approach
+
 ### 16 Mar 2022:
 - mips working for local_var and integer (arithmetic, parameters, variable allocation to registers)
