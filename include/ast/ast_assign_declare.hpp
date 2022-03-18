@@ -42,14 +42,17 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
-        
+        dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
+        dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
+
         variable v;
         v.reg = destReg;
         v.offset = -((context.variables_map.size())*4 + 4);
         context.variables_map.insert({right->getId(), v});
+        dst<<"#DEBUG: adding to map at address " << right->getId() << " making map size = "<< context.variables_map.size() <<'\n';
         
 
-        dst<<"sw $"<<context.variables_map[right->getId()].reg<<","<<context.variables_map[right->getId()].offset<<"($fp)"<<'\n';
+        dst<<"sw $"<<context.variables_map[right->getId()].reg<<",8($fp)"<<'\n';
         dst<<"#DEBUG: reg of argument="<<context.variables_map[right->getId()].reg<< " "<< right->getId() <<'\n';
         right->generateMIPS(dst, context, context.variables_map[right->getId()].reg);
 
@@ -90,13 +93,14 @@ public:
         v.reg = context.allocate();
         v.offset = -((context.variables_map.size()-1)*4 + 4);
         context.variables_map.insert({left->getId(), v});
+        dst<<"#DEBUG: adding to map at address " << right->getId() << " making map size = "<< context.variables_map.size() <<'\n';
 
 
         right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
-        dst<<"#DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].offset << " " << v.offset << '\n';
+        //dst<<"#DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].offset << " " << v.offset << '\n';
         dst<<"sw $";
         dst<<destReg;
-        dst<<","<<(context.variables_map[left->getId()].offset)<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+        dst<<",8($fp)"<<'\n'; //store output register of the calculations in  respective stack location
         left->generateMIPS(dst, context, context.variables_map[left->getId()].reg);
 
     }
@@ -133,6 +137,7 @@ public:
         v.reg = destReg;
         v.offset = -((context.variables_map.size()-1)*4 + 4);
         context.variables_map.insert({id, v});
+        dst<<"#DEBUG: DECLARATOR adding to map at address" << id << " making map size = "<< context.variables_map.size() <<'\n';
 
         dst<<"lw $"<<destReg<<","; 
         dst<<context.variables_map[id].offset<<"($fp)"<<'\n'; 
@@ -172,6 +177,7 @@ public:
             v.reg = context.allocate();
             v.offset = -((context.variables_map.size()-1)*4 + 4);
             context.variables_map.insert({left->getId(), v});
+            dst<<"#DEBUG: adding to map at address " << right->getId() << " making map size = "<< context.variables_map.size() <<'\n';
 
 
             right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function

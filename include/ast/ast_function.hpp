@@ -140,7 +140,9 @@ public:
         dst<<":"<<'\n';
         dst<<"addiu $sp,$sp,-8"<<'\n';
         dst<<"sw $fp,4($sp)"<<'\n';
+        dst<<"move $25,$fp"<< '\n'; //make a copy of old fp in register 25
         dst<<"move $fp,$sp"<<'\n';
+
         int start_reg = 4;
 
         for (int i = 0; i < arg->list.size(); i++){
