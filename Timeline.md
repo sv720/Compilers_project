@@ -51,3 +51,4 @@ https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y
 
 TODO: "Unable to empty registers" - for_in_for testcase (parsing error)
         - in general take a look at for, NOT WORKING (anf while loops, tho they work)
+        - logical and and or seems to be broken 
