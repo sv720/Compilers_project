@@ -106,7 +106,7 @@ struct Context
     // Return a unique label for assembly code
     std::string makeLabel(std::string label){
         static int count = 0;
-        return "_"+label+"_"+std::to_string(count++);
+        return label+"_"+std::to_string(count++);
     };
 
     // bool isGlobal(std::string varName){
