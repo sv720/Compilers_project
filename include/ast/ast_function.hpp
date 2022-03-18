@@ -58,7 +58,7 @@ public:
 
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
-        dst<<"addiu $sp,$sp,8"<<'\n';
+        dst<<"move $sp,$25"<<'\n';
         dst<<"jr $31"<<'\n';
         dst<<"nop"<<'\n';
     }
@@ -135,7 +135,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        id->generateMIPS(dst, context, destReg);
+        // id->generateMIPS(dst, context, destReg);
         dst<<id->getId();
         dst<<":"<<'\n';
         dst<<"addiu $sp,$sp,-8"<<'\n';

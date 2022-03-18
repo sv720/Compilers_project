@@ -30,7 +30,9 @@ public:
     {
         // we need to access register number, through a function so we realise how far down from fp the variable is
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-        dst<<(4*context.variables_map.size() - context.variables_map[id].offset +4)<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        dst<<(4*(context.variables_map.size() - context.variables_map[id].old_map_size) + 8)<<"($fp)"<<'\n'; 
+        //specific location in stack for the variable (to check in alive variables vector)
+        // we add +8 as the old_fp is stored in the relative location of +4
         // dst<<id<<'\n'; //id is variable name, here we will need register assigned to that variable, a scan function in the vector of alive/used regs
     }
    

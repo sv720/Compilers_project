@@ -65,7 +65,7 @@ struct registers
 struct variable
 {
     unsigned int size;                     // How many bytes does the variable take up
-    int offset;                            // Offset from frame pointer (+ for arguments, - for variables)
+    int old_map_size;                      // To calculate the new relative offset from the current fp
     int reg;                               // Keeps track of which register the variable is in (-1 := not stored in reg)
     std::string type = "int";
     // enum Specifier type = Specifier::_int; // keeps track of type, int by default (refactor this to enum if possible at some point)
