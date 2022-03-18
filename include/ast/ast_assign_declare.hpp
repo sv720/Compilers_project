@@ -178,7 +178,7 @@ public:
             dst<<"#DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].offset << " " << v.offset << '\n';
             dst<<"sw $";
             dst<<destReg;
-            dst<<","<<(context.variables_map[left->getId()].offset)<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+            dst<<","<<context.variables_map[left->getId()].offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
             left->generateMIPS(dst, context, context.variables_map[left->getId()].reg);
 
         }else if (middle == "*="){

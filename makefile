@@ -1,4 +1,4 @@
-
+.PHONY: clean
   
 CPPFLAGS += -std=c++11 -W -Wall -g -Wno-unused-parameter
 CPPFLAGS += -I include
@@ -18,10 +18,10 @@ bin/c_compiler : src/c_compiler.o src/parser.tab.o src/lexer.yy.o src/parser.tab
 
 
 clean :
-	rm src/*.o
-	rm bin/*
-	rm src/*.tab.cpp
-	rm src/*.yy.cpp
-	rm -r test/err/
-	rm -r test/working/
-	rm -r test/objects/
+	rm -f src/*.o
+	rm -f bin/*
+	rm -f src/*.tab.cpp
+	rm -f src/*.yy.cpp
+	rm -f -r test/err/
+	rm -f -r test/working/
+	rm -f -r test/objects/
