@@ -28,7 +28,7 @@ struct registers
          1, 1, 1, 1,             // $a0-$a3, function arguments, just use them for that [4-7]
          0, 0, 0, 0, 0, 0, 0, 0, // $t0-$t7, temporary registers, do what you want [8-15]
          1, 1, 1, 1, 1, 1, 1, 1, // $s0-$s7, values preserved across function calls [16-23]
-         0, 0,                   // $t8-$t9, more temporaries [24-25]
+         0, 1,                   // $t8-$t9, more temporaries [24-25]
          1, 1,                   // $k0-$k1, kernel registers, no touchy [26-27]
          1,                      // $gp, used for static global variables (probs never use) [28]
          1,                      // $sp, stack pointer [29]
@@ -38,7 +38,7 @@ struct registers
     void useReg(int i) { usedRegs[i] = 1; };  // Register is now being used
     void freeReg(int i) { usedRegs[i] = 0; }; // Register is no longer being used
     int allocate(){
-        for (int i = 2; i < 26; i++)
+        for (int i = 2; i < 25; i++) //was 26
         {
             if (!usedRegs[i])
             {

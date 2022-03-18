@@ -38,7 +38,22 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        int regA = context.allocate();
+        std::string WHILElabel = context.makeLabel("WHILE");
+        std::string endWhileLabel = context.makeLabel("endWHILE");
+
+        condition->generateMIPS(dst, context, regA);
+        dst<<WHILElabel<<":"<<'\n';
+        dst<<"beq $"<<regA<<",$zero,"<<endWhileLabel<<'\n';
+        statement->generateMIPS(dst, context, destReg);
+        condition->generateMIPS(dst, context, regA); //not needed?
+        dst<<"bne $"<<regA<<",$zero,"<<WHILElabel<<'\n';
+
+        dst<<endWhileLabel<<":"<<'\n';
+        
+        context.regFile.freeReg(regA);
+    }
 };
 
 class ForLoop
@@ -85,7 +100,29 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        int regA = context.allocate();
+        int regCondition = context.allocate();
+        int regStep = context.allocate();
+        std::string FORlabel = context.makeLabel("FOR");
+        std::string endForLabel = context.makeLabel("endFOR");
+
+        conditionInit->generateMIPS(dst, context, regA);
+
+        condition->generateMIPS(dst, context, regCondition);
+        dst<<FORlabel<<":"<<'\n';
+        dst<<"beq $"<<regCondition<<",$zero,"<<endForLabel<<'\n';
+        statement->generateMIPS(dst, context, destReg);
+        condition->generateMIPS(dst, context, regCondition); //not needed?
+        conditionStep->generateMIPS(dst, context, regStep);
+        dst<<"bne $"<<regCondition<<",$zero,"<<FORlabel<<'\n';
+
+        dst<<endForLabel<<":"<<'\n';
+
+        // context.regFile.freeReg(regA);
+        context.regFile.freeReg(regCondition);
+        // context.regFile.freeReg(regStep);
+    }
 };
 
 

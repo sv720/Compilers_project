@@ -37,7 +37,19 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        int regA = context.allocate();
+        condition->generateMIPS(dst, context, regA);
+        dst<<"nop"<<'\n';
+        std::string endIfLabel = context.makeLabel("endIF");
+        dst<<"beq $zero,$"<<regA<<","<<endIfLabel<<'\n';
+        statement->generateMIPS(dst, context, destReg);
+
+        dst<<endIfLabel<<":"<<'\n';
+        // dst<<"nop"<<'\n';
+
+        context.regFile.freeReg(regA);
+    }
 };
 
 class IfElse
@@ -73,7 +85,25 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        int regA = context.allocate();
+        condition->generateMIPS(dst, context, regA);
+        std::string ELSElabel = context.makeLabel("ELSE");
+        dst<<"beq $"<<regA<<",$zero,"<<ELSElabel<<'\n';
+
+        statement->generateMIPS(dst, context, destReg);
+        std::string endIfLabel = context.makeLabel("endIFELSE");
+        dst<<"j "<<endIfLabel<<'\n';
+        // dst<<"nop"<<'\n';
+
+        dst<<ELSElabel<<":"<<'\n';
+        elseStatement->generateMIPS(dst, context, destReg);
+
+        dst<<endIfLabel<<":"<<'\n';
+
+
+        context.regFile.freeReg(regA);
+    }
 };
 
 class SwitchCase

@@ -56,6 +56,7 @@ public:
 
         right->generateMIPS(dst, context, destReg);
 
+        dst<<"endFunction:"<<'\n';
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
