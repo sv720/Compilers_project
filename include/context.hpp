@@ -89,7 +89,7 @@ struct Context
     // std::map<std::string, enum Specifier> globals; // Just needs to track the names + types of globals
     std::map<std::string, function> functions;     // tracks the size of the arguments
     // std::map<std::string, enumeration> enums;      // Tracks enums globally
-
+    std::string current_function;
 
     // MIPS Register file
     registers regFile;

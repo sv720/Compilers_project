@@ -138,8 +138,6 @@ public:
         context.variables_map.insert({id, v});
         dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.variables_map.size() <<'\n';
 
-        //dst<<"lw $"<<destReg<<","; 
-        //dst<<context.variables_map[id].offset<<"($fp)"<<'\n';
         //TODO: check if valid
         int curr_offset = 4*(context.variables_map.size() - context.variables_map[id].old_map_size) + 8;
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free

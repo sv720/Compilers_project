@@ -56,7 +56,7 @@ public:
 
         right->generateMIPS(dst, context, destReg);
 
-        dst<<"endFunction:"<<'\n';
+        dst<<"end_"<<left->getId()<<":"<<'\n';
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
@@ -84,6 +84,9 @@ public:
 
     const std::string getType() const
     { return type; }
+
+    std::string getId() const
+    { return label_args->getId(); }
 
     ExpressionPtr getLabel() const
     { return label_args; }
@@ -123,6 +126,9 @@ public:
         delete arg;
     }
 
+    std::string getId() const
+    { return id->getId(); }
+
     ExpressionListPtr getArg() const
     { return arg; }
 
@@ -146,13 +152,75 @@ public:
 
         int start_reg = 4;
 
-        for (int i = 0; i < arg->list.size(); i++){
-            arg->list[i]->generateMIPS(dst, context, start_reg+i);
+        if (arg->list.size() <= 4){
+            for (int i = 0; i < arg->list.size(); i++){
+                arg->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+        } else {
+            for (int i = 0; i <= 4; i++){
+                arg->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+            for (int i = 5; i <= arg->list.size(); i++){
+                int regParam = context.allocate();
+                arg->list[i]->generateMIPS(dst, context, regParam);
+            }
         }
+
+        function f;
+        context.functions.insert({id->getId(), f});
+        context.current_function = id->getId();
         // storing argument parameters in stack
+
     }
-    
+
 };
+
+//--------------------------------------------------------------------------------
+
+class Function_Call_Definition
+    : public Expression
+{
+private:
+    std::string type;
+    ExpressionPtr label_args;  
+public:
+    Function_Call_Definition(const std::string &_type, ExpressionPtr _label_args)
+        : type(_type)
+        , label_args(_label_args)
+    {}
+
+    virtual ~Function_Call_Definition()
+    {
+        delete label_args;
+    }
+
+    const std::string getType() const
+    { return type; }
+
+    std::string getId() const
+    { return label_args->getId(); }
+
+    ExpressionPtr getLabel() const
+    { return label_args; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<type<<" ";
+        label_args->print(dst);
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        label_args->generateMIPS(dst, context, destReg);
+        dst<<"end_"<<label_args->getId()<<":"<<'\n';
+        dst<<"move $sp,$fp"<<'\n';
+        dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
+        dst<<"move $sp,$25"<<'\n';
+        dst<<"jr $31"<<'\n';
+        dst<<"nop"<<'\n';
+    }
+};
+
 
 
 class FunctionCall
@@ -195,7 +263,31 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        int start_reg = 4;
+
+        if (args->list.size() <= 4){
+            for (int i = 0; i < args->list.size(); i++){
+                args->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+        } else {
+            for (int i = 0; i <= 4; i++){
+                args->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+            int regParam = context.allocate();
+            for (int i = 5; i <= args->list.size(); i++){
+                args->list[i]->generateMIPS(dst, context, regParam);
+                int curr_offset = 4*(context.variables_map.size() - context.variables_map[args->list[i]->getId()].old_map_size) + 8;
+                dst<<"sw $"<<regParam<<","<<curr_offset<<"($fp)"<<'\n';
+            }
+            context.regFile.freeReg(regParam);
+        }
+
+        // functionName->generateMIPS(dst, context, destReg);
+
+        dst<<"jal "<<functionName->getId()<<'\n';
+        dst<<"nop"<<'\n';
+    }
 };
 
 
