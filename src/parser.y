@@ -94,7 +94,8 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator compound_statement { $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
+	: declaration_specifiers declarator compound_statement 	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
+	| declaration_specifiers declarator	';'					{ $$ = new Function_Call_Definition(*$1, $2);}
 	| declarator 
 	;
 
@@ -248,7 +249,7 @@ jump_statement
 
 /* new */
 primary_expression
-	: IDENTIFIER			{ $$ = new Variable( *$1 );}
+	: IDENTIFIER			{ $$ = new Declarator( *$1 );}
 	| INT_LITERAL			{ $$ = new Integer( $1 );}
 	// | FLOAT_LITERAL			{ ;}
 	// | CHAR_LITERAL			{ $$ = new Integer($1);}

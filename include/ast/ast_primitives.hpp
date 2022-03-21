@@ -28,10 +28,16 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        // we need to access register number, through a function so we realise how far down from fp the variable is
+        variable v;
+        v.reg = destReg;
+        v.old_map_size = context.variables_map.size() +1; //------------------------------
+        context.variables_map.insert({id, v});
+        dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.variables_map.size() <<'\n';
+
+        //TODO: check if valid
+        int curr_offset = 4*(context.variables_map.size() - context.variables_map[id].old_map_size) + 12;
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-        dst<<context.variables_map[id].offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
-        // dst<<id<<'\n'; //id is variable name, here we will need register assigned to that variable, a scan function in the vector of alive/used regs
+        dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
     }
    
 };
@@ -89,7 +95,13 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         arg->generateMIPS(dst, context, 2);
-        dst<<"j endFunction"<<'\n';
+        // dst<<"move $sp,$fp"<<'\n';
+        // dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
+        // dst<<"move $sp,$25"<<'\n';
+        // dst<<"jr $31"<<'\n';
+        // dst<<"nop"<<'\n';
+        dst<<"j end_"<<context.current_function<<'\n';
+        dst<<"nop"<<'\n';
     }
 
 };
@@ -115,6 +127,7 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst<<".global f"<<'\n';
+        // dst<<".cprestore 8"<<'\n';
         arg->generateMIPS(dst, context, destReg);
     }
 
