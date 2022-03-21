@@ -43,6 +43,7 @@ public:
     {
         dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
         dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
+        dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
         dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
 
         variable v;
@@ -52,7 +53,7 @@ public:
         dst<<"#DEBUG Declare: adding to map at address " << right->getId() << " making map size = "<< context.variables_map.size() <<'\n';
         
 
-        dst<<"sw $"<<context.variables_map[right->getId()].reg<<",8($fp)"<<'\n';
+        dst<<"sw $"<<context.variables_map[right->getId()].reg<<",12($fp)"<<'\n';
         dst<<"#DEBUG: reg of argument="<<context.variables_map[right->getId()].reg<< " "<< right->getId() <<'\n';
         right->generateMIPS(dst, context, context.variables_map[right->getId()].reg);
 
@@ -99,7 +100,7 @@ public:
         //dst<<"#DEBUG : in variables_map for " << left->getId() << " " << context.variables_map[left->getId()].offset << " " << v.offset << '\n';
         dst<<"sw $";
         dst<<destReg;
-        dst<<",8($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+        dst<<",12($fp)"<<'\n'; //store output register of the calculations in  respective stack location
         left->generateMIPS(dst, context, context.variables_map[left->getId()].reg);
 
     }
@@ -139,7 +140,7 @@ public:
         dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.variables_map.size() <<'\n';
 
         //TODO: check if valid
-        int curr_offset = 4*(context.variables_map.size() - context.variables_map[id].old_map_size) + 8;
+        int curr_offset = 4*(context.variables_map.size() - context.variables_map[id].old_map_size) + 12;
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
         dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
     }
@@ -183,7 +184,7 @@ public:
 
             right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
             dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';
-            int curr_offset = 4*(context.variables_map.size() - context.variables_map[left->getId()].old_map_size) + 8;
+            int curr_offset = 4*(context.variables_map.size() - context.variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<destReg;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location

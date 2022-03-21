@@ -56,10 +56,11 @@ public:
 
         right->generateMIPS(dst, context, destReg);
 
-        dst<<"end_"<<left->getId()<<":"<<'\n';
+        //dst<<"end_"<<left->getId()<<":"<<'\n';
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
+        //dst<<"lw $24,8($sp)"<<'\n';// get old_pc before jumping
         dst<<"jr $31"<<'\n';
         dst<<"nop"<<'\n';
     }
@@ -145,8 +146,9 @@ public:
         // id->generateMIPS(dst, context, destReg);
         dst<<id->getId();
         dst<<":"<<'\n';
-        dst<<"addiu $sp,$sp,-8"<<'\n';
+        dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
         dst<<"sw $fp,4($sp)"<<'\n';
+        dst<<"sw $31, 8($sp)"<<'\n'; // stores pc above old_pc
         dst<<"move $25,$fp"<< '\n'; //make a copy of old fp in register 25
         dst<<"move $fp,$sp"<<'\n';
 
@@ -212,11 +214,13 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         label_args->generateMIPS(dst, context, destReg);
-        dst<<"end_"<<label_args->getId()<<":"<<'\n';
+        //dst<<"end_"<<label_args->getId()<<":"<<'\n';
         dst<<"move $sp,$fp"<<'\n';
-        dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
+        dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector ; Scott: not sure what this mean think we are just taking old fp and loading it into fp
         dst<<"move $sp,$25"<<'\n';
-        dst<<"jr $31"<<'\n';
+        //dst<<"move $fp, $sp"<<'\n'; //also resetting the frame pointer at end of function call
+        //dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
+        dst<<"jr $31"<<'\n'; //now we change the PC
         dst<<"nop"<<'\n';
     }
 };
@@ -277,7 +281,7 @@ public:
             int regParam = context.allocate();
             for (int i = 5; i <= args->list.size(); i++){
                 args->list[i]->generateMIPS(dst, context, regParam);
-                int curr_offset = 4*(context.variables_map.size() - context.variables_map[args->list[i]->getId()].old_map_size) + 8;
+                int curr_offset = 4*(context.variables_map.size() - context.variables_map[args->list[i]->getId()].old_map_size) + 12;
                 dst<<"sw $"<<regParam<<","<<curr_offset<<"($fp)"<<'\n';
             }
             context.regFile.freeReg(regParam);
@@ -285,6 +289,7 @@ public:
 
         // functionName->generateMIPS(dst, context, destReg);
 
+        dst<<"sw $31,8($sp)"<<'\n'; //we store old pc in memory
         dst<<"jal "<<functionName->getId()<<'\n';
         dst<<"nop"<<'\n';
     }
