@@ -60,7 +60,7 @@ public:
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
-        dst<<"lw $24,8($sp)"<<'\n';// get old_pc before jumping
+        //dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
         dst<<"jr $31"<<'\n';
         dst<<"nop"<<'\n';
     }
@@ -150,7 +150,6 @@ public:
         dst<<"sw $fp,4($sp)"<<'\n';
         dst<<"sw $31, 8($sp)"<<'\n'; // stores pc above old_pc
         dst<<"move $25,$fp"<< '\n'; //make a copy of old fp in register 25
-        dst<<"move $24,$fp"<< '\n'; //make a copy of old pc in register 24
         dst<<"move $fp,$sp"<<'\n';
 
         int start_reg = 4;
@@ -220,7 +219,6 @@ public:
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector ; Scott: not sure what this mean think we are just taking old fp and loading it into fp
         dst<<"move $sp,$25"<<'\n';
         //dst<<"move $fp, $sp"<<'\n'; //also resetting the frame pointer at end of function call
-        dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
         dst<<"jr $31"<<'\n'; //now we change the PC
         dst<<"nop"<<'\n';
     }
@@ -293,6 +291,7 @@ public:
         dst<<"sw $31,8($sp)"<<'\n'; //we store old pc in memory NOT SURE IF NEEDED HERE (probably not)
         dst<<"jal "<<functionName->getId()<<'\n';
         dst<<"nop"<<'\n';
+        dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
     }
 };
 
