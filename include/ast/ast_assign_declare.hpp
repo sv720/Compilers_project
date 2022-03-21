@@ -90,7 +90,8 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         variable v;
-        v.reg = context.allocate();
+        v.reg = v.reg = context.allocate();
+        if (v.reg == -1) v.reg = context.allocate();
         v.old_map_size = context.variables_map.size() +1; //------------------------------
         context.variables_map.insert({left->getId(), v});
         dst<<"#DEBUG InitDeclarator: adding to map at address " << right->getId() << " making map size = "<< context.variables_map.size() <<'\n';
@@ -103,6 +104,7 @@ public:
         dst<<",12($fp)"<<'\n'; //store output register of the calculations in  respective stack location
         left->generateMIPS(dst, context, context.variables_map[left->getId()].reg);
 
+        context.regFile.freeReg(context.variables_map[left->getId()].reg);
     }
 };
 
@@ -177,6 +179,7 @@ public:
         if (middle == "="){
             variable v;
             v.reg = context.allocate();
+            if (v.reg == -1) v.reg = context.allocate();
             v.old_map_size = context.variables_map.size()+1; //------------------------------
             context.variables_map.insert({left->getId(), v});
             dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << " was " << context.variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';
@@ -189,6 +192,8 @@ public:
             dst<<destReg;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
             left->generateMIPS(dst, context, context.variables_map[left->getId()].reg);
+
+            context.regFile.freeReg(context.variables_map[left->getId()].reg);
 
         }else if (middle == "*="){
 

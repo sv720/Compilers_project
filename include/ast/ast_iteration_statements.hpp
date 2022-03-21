@@ -47,7 +47,7 @@ public:
         dst<<WHILElabel<<":"<<'\n';
         dst<<"beq $"<<regA<<",$zero,"<<endWhileLabel<<'\n';
         statement->generateMIPS(dst, context, destReg);
-        condition->generateMIPS(dst, context, regA); //not needed?
+        condition->generateMIPS(dst, context, regA);
         dst<<"bne $"<<regA<<",$zero,"<<WHILElabel<<'\n';
 
         dst<<endWhileLabel<<":"<<'\n';
@@ -109,12 +109,20 @@ public:
 
         conditionInit->generateMIPS(dst, context, regA);
 
-        condition->generateMIPS(dst, context, regCondition);
         dst<<FORlabel<<":"<<'\n';
+        condition->generateMIPS(dst, context, regCondition);
+        
         dst<<"beq $"<<regCondition<<",$zero,"<<endForLabel<<'\n';
-        statement->generateMIPS(dst, context, destReg);
-        condition->generateMIPS(dst, context, regCondition); //not needed?
-        conditionStep->generateMIPS(dst, context, regStep);
+        if (conditionStep->getId() == "pre++" || conditionStep->getId() == "pre--"){
+            conditionStep->generateMIPS(dst, context, regStep);
+            statement->generateMIPS(dst, context, destReg);
+            // condition->generateMIPS(dst, context, regCondition); 
+        } else {
+            statement->generateMIPS(dst, context, destReg);
+            // condition->generateMIPS(dst, context, regCondition); 
+            conditionStep->generateMIPS(dst, context, regStep);
+        }
+        
         dst<<"bne $"<<regCondition<<",$zero,"<<FORlabel<<'\n';
 
         dst<<endForLabel<<":"<<'\n';

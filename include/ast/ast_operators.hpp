@@ -35,6 +35,8 @@ public:
     ExpressionPtr getRight() const
     { return right; }
 
+    std::string getId() const override {}
+
     virtual void print(std::ostream &dst) const override
     {
         dst<<"( ";
@@ -628,7 +630,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "post++"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "add"; }
 public:
     PostIncrementOperator(ExpressionPtr _left)
         : Operator(_left)
@@ -646,7 +648,7 @@ public:
     {
         dst<<"#PostInrementOperator generateMIPS Called"<<'\n';
         left->generateMIPS(dst, context, destReg);
-        dst<<"addiu $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
 
     }
 
@@ -659,7 +661,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "post--"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "add"; }
 public:
     PostDecrementOperator(ExpressionPtr _left)
         : Operator(_left)
@@ -677,7 +679,7 @@ public:
     {
         dst<<"#PostDecrementOperator generateMIPS Called"<<'\n';
         left->generateMIPS(dst, context, destReg);
-        dst<<"subi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",-1"<<'\n'; 
     }
 
 };
@@ -689,11 +691,15 @@ protected:
     virtual const char *getOpcode() const override
     { return "pre++"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "add"; }
 public:
     PreIncrementOperator(ExpressionPtr _left)
         : Operator(_left)
     {}
+
+    std::string getId() const override{
+        return "pre++";
+    }
 
     virtual void print(std::ostream &dst) const override
     {
@@ -724,6 +730,10 @@ public:
         : Operator(_left)
     {}
 
+    std::string getId() const override{
+        return "pre--";
+    }
+
     virtual void print(std::ostream &dst) const override
     {
         dst<<"( ";
@@ -735,7 +745,7 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst<<"#PreDecrementOperator generateMIPS Called"<<'\n';
-        dst<<"subi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",-1"<<'\n'; 
         left->generateMIPS(dst, context, destReg);
     }
 

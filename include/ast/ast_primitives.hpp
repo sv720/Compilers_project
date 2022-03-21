@@ -100,7 +100,7 @@ public:
         // dst<<"move $sp,$25"<<'\n';
         // dst<<"jr $31"<<'\n';
         // dst<<"nop"<<'\n';
-        //dst<<"j end_"<<context.current_function<<'\n';
+        dst<<"j end_"<<context.current_function<<'\n';
         dst<<"nop"<<'\n';
     }
 

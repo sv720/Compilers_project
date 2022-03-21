@@ -56,7 +56,7 @@ public:
 
         right->generateMIPS(dst, context, destReg);
 
-        //dst<<"end_"<<left->getId()<<":"<<'\n';
+        dst<<"end_"<<left->getId()<<":"<<'\n';
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
@@ -213,14 +213,17 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        label_args->generateMIPS(dst, context, destReg);
-        //dst<<"end_"<<label_args->getId()<<":"<<'\n';
-        dst<<"move $sp,$fp"<<'\n';
-        dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector ; Scott: not sure what this mean think we are just taking old fp and loading it into fp
-        dst<<"move $sp,$25"<<'\n';
-        //dst<<"move $fp, $sp"<<'\n'; //also resetting the frame pointer at end of function call
-        dst<<"jr $31"<<'\n'; //now we change the PC
-        dst<<"nop"<<'\n';
+        
+        function f;
+        context.functions.insert({label_args->getId(), f});
+        // label_args->generateMIPS(dst, context, destReg);
+        // //dst<<"end_"<<label_args->getId()<<":"<<'\n';
+        // dst<<"move $sp,$fp"<<'\n';
+        // dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector ; Scott: not sure what this mean think we are just taking old fp and loading it into fp
+        // dst<<"move $sp,$25"<<'\n';
+        // //dst<<"move $fp, $sp"<<'\n'; //also resetting the frame pointer at end of function call
+        // dst<<"jr $31"<<'\n'; //now we change the PC
+        // dst<<"nop"<<'\n';
     }
 };
 
