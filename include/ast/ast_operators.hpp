@@ -35,6 +35,8 @@ public:
     ExpressionPtr getRight() const
     { return right; }
 
+    std::string getId() const override {}
+
     virtual void print(std::ostream &dst) const override
     {
         dst<<"( ";
@@ -78,6 +80,8 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"add $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
     
 };
@@ -103,6 +107,8 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB); 
         dst<<"sub $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 };
 
@@ -130,6 +136,8 @@ public:
         dst<<"mult $"<<regA<<",$"<<regB<<'\n'; //remember: this goes in HI and LO registers
         dst<<"mflo $"<<destReg<<'\n'; //TBC : LO resutls goes into destReg (usually $2)
         dst<<"mfhi $"<<destReg+1<<'\n'; //TBC : HI result goes into destReg +1 (usually $3)
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -156,6 +164,8 @@ public:
         right->generateMIPS(dst, context, regB); //TODO: why can't we access right here?
         dst<<"div $"<<regA<<",$"<<regB<<'\n'; //remember: this goes in HI and LO registers
         dst<<"mflo $"<<destReg<<'\n'; //TBC : LO resutls goes into destReg (usually $2)
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 };
 
@@ -181,6 +191,8 @@ public:
         right->generateMIPS(dst, context, regB); //TODO: why can't we access right here?
         dst<<"div $"<<regA<<",$"<<regB<<'\n'; //remember: this goes in HI and LO registers
         dst<<"mfhi $"<<destReg<<'\n'; //TBC : HI result goes into destReg +1 (usually $3)
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 };
 
@@ -208,6 +220,8 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"sllv $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -234,6 +248,8 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"srlv $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -260,6 +276,8 @@ virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) cons
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"slt $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n'; //if left<right : set destReg to 1
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -284,6 +302,8 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"slt $"<< destReg << ",$"<<regB<<",$"<<regA<<'\n'; //if right<left : set destReg to 1
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -310,6 +330,8 @@ public:
         right->generateMIPS(dst, context, regB);
         dst<<"addi $"<<regA<<",$"<<regA<< ",-1"<< '\n'; //shift by -1 as a <= b equivalent to a-1 < b
         dst<<"slt $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n'; //if right<left : set destReg to 1
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -336,6 +358,8 @@ public:
         right->generateMIPS(dst, context, regB);
         dst<<"addi $"<<regB<<",$"<<regB<< ",-1"<< '\n'; //shift by -1 as b <= a equivalent to b-1 < a
         dst<<"slt $"<< destReg << ",$"<<regB<<",$"<<regA<<'\n'; //if right<left : set destReg to 1
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -366,6 +390,10 @@ public:
         dst<<"slt $"<< regD << ",$"<<regB<<",$"<<regA<<'\n';
         dst<<"nor $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n'; 
         //if a number neither smaller neither greater to its pear, it must be equal
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
+        context.regFile.freeReg(regC);
+        context.regFile.freeReg(regD);
     }
 };
 
@@ -395,6 +423,10 @@ public:
         dst<<"slt $"<< regD << ",$"<<regB<<",$"<<regA<<'\n';
         dst<<"or $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n'; 
         //if either number is strictly greater than the other; they can't be equal
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
+        context.regFile.freeReg(regC);
+        context.regFile.freeReg(regD);
     }
 
 
@@ -423,6 +455,9 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"and $"<< destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
+
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 
@@ -449,6 +484,9 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"xor $"<< destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
+
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -473,6 +511,9 @@ public:
         int regB = context.allocate();
         right->generateMIPS(dst, context, regB);
         dst<<"or $"<< destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
+
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
     }
 
 };
@@ -492,6 +533,41 @@ public:
         : Operator(_left, _right)
     {}
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        int regC = context.allocate();
+        int regD = context.allocate();
+        int regE = context.allocate();
+        int regF = context.allocate();
+    
+        int regLis0 = context.allocate();
+        int regRis0 = context.allocate();
+        
+        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
+        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
+        dst<<"nor $"<<regLis0<<",$"<<regC<<",$"<<regD<<'\n';
+
+        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
+        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
+        dst<<"nor $"<<regRis0<<",$"<<regC<<",$"<<regD<<'\n';
+
+
+        dst<<"nor $"<<destReg<<",$"<<regLis0<<",$"<<regRis0<<'\n';
+
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
+        context.regFile.freeReg(regC);
+        context.regFile.freeReg(regD);
+        context.regFile.freeReg(regE);
+        context.regFile.freeReg(regF);
+        context.regFile.freeReg(regLis0);
+        context.regFile.freeReg(regRis0);
+  
+    }
 };
 
 class LogicalOROperator
@@ -506,6 +582,42 @@ public:
     LogicalOROperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
     {}
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        int regA = context.allocate();
+        left->generateMIPS(dst, context, regA);
+        int regB = context.allocate();
+        right->generateMIPS(dst, context, regB);
+        int regC = context.allocate();
+        int regD = context.allocate();
+        int regE = context.allocate();
+        int regF = context.allocate();
+    
+        int regLis0 = context.allocate();
+        int regRis0 = context.allocate();
+        
+        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
+        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
+        dst<<"nor $"<<regLis0<<",$"<<regC<<",$"<<regD<<'\n';
+
+        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
+        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
+        dst<<"nor $"<<regRis0<<",$"<<regC<<",$"<<regD<<'\n';
+
+        dst<<"or $"<<destReg<<",$"<<regLis0<<",$"<<regRis0<<'\n';
+
+        context.regFile.freeReg(regA);
+        context.regFile.freeReg(regB);
+        context.regFile.freeReg(regC);
+        context.regFile.freeReg(regD);
+        context.regFile.freeReg(regE);
+        context.regFile.freeReg(regF);
+        context.regFile.freeReg(regLis0);
+        context.regFile.freeReg(regRis0);
+
+        //error for if_else_if testcase
+        
+    }
 
 };
 
@@ -518,7 +630,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "post++"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "add"; }
 public:
     PostIncrementOperator(ExpressionPtr _left)
         : Operator(_left)
@@ -532,6 +644,14 @@ public:
         dst<<" )";
     }
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#PostInrementOperator generateMIPS Called"<<'\n';
+        left->generateMIPS(dst, context, destReg);
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
+
+    }
+
 };
 
 class PostDecrementOperator
@@ -541,7 +661,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "post--"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "add"; }
 public:
     PostDecrementOperator(ExpressionPtr _left)
         : Operator(_left)
@@ -555,6 +675,13 @@ public:
         dst<<" )";
     }
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#PostDecrementOperator generateMIPS Called"<<'\n';
+        left->generateMIPS(dst, context, destReg);
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",-1"<<'\n'; 
+    }
+
 };
 
 class PreIncrementOperator
@@ -564,11 +691,15 @@ protected:
     virtual const char *getOpcode() const override
     { return "pre++"; }
     virtual const char *getOpInstruction() const override
-    { return "addu"; }
+    { return "add"; }
 public:
     PreIncrementOperator(ExpressionPtr _left)
         : Operator(_left)
     {}
+
+    std::string getId() const override{
+        return "pre++";
+    }
 
     virtual void print(std::ostream &dst) const override
     {
@@ -576,6 +707,12 @@ public:
         dst<<"++ ";
         left->print(dst);
         dst<<" )";
+    }
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#PreIncrementOperator generateMIPS Called"<<'\n';
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
+        left->generateMIPS(dst, context, destReg);
     }
 
 };
@@ -593,6 +730,10 @@ public:
         : Operator(_left)
     {}
 
+    std::string getId() const override{
+        return "pre--";
+    }
+
     virtual void print(std::ostream &dst) const override
     {
         dst<<"( ";
@@ -600,6 +741,15 @@ public:
         left->print(dst);
         dst<<" )";
     }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#PreDecrementOperator generateMIPS Called"<<'\n';
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",-1"<<'\n'; 
+        left->generateMIPS(dst, context, destReg);
+    }
+
+    
 
 };
 

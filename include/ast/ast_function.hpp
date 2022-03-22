@@ -56,10 +56,11 @@ public:
 
         right->generateMIPS(dst, context, destReg);
 
-        dst<<"endFunction:"<<'\n';
+        dst<<"end_"<<left->getId()<<":"<<'\n';
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
-        dst<<"addiu $sp,$sp,8"<<'\n';
+        dst<<"move $sp,$25"<<'\n';
+        //dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
         dst<<"jr $31"<<'\n';
         dst<<"nop"<<'\n';
     }
@@ -84,6 +85,9 @@ public:
 
     const std::string getType() const
     { return type; }
+
+    std::string getId() const
+    { return label_args->getId(); }
 
     ExpressionPtr getLabel() const
     { return label_args; }
@@ -123,6 +127,9 @@ public:
         delete arg;
     }
 
+    std::string getId() const
+    { return id->getId(); }
+
     ExpressionListPtr getArg() const
     { return arg; }
 
@@ -136,21 +143,90 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        id->generateMIPS(dst, context, destReg);
+        // id->generateMIPS(dst, context, destReg);
         dst<<id->getId();
         dst<<":"<<'\n';
-        dst<<"addiu $sp,$sp,-8"<<'\n';
+        dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
         dst<<"sw $fp,4($sp)"<<'\n';
+        dst<<"sw $31, 8($sp)"<<'\n'; // stores pc above old_pc
+        dst<<"move $25,$fp"<< '\n'; //make a copy of old fp in register 25
         dst<<"move $fp,$sp"<<'\n';
+
         int start_reg = 4;
 
-        for (int i = 0; i < arg->list.size(); i++){
-            arg->list[i]->generateMIPS(dst, context, start_reg+i);
+        if (arg->list.size() <= 4){
+            for (int i = 0; i < arg->list.size(); i++){
+                arg->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+        } else {
+            for (int i = 0; i <= 4; i++){
+                arg->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+            for (int i = 5; i <= arg->list.size(); i++){
+                int regParam = context.allocate();
+                arg->list[i]->generateMIPS(dst, context, regParam);
+            }
         }
+
+        function f;
+        context.functions.insert({id->getId(), f});
+        context.current_function = id->getId();
         // storing argument parameters in stack
+
     }
-    
+
 };
+
+//--------------------------------------------------------------------------------
+
+class Function_Call_Definition
+    : public Expression
+{
+private:
+    std::string type;
+    ExpressionPtr label_args;  
+public:
+    Function_Call_Definition(const std::string &_type, ExpressionPtr _label_args)
+        : type(_type)
+        , label_args(_label_args)
+    {}
+
+    virtual ~Function_Call_Definition()
+    {
+        delete label_args;
+    }
+
+    const std::string getType() const
+    { return type; }
+
+    std::string getId() const
+    { return label_args->getId(); }
+
+    ExpressionPtr getLabel() const
+    { return label_args; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<type<<" ";
+        label_args->print(dst);
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        
+        function f;
+        context.functions.insert({label_args->getId(), f});
+        // label_args->generateMIPS(dst, context, destReg);
+        // //dst<<"end_"<<label_args->getId()<<":"<<'\n';
+        // dst<<"move $sp,$fp"<<'\n';
+        // dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector ; Scott: not sure what this mean think we are just taking old fp and loading it into fp
+        // dst<<"move $sp,$25"<<'\n';
+        // //dst<<"move $fp, $sp"<<'\n'; //also resetting the frame pointer at end of function call
+        // dst<<"jr $31"<<'\n'; //now we change the PC
+        // dst<<"nop"<<'\n';
+    }
+};
+
 
 
 class FunctionCall
@@ -193,7 +269,33 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        int start_reg = 4;
+
+        if (args->list.size() <= 4){
+            for (int i = 0; i < args->list.size(); i++){
+                args->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+        } else {
+            for (int i = 0; i <= 4; i++){
+                args->list[i]->generateMIPS(dst, context, start_reg+i);
+            }
+            int regParam = context.allocate();
+            for (int i = 5; i <= args->list.size(); i++){
+                args->list[i]->generateMIPS(dst, context, regParam);
+                int curr_offset = 4*(context.variables_map.size() - context.variables_map[args->list[i]->getId()].old_map_size) + 12;
+                dst<<"sw $"<<regParam<<","<<curr_offset<<"($fp)"<<'\n';
+            }
+            context.regFile.freeReg(regParam);
+        }
+
+        // functionName->generateMIPS(dst, context, destReg);
+
+        dst<<"sw $31,8($sp)"<<'\n'; //we store old pc in memory NOT SURE IF NEEDED HERE (probably not)
+        dst<<"jal "<<functionName->getId()<<'\n';
+        dst<<"nop"<<'\n';
+        dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
+    }
 };
 
 

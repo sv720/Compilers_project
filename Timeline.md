@@ -44,3 +44,12 @@ https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y
 
 ### 16 Mar 2022:
 - mips working for local_var and integer (arithmetic, parameters, variable allocation to registers)
+
+### 18 Mar 2022:
+- relative stack/frame pointers implemented
+- allocating temporary registers for operations and emtying them after use
+- implemented while, if and for loops for generating mips
+
+TODO: "Unable to empty registers" - for_in_for testcase (parsing error)
+        - in general take a look at for, NOT WORKING (anf while loops, tho they work)
+        - logical and and or seems to be broken 

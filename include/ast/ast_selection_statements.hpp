@@ -38,17 +38,25 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+<<<<<<< HEAD
         
         int regA = context.allocate();
         condition->generateMIPS(dst, context, regA);
         dst<<"nop"<<'\n';
         std::string endIfLabel = context.makeLabel("L");
+=======
+        int regA = context.allocate();
+        condition->generateMIPS(dst, context, regA);
+        dst<<"nop"<<'\n';
+        std::string endIfLabel = context.makeLabel("endIF");
+>>>>>>> c2d88deee9140bc985f44f78d9c989b59aac66f3
         dst<<"beq $zero,$"<<regA<<","<<endIfLabel<<'\n';
         statement->generateMIPS(dst, context, destReg);
 
         dst<<endIfLabel<<":"<<'\n';
-        dst<<"nop"<<'\n';
+        // dst<<"nop"<<'\n';
 
+        context.regFile.freeReg(regA);
     }
 };
 
@@ -92,14 +100,26 @@ public:
         dst<<"beq $"<<regA<<",$zero,"<<ELSElabel<<'\n';
 
         statement->generateMIPS(dst, context, destReg);
+<<<<<<< HEAD
         std::string endIfLabel = context.makeLabel("L");
         dst<<"j "<<endIfLabel<<'\n';
         dst<<"nop"<<'\n';
+=======
+        std::string endIfLabel = context.makeLabel("endIFELSE");
+        dst<<"j "<<endIfLabel<<'\n';
+        // dst<<"nop"<<'\n';
+>>>>>>> c2d88deee9140bc985f44f78d9c989b59aac66f3
 
         dst<<ELSElabel<<":"<<'\n';
         elseStatement->generateMIPS(dst, context, destReg);
 
         dst<<endIfLabel<<":"<<'\n';
+<<<<<<< HEAD
+=======
+
+
+        context.regFile.freeReg(regA);
+>>>>>>> c2d88deee9140bc985f44f78d9c989b59aac66f3
     }
 };
 
