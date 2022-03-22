@@ -30,12 +30,12 @@ public:
     {
         variable v;
         v.reg = destReg;
-        v.old_map_size = context.variables_map.size() +1; //------------------------------
-        context.variables_map.insert({id, v});
-        dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.variables_map.size() <<'\n';
+        v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
+        context.functions[context.current_function].variables_map.insert({id, v});
+        dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
 
         //TODO: check if valid
-        int curr_offset = 4*(context.variables_map.size() - context.variables_map[id].old_map_size) + 12;
+        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
         dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
     }
@@ -100,7 +100,7 @@ public:
         // dst<<"move $sp,$25"<<'\n';
         // dst<<"jr $31"<<'\n';
         // dst<<"nop"<<'\n';
-        dst<<"j end_"<<context.current_function<<'\n';
+        dst<<"j end_"<<context.current_function_name<<'\n';
         dst<<"nop"<<'\n';
     }
 

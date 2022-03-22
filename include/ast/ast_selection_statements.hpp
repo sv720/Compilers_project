@@ -38,7 +38,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        int regA = context.allocate();
+        int regA = context.allocate(context.current_function);
         condition->generateMIPS(dst, context, regA);
         dst<<"nop"<<'\n';
         std::string endIfLabel = context.makeLabel("endIF");
@@ -86,7 +86,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        int regA = context.allocate();
+        int regA = context.allocate(context.current_function);
         condition->generateMIPS(dst, context, regA);
         std::string ELSElabel = context.makeLabel("ELSE");
         dst<<"beq $"<<regA<<",$zero,"<<ELSElabel<<'\n';

@@ -75,21 +75,25 @@ struct function
 {
     unsigned int size;                 // Total size of arguments
     std::vector<unsigned int> argSize; // Individual size of each argument
+    std::map<std::string, variable> variables_map; 
 };
 
 struct Context
 {
-    // Stack stuff
-    std::vector<stackFrame> stack;
     std::map<std::string, variable> variables_map; // key is variable id, store memory address offset (relative to frame pointer)
     std::map<int, bool> live_variables; //maps register numbers to bool live (1) or dead (0)
-
+    // typedef std::map<std::string, variable> vars_map;
+    // std::map<std::string, vars_map> function_vars_map;
 
     // Globals (pretty sure i should be using std::unordered_map for faster lookups but getting weird issues with the header)
     // std::map<std::string, enum Specifier> globals; // Just needs to track the names + types of globals
-    std::map<std::string, function> functions;     // tracks the size of the arguments
+    
     // std::map<std::string, enumeration> enums;      // Tracks enums globally
+    std::map<std::string, function> functions;     // tracks the size of the arguments
     std::string current_function;
+    std::vector<std::string> functions_names;
+    std::string current_function_name;
+    // std::string curr_function_label = makeLabel(current_function); //key of functions map
 
     // MIPS Register file
     registers regFile;
@@ -164,7 +168,7 @@ struct Context
 
     // Use this method for allocation
     // If all registers are being used, this will clear a register and return it
-    int allocate(){
+    int allocate(std::string unique_label){
         // Allocates register
         int reg = regFile.allocate();
         if (reg != -1)
@@ -174,7 +178,7 @@ struct Context
         // If no registers are free, overwrites variable
         else
         {
-            for(auto it = variables_map.begin(); it != variables_map.end(); it++){
+            for(auto it = functions[unique_label].variables_map.begin(); it != functions[unique_label].variables_map.end(); it++){
             {
                 reg = it->second.reg;
                 if (reg != -1)

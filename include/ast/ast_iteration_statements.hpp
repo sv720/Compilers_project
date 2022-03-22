@@ -39,7 +39,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        int regA = context.allocate();
+        int regA = context.allocate(context.current_function);
         std::string WHILElabel = context.makeLabel("WHILE");
         std::string endWhileLabel = context.makeLabel("endWHILE");
 
@@ -101,9 +101,9 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        int regA = context.allocate();
-        int regCondition = context.allocate();
-        int regStep = context.allocate();
+        int regA = context.allocate(context.current_function);
+        int regCondition = context.allocate(context.current_function);
+        int regStep = context.allocate(context.current_function);
         std::string FORlabel = context.makeLabel("FOR");
         std::string endForLabel = context.makeLabel("endFOR");
 
