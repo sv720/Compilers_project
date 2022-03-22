@@ -96,6 +96,7 @@ external_declaration
 function_definition
 	: declaration_specifiers declarator compound_statement 	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
 	| declaration_specifiers declarator	';'					{ $$ = new Function_Call_Definition(*$1, $2);}
+	| enum_specifier ';'									{ $$ = $1; }
 	| declarator 
 	;
 
@@ -398,7 +399,7 @@ type_specifier
 	| SIGNED
 	| UNSIGNED
 	// | struct_specifier
-	| enum_specifier
+	// | enum_specifier		{ $$ = $1; } // moved to full function
 	;
 
 struct_or_union_specifier
@@ -440,19 +441,19 @@ struct_declarator
 	;
 
 enum_specifier
-	: ENUM '{' enumerator_list '}'
-	| ENUM IDENTIFIER '{' enumerator_list '}'
-	| ENUM IDENTIFIER
+	: ENUM '{' enumerator_list '}'				{ $$ = new Enum( $3 ); }
+	| ENUM IDENTIFIER '{' enumerator_list '}'	{ $$ = new Enum( new Declarator(*$2), $4 ); }
+	| ENUM IDENTIFIER							{ $$ = new Enum( new Declarator(*$2) ); }
 	;
 
 enumerator_list
-	: enumerator
-	| enumerator_list ',' enumerator
+	: enumerator						{ $$ = initExprList($1); }
+	| enumerator_list ',' enumerator	{ appendToExprList($1, $3); }	
 	;
 
 enumerator
-	: IDENTIFIER
-	| IDENTIFIER '=' constant_expression
+	: IDENTIFIER							{ $$ = new EnumDeclarator( *$1 ); }
+	| IDENTIFIER '=' constant_expression	{ $$ = new AssignEnum( *$1, $3 );}
 	;
 
 type_qualifier

@@ -31,10 +31,16 @@ public:
 
     // virtual std::string getDeclarator() const {};
 
-    virtual std::string getId() const //TODO: check if this is desirable
+    virtual std::string getId() const 
     {
         return "<NULL>";
     }
+
+    virtual int getValue() const //for enums, as they are not considered in the mips generation, all of its assignments are done in compiler
+    { return NULL; }
+
+    virtual void generateENUM(int counter, Context &context) const
+    { }
 };
 
 class EmptyExpr

@@ -78,6 +78,12 @@ struct function
     std::map<std::string, variable> variables_map; 
 };
 
+struct enumeration
+{
+    std::string id; // Name of enum element
+    int value;      // Value associated with enum element
+};
+
 struct Context
 {
     std::map<std::string, variable> global_variables_map; // key is variable id, store memory address offset (relative to frame pointer)
@@ -87,7 +93,8 @@ struct Context
     // Globals (pretty sure i should be using std::unordered_map for faster lookups but getting weird issues with the header)
     // std::map<std::string, enum Specifier> globals; // Just needs to track the names + types of globals
     
-    // std::map<std::string, enumeration> enums;      // Tracks enums globally
+    std::map<std::string, std::vector<enumeration>> global_enums;      // Tracks enums globally with spefific enum label
+    std::vector<enumeration> enums;                 // track all enums independent of their label
     std::map<std::string, function> functions;     // tracks the size of the arguments
     std::string current_function;
     std::vector<std::string> functions_names;
@@ -204,13 +211,6 @@ struct Context
     //     exit(1);
     // };
 };
-
-
-// struct enumeration
-// {
-//     std::string id; // Name of enum
-//     int value;      // Value associated with enum
-// };
 
 struct stackFrame
 {

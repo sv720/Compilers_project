@@ -135,16 +135,43 @@ public:
         // dst<<"DEBUG : added to map "<< variables_map[id];
         //dst<< "#DEBUG : IN DECLARATOR \n";
         //dst<<id; //prints out labels (when we have a function definition) and gives variable name
-        variable v;
-        v.reg = destReg;
-        v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
-        context.functions[context.current_function].variables_map.insert({id, v});
-        dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+        int found_enum_index = -1;
+        for (int i = 0; i < context.enums.size(); i++) {
+            if (context.enums[i].id == id) {
+                found_enum_index = i;
+            }
+        }
 
-        //TODO: check if valid
-        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
-        dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-        dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        int found_var = false;
+        for (int i = 0; i < context.functions[context.current_function].variables_map.size(); i++) {
+            if (context.functions[context.current_function].variables_map.find(id) !=  context.functions[context.current_function].variables_map.end()) {
+                found_var = true;
+            }
+        }
+
+        if (found_enum_index != -1) {
+            dst<<"#DEBUG ENUM call: "<<context.enums[found_enum_index].id<<" <-> "<<context.enums[found_enum_index].value<<'\n';
+            dst<<"li $"<<destReg<<","<<context.enums[found_enum_index].value<<'\n';
+        }
+        else if ( found_var ) {
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
+            dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
+            dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+            
+        } else {
+            variable v;
+            v.reg = destReg;
+            v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
+            context.functions[context.current_function].variables_map.insert({id, v});
+            dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+
+            //TODO: check if valid
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
+            dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
+            dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        }
+        
     }
     
 };

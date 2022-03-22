@@ -21,10 +21,14 @@ int main(int argc, char *argv[])
     std::cout<<std::endl;
 
     if(ofs.is_open()){
-        
             std::cout<<std::endl;
             std::cout<<"MIPS GENERATED:"<<std::endl;
+
+            
             ast->generateMIPS(ofs, context, 2);
+            ofs<<".global "<<context.current_function_name; //assume that top level function is the last one in the code
+            ofs<<'\n';
+
             std::cout<<std::endl;
 
         ofs.close();

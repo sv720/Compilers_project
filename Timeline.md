@@ -57,4 +57,12 @@ https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y
 ### 22 Mar 2022:
 - implemented separate functions variable_map, to differentiate between each instance(looping) through the functions (for recursive calls) and differentiate the global wariable_map with the local ones (also for separating variables in scopes)
 
-TODO:  - logical and and or seems to be broken 
+https://www.cs.tufts.edu/comp/140/lectures/Day_3/mips_summary.pdf //high level mips instr
+
+- implemented enums which are calculated and kept track of by the compiler internally, no mips generated for it: so when reaching class declarator we heck if the id is of an enum, existent variable or we need to create a new variable for it
+- flags are not added in the c_compiler.cpp file at the end of the output files (works)
+
+
+TODO:   enums
+        switch
+        arrays

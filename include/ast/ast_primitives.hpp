@@ -72,7 +72,6 @@ public:
 
 };
 
-
 //________________________________________________
 
 
@@ -95,11 +94,6 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         arg->generateMIPS(dst, context, 2);
-        // dst<<"move $sp,$fp"<<'\n';
-        // dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
-        // dst<<"move $sp,$25"<<'\n';
-        // dst<<"jr $31"<<'\n';
-        // dst<<"nop"<<'\n';
         dst<<"j end_"<<context.current_function_name<<'\n';
         dst<<"nop"<<'\n';
     }
@@ -126,7 +120,11 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        dst<<".global f"<<'\n';
+        // dst<<".global "; //must be called after generating all mips so we know which function to add here
+        // for (std::string f_name : context.functions_names) {
+        //     dst<<f_name<<' ';
+        // }
+        // dst<<'\n';
         // dst<<".cprestore 8"<<'\n';
         arg->generateMIPS(dst, context, destReg);
     }
