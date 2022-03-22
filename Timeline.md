@@ -50,6 +50,11 @@ https://github.com/sts219/Odyssey_C_Compiler/blob/master/src/parser.y
 - allocating temporary registers for operations and emtying them after use
 - implemented while, if and for loops for generating mips
 
-TODO: "Unable to empty registers" - for_in_for testcase (parsing error)
-        - in general take a look at for, NOT WORKING (anf while loops, tho they work)
-        - logical and and or seems to be broken 
+### 21 Mar 2022:
+- Implementing storage of out of function pc values ($31) on stack to avoid loosing track when multiple function calls are present.
+- Managing calls to internally and exteranly compiled/defined functions.
+
+### 22 Mar 2022:
+- implemented separate functions variable_map, to differentiate between each instance(looping) through the functions (for recursive calls) and differentiate the global wariable_map with the local ones (also for separating variables in scopes)
+
+TODO:  - logical and and or seems to be broken 

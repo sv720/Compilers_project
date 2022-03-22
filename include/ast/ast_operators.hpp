@@ -384,16 +384,10 @@ public:
         left->generateMIPS(dst, context, regA);
         int regB = context.allocate(context.current_function);
         right->generateMIPS(dst, context, regB);
-        int regC = context.allocate(context.current_function);
-        int regD = context.allocate(context.current_function);
-        dst<<"slt $"<< regC << ",$"<<regA<<",$"<<regB<<'\n';
-        dst<<"slt $"<< regD << ",$"<<regB<<",$"<<regA<<'\n';
-        dst<<"nor $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n'; 
+        dst<<"seq $"<<destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
         //if a number neither smaller neither greater to its pear, it must be equal
         context.regFile.freeReg(regA);
         context.regFile.freeReg(regB);
-        context.regFile.freeReg(regC);
-        context.regFile.freeReg(regD);
     }
 };
 
@@ -417,16 +411,10 @@ public:
         left->generateMIPS(dst, context, regA);
         int regB = context.allocate(context.current_function);
         right->generateMIPS(dst, context, regB);
-        int regC = context.allocate(context.current_function);
-        int regD = context.allocate(context.current_function);
-        dst<<"slt $"<< regC << ",$"<<regA<<",$"<<regB<<'\n';
-        dst<<"slt $"<< regD << ",$"<<regB<<",$"<<regA<<'\n';
-        dst<<"or $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n'; 
+        dst<<"sne $"<<destReg<<",$"<<regA<<",$"<<regB<<'\n'; 
         //if either number is strictly greater than the other; they can't be equal
         context.regFile.freeReg(regA);
         context.regFile.freeReg(regB);
-        context.regFile.freeReg(regC);
-        context.regFile.freeReg(regD);
     }
 
 
@@ -541,31 +529,16 @@ public:
         right->generateMIPS(dst, context, regB);
         int regC = context.allocate(context.current_function);
         int regD = context.allocate(context.current_function);
-        int regE = context.allocate(context.current_function);
-        int regF = context.allocate(context.current_function);
-    
-        int regLis0 = context.allocate(context.current_function);
-        int regRis0 = context.allocate(context.current_function);
-        
-        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
-        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
-        dst<<"nor $"<<regLis0<<",$"<<regC<<",$"<<regD<<'\n';
 
-        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
-        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
-        dst<<"nor $"<<regRis0<<",$"<<regC<<",$"<<regD<<'\n';
+        dst<<"sne $"<< regC<<",$"<<regA<<",$0"<<'\n';
+        dst<<"sne $"<< regD<<",$"<<regB<<",$0"<<'\n';
+        dst<<"and $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n';
 
-
-        dst<<"nor $"<<destReg<<",$"<<regLis0<<",$"<<regRis0<<'\n';
 
         context.regFile.freeReg(regA);
         context.regFile.freeReg(regB);
         context.regFile.freeReg(regC);
         context.regFile.freeReg(regD);
-        context.regFile.freeReg(regE);
-        context.regFile.freeReg(regF);
-        context.regFile.freeReg(regLis0);
-        context.regFile.freeReg(regRis0);
   
     }
 };
@@ -590,32 +563,16 @@ public:
         right->generateMIPS(dst, context, regB);
         int regC = context.allocate(context.current_function);
         int regD = context.allocate(context.current_function);
-        int regE = context.allocate(context.current_function);
-        int regF = context.allocate(context.current_function);
     
-        int regLis0 = context.allocate(context.current_function);
-        int regRis0 = context.allocate(context.current_function);
-        
-        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
-        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
-        dst<<"nor $"<<regLis0<<",$"<<regC<<",$"<<regD<<'\n';
+        dst<<"sne $"<< regC<<",$"<<regA<<",$0"<<'\n';
+        dst<<"sne $"<< regD<<",$"<<regB<<",$0"<<'\n';
+        dst<<"or $"<<destReg<<",$"<<regC<<",$"<<regD<<'\n';
 
-        dst<<"slt $"<< regC << ",$"<<regB<<",$0"<<'\n';
-        dst<<"slt $"<< regD << ",$0,$"<<regB<<'\n';
-        dst<<"nor $"<<regRis0<<",$"<<regC<<",$"<<regD<<'\n';
-
-        dst<<"or $"<<destReg<<",$"<<regLis0<<",$"<<regRis0<<'\n';
 
         context.regFile.freeReg(regA);
         context.regFile.freeReg(regB);
         context.regFile.freeReg(regC);
         context.regFile.freeReg(regD);
-        context.regFile.freeReg(regE);
-        context.regFile.freeReg(regF);
-        context.regFile.freeReg(regLis0);
-        context.regFile.freeReg(regRis0);
-
-        //error for if_else_if testcase
         
     }
 

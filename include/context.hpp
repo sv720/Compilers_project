@@ -80,10 +80,9 @@ struct function
 
 struct Context
 {
-    std::map<std::string, variable> variables_map; // key is variable id, store memory address offset (relative to frame pointer)
-    std::map<int, bool> live_variables; //maps register numbers to bool live (1) or dead (0)
-    // typedef std::map<std::string, variable> vars_map;
-    // std::map<std::string, vars_map> function_vars_map;
+    std::map<std::string, variable> global_variables_map; // key is variable id, store memory address offset (relative to frame pointer)
+    // std::map<int, bool> live_variables; //maps register numbers to bool live (1) or dead (0)
+
 
     // Globals (pretty sure i should be using std::unordered_map for faster lookups but getting weird issues with the header)
     // std::map<std::string, enum Specifier> globals; // Just needs to track the names + types of globals
