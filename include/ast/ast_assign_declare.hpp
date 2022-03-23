@@ -41,22 +41,24 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
-        dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
-        dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
-        dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
+        //if (right->getId() != "<NULL>"){ //don't want to add "<NULL> to map" BUT THIS IS NEEDED TO PASS MANY TESTCASES
+            dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
+            dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
+            dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
+            dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
 
-        variable v;
-        v.reg = destReg; 
-        v.size = 4; // only for int !!!
-        v.old_map_size = context.functions[context.current_function].variables_map.size() +1 ; //------------------------------
-        context.functions[context.current_function].variables_map.insert({right->getId(), v});
-        dst<<"#DEBUG Declare: adding to map at address " << right->getId() << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
-        
+            variable v;
+            v.reg = destReg; 
+            v.size = 4; // only for int !!!
+            v.old_map_size = context.functions[context.current_function].variables_map.size() +1 ; //------------------------------
+            context.functions[context.current_function].variables_map.insert({right->getId(), v});
+            dst<<"#DEBUG Declare: adding to map at address " << right->getId() << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+            
 
-        dst<<"sw $"<<context.functions[context.current_function].variables_map[right->getId()].reg<<",12($fp)"<<'\n';
-        dst<<"#DEBUG: reg of argument="<<context.functions[context.current_function].variables_map[right->getId()].reg<< " "<< right->getId() <<'\n';
-        right->generateMIPS(dst, context, context.functions[context.current_function].variables_map[right->getId()].reg);
+            dst<<"sw $"<<context.functions[context.current_function].variables_map[right->getId()].reg<<",12($fp)"<<'\n';
+            dst<<"#DEBUG: reg of argument="<<context.functions[context.current_function].variables_map[right->getId()].reg<< " "<< right->getId() <<'\n';
+            right->generateMIPS(dst, context, context.functions[context.current_function].variables_map[right->getId()].reg);
+        //}
 
     }
 };

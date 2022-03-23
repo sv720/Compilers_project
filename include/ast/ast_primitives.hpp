@@ -37,7 +37,7 @@ public:
         //TODO: check if valid
         int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-        dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector) //S: Does this do anything? TODO : check if can remove
     }
    
 };

@@ -35,6 +35,7 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
+        dst<<"ARRAY: ";
         id->print(dst);
         dst<<"[";
         size->print(dst);
@@ -43,11 +44,15 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        dst << "#DEBUG: adding array to stack "<<'\n';
         int array_size = size->getValue();
-        dst << "addiu $sp,$sp,-"<< (array_size-1)*4 <<" \n"; //have a new array so need to make some space on the stack 
-        dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
-        dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
+        dst << "addiu $sp,$sp,-"<< (array_size)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : no -1 as need to free exactly number of words present
+        //Scott: we want to keep old_fp and sp and bottom of allocated stack
         dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
+        dst<< "sw $25,4($fp)"<< '\n'; //we move the old (out of function) frame pointer just above the new fp
+        dst<< "sw $31,8($fp)" << '\n'; //we store old_pc just above old_fp
+        
+   
 
         //declare the array as a normal variable, declarator could have been used
         variable v;
@@ -58,18 +63,28 @@ public:
         context.current_array_label = id->getId();
 
         context.functions[context.current_function].variables_map.insert({id->getId(), v});
-        dst<<"#DEBUG ARRAYDeclarator: adding to map at address of ARRAY " << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+        for(int i = 1; i<array_size; i++){
+            //dst<<"#DEBUG i = " << i <<'\n';
+            std::string item_id = id->getId() + std::to_string(i); 
+            context.functions[context.current_function].variables_map.insert({item_id, v});
 
+        }
+        dst<<"#DEBUG ARRAYDeclarator: adding to map at address of ARRAY " << id->getId() << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+/*
         //TODO: check if valid
-        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id->getId()].old_map_size) + 12;
-        dst<<"#DEBUG array declarator: curr_map_array: "<<4*(context.functions[context.current_function].variables_map.size())<<'\n';
-        dst<<"#DEBUG array declarator: old_map_size: "<<4*(context.functions[context.current_function].variables_map[id->getId()].old_map_size)<<'\n';
+        int curr_offset = 4*(context.functions[context.current_function].variables_map[id->getId()].old_map_size - context.functions[context.current_function].variables_map.size() ) + 12;
+        dst<<"#DEBUG array declarator: curr_map_array: "<<context.functions[context.current_function].variables_map.size()<<'\n';
+        dst<<"#DEBUG array declarator: old_map_size: "<<context.functions[context.current_function].variables_map[id->getId()].old_map_size<<'\n';
         dst<<"#DEBUG array declarator: curr_offset: "<<curr_offset<<'\n';
         dst<<"sw $";
         dst<<destReg;
         dst<<","<<curr_offset<<"($fp)"<<'\n';
 
+        //Scott: Don't think we need to store anything here (in MIPS)?
+
         // context.regFile.freeReg(context.functions[context.current_function].variables_map[left->getId()].reg);
+
+        */
     }
     
 };
