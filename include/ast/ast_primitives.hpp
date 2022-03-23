@@ -93,7 +93,9 @@ public:
     
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        dst<<"#DEBUG: calling generateMIPS on arg is return \n";
         arg->generateMIPS(dst, context, 2);
+        
         dst<<"j end_"<<context.current_function_name<<'\n';
         dst<<"nop"<<'\n';
     }

@@ -44,6 +44,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        dst << "#DEBUG: ARRAYDECLARATOR "<<'\n';
         dst << "#DEBUG: adding array to stack "<<'\n';
         int array_size = size->getValue();
         dst << "addiu $sp,$sp,-"<< (array_size)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : no -1 as need to free exactly number of words present
@@ -58,7 +59,7 @@ public:
         variable v;
         v.reg = destReg;
         v.size = array_size*4;
-        v.old_map_size = context.functions[context.current_function].variables_map.size() + array_size; //------------------------------
+        v.old_map_size = context.functions[context.current_function].variables_map.size(); //------------------------------
 
         context.current_array_label = id->getId();
 
@@ -108,6 +109,7 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
+        dst <<"array init";
         dst<<" {:";
         for (ExpressionPtr e : elements->list) {
             e->print(dst);
@@ -117,6 +119,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        dst << "#DEBUG: ARRAYINIT "<<'\n';
         for ( int i = 0; i < elements->list.size(); i++ ) {
             // get the address of where we declared the array (label)
 
@@ -168,12 +171,13 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         // x[a] == &x+a*4
-
+        dst << "#DEBUG: ARRAYCALL "<<'\n';
         int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id->getId()].old_map_size) + 12;
         int element_offset = index->getValue()*4;
+        dst << "#DEBUG current map size = " << context.functions[context.current_function].variables_map.size() << '\n';
+        dst << "#DEBUG old map size = " << context.functions[context.current_function].variables_map[id->getId()].old_map_size << '\n';
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-        dst<<curr_offset+element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
-
+        dst<<curr_offset-element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
     }
     
 };

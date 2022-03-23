@@ -198,7 +198,11 @@ public:
         , middle(_middle)
         , right(_right)
     {}
-    //no member functions yet
+    
+    std::string getId() const{
+        return left->getId();
+    }
+
     virtual void print(std::ostream &dst) const override
     { 
         left->print(dst);

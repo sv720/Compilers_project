@@ -107,7 +107,7 @@ public:
         std::string FORlabel = context.makeLabel("FOR");
         std::string endForLabel = context.makeLabel("endFOR");
 
-        conditionInit->generateMIPS(dst, context, regA);
+        conditionInit->generateMIPS(dst, context, regStep);
 
         dst<<FORlabel<<":"<<'\n';
         condition->generateMIPS(dst, context, regCondition);
@@ -116,12 +116,17 @@ public:
         if (conditionStep->getId() == "pre++" || conditionStep->getId() == "pre--"){
             conditionStep->generateMIPS(dst, context, regStep);
             statement->generateMIPS(dst, context, destReg);
-            // condition->generateMIPS(dst, context, regCondition); 
+            condition->generateMIPS(dst, context, regCondition); 
         } else {
             statement->generateMIPS(dst, context, destReg);
-            // condition->generateMIPS(dst, context, regCondition); 
+            condition->generateMIPS(dst, context, regCondition); 
             conditionStep->generateMIPS(dst, context, regStep);
         }
+
+        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[conditionInit->getId()].old_map_size) + 12;
+        dst<<"sw $";
+        dst<<regStep;
+        dst<<","<<curr_offset<<"($fp)"<<'\n';
         
         dst<<"bne $"<<regCondition<<",$zero,"<<FORlabel<<'\n';
 
