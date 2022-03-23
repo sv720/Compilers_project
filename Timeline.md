@@ -63,6 +63,8 @@ https://www.cs.tufts.edu/comp/140/lectures/Day_3/mips_summary.pdf //high level m
 - flags are not added in the c_compiler.cpp file at the end of the output files (works)
 
 
-TODO:   enums
-        switch
+### 23 Mar 2022
+- working on arrays 
+
+TODO:   switch
         arrays

@@ -90,7 +90,7 @@ translation_unit
 
 external_declaration
 	: function_definition		{ $$ = $1; }
-	| declaration				{ $$ = $1; }
+	| declaration				{ $$ = $1; } /* global ariables, to be added in context.global_variables_map */
 	;
 
 function_definition

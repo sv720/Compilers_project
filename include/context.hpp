@@ -99,7 +99,7 @@ struct Context
     std::string current_function;
     std::vector<std::string> functions_names;
     std::string current_function_name;
-    // std::string curr_function_label = makeLabel(current_function); //key of functions map
+    std::string current_array_label;
 
     // MIPS Register file
     registers regFile;

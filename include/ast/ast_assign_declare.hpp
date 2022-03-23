@@ -48,6 +48,7 @@ public:
 
         variable v;
         v.reg = destReg; 
+        v.size = 4; // only for int !!!
         v.old_map_size = context.functions[context.current_function].variables_map.size() +1 ; //------------------------------
         context.functions[context.current_function].variables_map.insert({right->getId(), v});
         dst<<"#DEBUG Declare: adding to map at address " << right->getId() << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
@@ -90,6 +91,7 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         variable v;
+        v.size = 4; //only for int !!!
         v.reg = v.reg = context.allocate(context.current_function);
         if (v.reg == -1) v.reg = context.allocate(context.current_function);
         v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
@@ -143,7 +145,7 @@ public:
         }
 
         int found_var = false;
-        for (int i = 0; i < context.functions[context.current_function].variables_map.size(); i++) {
+        for (int i = 0; i < context.functions[context.current_function].variables_map.size() && !found_var; i++) {
             if (context.functions[context.current_function].variables_map.find(id) !=  context.functions[context.current_function].variables_map.end()) {
                 found_var = true;
             }
@@ -162,6 +164,7 @@ public:
         } else {
             variable v;
             v.reg = destReg;
+            v.size = 4; //only for int !!!
             v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
             context.functions[context.current_function].variables_map.insert({id, v});
             dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
@@ -206,6 +209,7 @@ public:
         if (middle == "="){
             variable v;
             v.reg = context.allocate(context.current_function);
+            v.size = 4; //only for int !!!
             if (v.reg == -1) v.reg = context.allocate(context.current_function);
             v.old_map_size = context.functions[context.current_function].variables_map.size()+1; //------------------------------
             context.functions[context.current_function].variables_map.insert({left->getId(), v});

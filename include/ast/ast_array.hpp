@@ -42,7 +42,35 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        int array_size = size->getValue();
+        dst << "addiu $sp,$sp,-"<< (array_size-1)*4 <<" \n"; //have a new array so need to make some space on the stack 
+        dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
+        dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
+        dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
+
+        //declare the array as a normal variable, declarator could have been used
+        variable v;
+        v.reg = destReg;
+        v.size = array_size*4;
+        v.old_map_size = context.functions[context.current_function].variables_map.size() + array_size; //------------------------------
+
+        context.current_array_label = id->getId();
+
+        context.functions[context.current_function].variables_map.insert({id->getId(), v});
+        dst<<"#DEBUG ARRAYDeclarator: adding to map at address of ARRAY " << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+
+        //TODO: check if valid
+        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id->getId()].old_map_size) + 12;
+        dst<<"#DEBUG array declarator: curr_map_array: "<<4*(context.functions[context.current_function].variables_map.size())<<'\n';
+        dst<<"#DEBUG array declarator: old_map_size: "<<4*(context.functions[context.current_function].variables_map[id->getId()].old_map_size)<<'\n';
+        dst<<"#DEBUG array declarator: curr_offset: "<<curr_offset<<'\n';
+        dst<<"sw $";
+        dst<<destReg;
+        dst<<","<<curr_offset<<"($fp)"<<'\n';
+
+        // context.regFile.freeReg(context.functions[context.current_function].variables_map[left->getId()].reg);
+    }
     
 };
 
@@ -73,7 +101,23 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        for ( int i = 0; i < elements->list.size(); i++ ) {
+            // get the address of where we declared the array (label)
+
+            int regElement = context.allocate(context.current_function_name);
+            elements->list[i]->generateMIPS(dst, context, regElement);
+
+            //once we know the address, we can store the value stored in regElement into specific memory location
+            // i*4 is the offset from the initial array label (only int)
+
+            //would this be the address where we declare the start of the array????
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[context.current_array_label].old_map_size) + 12;
+            dst<<"#DEBUG ARRAY INIT: adding element "<<elements->list[i] << " in array " << context.current_array_label<< '\n';
+            dst<<"#DEBUG ARRAY offset = "<< curr_offset << " , element offset = "<< i*4 << '\n';
+            dst<<"lw $"<<regElement<<","<<i*4+curr_offset<<"($fp)"<<'\n'; 
+        }
+    }
     
 };
 
@@ -107,7 +151,15 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {}
+    {
+        // x[a] == &x+a*4
+
+        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id->getId()].old_map_size) + 12;
+        int element_offset = index->getValue()*4;
+        dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
+        dst<<curr_offset+element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+
+    }
     
 };
 
