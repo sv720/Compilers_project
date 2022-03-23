@@ -593,6 +593,9 @@ public:
         : Operator(_left)
     {}
 
+    std::string getId() const override
+    { return "post++"; }
+
     virtual void print(std::ostream &dst) const override
     {
         dst<<"( ";
@@ -623,6 +626,9 @@ public:
     PostDecrementOperator(ExpressionPtr _left)
         : Operator(_left)
     {}
+
+    std::string getId() const override
+    { return "post--"; }
 
     virtual void print(std::ostream &dst) const override
     {
