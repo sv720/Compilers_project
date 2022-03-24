@@ -126,10 +126,10 @@ public:
             statement->generateMIPS(dst, context, destReg);
             condition->generateMIPS(dst, context, regCondition); 
             conditionStep->generateMIPS(dst, context, regStep);
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[conditionInit->getId()].old_map_size) + 12;
-            dst<<"sw $";
-            dst<<regStep;
-            dst<<","<<curr_offset<<"($fp)"<<'\n';
+            // int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[conditionInit->getId()].old_map_size) + 12;
+            // dst<<"sw $";
+            // dst<<regStep;
+            // dst<<","<<curr_offset<<"($fp)"<<'\n';
         }
 
         

@@ -608,7 +608,12 @@ public:
     {
         dst<<"#PostInrementOperator generateMIPS Called"<<'\n';
         left->generateMIPS(dst, context, destReg);
-        dst<<"addi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
+
+        int reg = context.allocate(context.current_function_name);
+        dst<<"addi $"<< reg <<",$"<<destReg<<",1"<<'\n'; 
+        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - 
+                        context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+        dst<<"sw $"<< reg <<","<<curr_offset<<"($fp)"<<'\n';
 
     }
 
@@ -642,7 +647,12 @@ public:
     {
         dst<<"#PostDecrementOperator generateMIPS Called"<<'\n';
         left->generateMIPS(dst, context, destReg);
-        dst<<"addi $"<< destReg<<",$"<<destReg<<",-1"<<'\n'; 
+
+        int reg = context.allocate(context.current_function_name);
+        dst<<"addi $"<< reg <<",$"<<destReg<<",-1"<<'\n'; 
+        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - 
+                        context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+        dst<<"sw $"<< reg <<","<<curr_offset<<"($fp)"<<'\n';
     }
 
 };
@@ -674,8 +684,8 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst<<"#PreIncrementOperator generateMIPS Called"<<'\n';
-        dst<<"addi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
         left->generateMIPS(dst, context, destReg);
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",1"<<'\n'; 
     }
 
 };
@@ -708,8 +718,8 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst<<"#PreDecrementOperator generateMIPS Called"<<'\n';
-        dst<<"addi $"<< destReg<<",$"<<destReg<<",-1"<<'\n'; 
         left->generateMIPS(dst, context, destReg);
+        dst<<"addi $"<< destReg<<",$"<<destReg<<",-1"<<'\n'; 
     }
 
     
