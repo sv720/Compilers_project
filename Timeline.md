@@ -64,7 +64,11 @@ https://www.cs.tufts.edu/comp/140/lectures/Day_3/mips_summary.pdf //high level m
 
 
 ### 23 Mar 2022
-- working on arrays 
+- arrays declaration solved, considering all array elements as variables in the map, but they are only saved on memory with a relative offset to its initial label
+- working on arrays and their variable offsets for calling
+
+### 25 Mar 2022
+- all assignment operations completed (eg %= , /=) and written testcases for everyone of them
 
 TODO:   switch
         arrays
