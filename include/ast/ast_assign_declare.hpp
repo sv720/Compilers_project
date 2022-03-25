@@ -233,24 +233,160 @@ public:
             context.regFile.freeReg(context.functions[context.current_function].variables_map[left->getId()].reg);
 
         }else if (middle == "*="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"mult $"<<regLeft<<", $"<<regRight<<'\n';
+            dst<<"mflo $"<<regLeft<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == "/="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"div $"<<regLeft<<", $"<<regRight<<'\n';
+            dst<<"mflo $"<<regLeft<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == "%="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"div $"<<regLeft<<", $"<<regRight<<'\n';
+            dst<<"mfhi $"<<regLeft<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == "+="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"addu $"<<regLeft<<", $"<<regLeft<<", $"<<regRight<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == "-="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"subu $"<<regLeft<<", $"<<regLeft<<", $"<<regRight<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == "<<="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"sllv $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == ">>="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"srlv $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == "&="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
+
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"and $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else if (middle == "^="){
+            int regLeft = context.allocate(context.current_function_name);
+            int regRight = context.allocate(context.current_function_name);
 
-        }else if (middle == "!="){
+            left->generateMIPS(dst, context, regLeft);
+            right->generateMIPS(dst, context, regRight); 
+
+            dst<<"xor $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
+
+            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            dst<<"sw $";
+            dst<<regLeft;
+            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+
+            context.regFile.freeReg(regRight);
+            context.regFile.freeReg(regLeft);
 
         }else{
             std::cerr<< "Error: operand for assignment not accepted" << std::endl;
