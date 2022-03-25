@@ -233,8 +233,8 @@ public:
             context.regFile.freeReg(context.functions[context.current_function].variables_map[left->getId()].reg);
 
         }else if (middle == "*="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -251,8 +251,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "/="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -269,8 +269,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "%="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -287,8 +287,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "+="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -304,8 +304,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "-="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -321,8 +321,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "<<="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -338,8 +338,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == ">>="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -355,8 +355,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "&="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -372,8 +372,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "^="){
-            int regLeft = context.allocate(context.current_function_name);
-            int regRight = context.allocate(context.current_function_name);
+            int regLeft = context.allocate(context.current_function);
+            int regRight = context.allocate(context.current_function);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
