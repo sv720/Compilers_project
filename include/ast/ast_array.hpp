@@ -68,7 +68,6 @@ public:
             //dst<<"#DEBUG i = " << i <<'\n';
             std::string item_id = id->getId() + std::to_string(i); 
             context.functions[context.current_function].variables_map.insert({item_id, v});
-
         }
         dst<<"#DEBUG ARRAYDeclarator: adding to map at address of ARRAY " << id->getId() << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
 /*
@@ -173,11 +172,26 @@ public:
         // x[a] == &x+a*4
         dst << "#DEBUG: ARRAYCALL "<<'\n';
         int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id->getId()].old_map_size) + 12;
-        int element_offset = index->getValue()*4;
-        dst << "#DEBUG current map size = " << context.functions[context.current_function].variables_map.size() << '\n';
-        dst << "#DEBUG old map size = " << context.functions[context.current_function].variables_map[id->getId()].old_map_size << '\n';
-        dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-        dst<<curr_offset-element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        //int element_offset = index->getValue()*4;
+        int regIndex = context.allocate(context.current_function_name);
+        index->generateMIPS(dst, context, regIndex); 
+        int regOffset = context.allocate(context.current_function_name);
+    
+        dst<<"addi $"<<regOffset<<",$"<<regIndex<<",-"<<curr_offset<<'\n';
+        dst<<"sub $"<<regOffset<<",$0,$"<<regOffset<<'\n';
+
+        int regAddress = context.allocate(context.current_function_name);
+
+        dst<<"add $"<<regAddress<<",$"<<regOffset<<",$fp"<<'\n';
+
+        dst<<"lw $"<<destReg<<","; 
+        dst<<"0($"<< regAddress<<")" <<'\n';
+
+        //dst << "#DEBUG current map size = " << context.functions[context.current_function].variables_map.size() << '\n';
+        //dst << "#DEBUG old map size = " << context.functions[context.current_function].variables_map[id->getId()].old_map_size << '\n';
+        //dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
+        //dst<<curr_offset-element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+
     }
     
 };
