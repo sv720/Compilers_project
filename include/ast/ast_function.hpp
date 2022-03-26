@@ -153,7 +153,7 @@ public:
         dst<<context.current_function_name<<":"<<'\n';
         dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
         dst<<"sw $fp,4($sp)"<<'\n';
-        dst<<"sw $31, 8($sp)"<<'\n'; // stores pc above old_pc
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
         dst<<"move $25,$fp"<< '\n'; //make a copy of old fp in register 25
         dst<<"move $fp,$sp"<<'\n';
 
@@ -303,8 +303,8 @@ public:
         }
 
         // functionName->generateMIPS(dst, context, destReg);
-
-        dst<<"sw $31,8($sp)"<<'\n'; //we store old pc in memory NOT SURE IF NEEDED HERE (probably not)
+        // if (functionName->getId() != context.current_function_name) {
+        // dst<<"sw $31,8($sp)"<<'\n'; //we store old pc in memory NOT SURE IF NEEDED HERE (probably not)
         dst<<"jal "<<functionName->getId()<<'\n';
         dst<<"nop"<<'\n';
         dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping

@@ -27,6 +27,9 @@ int main(int argc, char *argv[])
             
             ast->generateMIPS(ofs, context, 2);
             ofs<<".global "<<context.current_function_name; //assume that top level function is the last one in the code
+            // for (std::map<std::string, std::vector<enumeration>>::iterator it = context.global_enums.begin(); it != context.global_enums.end(); ++it){
+            //     ofs << " " << it->first;
+            // } //enums are not global
             ofs<<'\n';
 
             std::cout<<std::endl;
