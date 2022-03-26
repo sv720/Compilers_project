@@ -305,9 +305,11 @@ public:
         // functionName->generateMIPS(dst, context, destReg);
         // if (functionName->getId() != context.current_function_name) {
         // dst<<"sw $31,8($sp)"<<'\n'; //we store old pc in memory NOT SURE IF NEEDED HERE (probably not)
+        // dst<<"nop"<<'\n';
         dst<<"jal "<<functionName->getId()<<'\n';
         dst<<"nop"<<'\n';
         dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
+        dst<<"nop"<<'\n';
     }
 };
 

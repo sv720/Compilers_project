@@ -46,7 +46,7 @@ public:
         statement->generateMIPS(dst, context, destReg);
 
         dst<<endIfLabel<<":"<<'\n';
-        // dst<<"nop"<<'\n';
+        dst<<"nop"<<'\n';
 
         context.regFile.freeReg(regA);
     }
@@ -94,7 +94,7 @@ public:
         statement->generateMIPS(dst, context, destReg);
         std::string endIfLabel = context.makeLabel("endIFELSE");
         dst<<"j "<<endIfLabel<<'\n';
-        // dst<<"nop"<<'\n';
+        dst<<"nop"<<'\n';
 
         dst<<ELSElabel<<":"<<'\n';
         elseStatement->generateMIPS(dst, context, destReg);

@@ -43,12 +43,15 @@ public:
         std::string WHILElabel = context.makeLabel("WHILE");
         std::string endWhileLabel = context.makeLabel("endWHILE");
 
-        condition->generateMIPS(dst, context, regA);
         dst<<WHILElabel<<":"<<'\n';
-        dst<<"beq $"<<regA<<",$0,"<<endWhileLabel<<'\n';
-        statement->generateMIPS(dst, context, destReg);
         condition->generateMIPS(dst, context, regA);
-        dst<<"bne $"<<regA<<",$0,"<<WHILElabel<<'\n';
+        dst<<"beq $"<<regA<<",$0,"<<endWhileLabel<<'\n';
+        dst<<"nop"<<'\n';
+        statement->generateMIPS(dst, context, destReg);
+        // condition->generateMIPS(dst, context, regA);
+        // dst<<"bne $"<<regA<<",$0,"<<WHILElabel<<'\n';
+        dst<<"j "<<WHILElabel<<'\n';
+        dst<<"nop"<<'\n';
 
         dst<<endWhileLabel<<":"<<'\n';
         
@@ -113,6 +116,7 @@ public:
         condition->generateMIPS(dst, context, regCondition);
         
         dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
+        // dst<<"nop"<<'\n';
         dst<<"#DEBUG FOR step value: "<<conditionStep->getId()<<'\n';
         if (conditionStep->getId() == "pre++" || conditionStep->getId() == "pre--"){
             conditionStep->generateMIPS(dst, context, regStep);
@@ -135,6 +139,7 @@ public:
         
         
         dst<<"bne $"<<regCondition<<",$0,"<<FORlabel<<'\n';
+        // dst<<"nop"<<'\n';
 
         dst<<endForLabel<<":"<<'\n';
 
