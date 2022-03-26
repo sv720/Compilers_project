@@ -157,8 +157,13 @@ public:
     }
 
 
-    ExpressionPtr getSize() const
-    { return index; }
+    virtual std::string getNature() const override
+    { 
+        if(index->getNature() == "Variable"){
+            return "Variable_Indexed_Array"; 
+        }
+        else{ return "Constant_Indexed_Array";}
+    }
 
     virtual void print(std::ostream &dst) const override
     {
@@ -179,7 +184,6 @@ public:
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
         dst<<curr_offset-element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
     }
-    
 };
 
 #endif
