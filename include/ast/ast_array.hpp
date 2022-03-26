@@ -157,8 +157,16 @@ public:
     }
 
 
-    ExpressionPtr getSize() const
+    ExpressionPtr getSize() const //not sure what this does
     { return index; }
+
+    virtual std::string getNature() const override
+    { 
+        if(index->getNature() == "Variable"){
+            return "Variable_Indexed_Array"; 
+        }
+        else{ return "Constant_Indexed_Array";}
+    }
 
     virtual void print(std::ostream &dst) const override
     {

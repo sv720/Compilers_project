@@ -232,17 +232,40 @@ public:
             // if (v.reg == -1) v.reg = context.allocate(context.current_function);
             // v.old_map_size = context.functions[context.current_function].variables_map.size()+1; //------------------------------
             // context.functions[context.current_function].variables_map.insert({left->getId(), v});
-            dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << '\n';
+            dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << '\n';
 
 
-            right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
-            // dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << '\n';
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
-            dst<<"sw $";
-            dst<<destReg;
-            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
-            // left->generateMIPS(dst, context, context.functions[context.current_function].variables_map[left->getId()].reg);
+             if (left->getNature() == "Variable_Indexed_Array"){
+                dst<<"#DEBUG : Varaible_Indexed_Array__________________________________________________________________"<<'\n';
+                //TODO : ADD CODE FOR REGISTER STYLE
+                right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+                //dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';
+                dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << '\n';
+                int regIndex = context.allocate(context.current_function_name);
 
+                int regOffset = context.allocate(context.current_function_name);
+
+                //dst<<"addi $"<<regOffset<<",$"<<regIndex<<",-"<<curr_offset<<'\n';
+                dst<<"sub $"<<regOffset<<",$0,$"<<regOffset<<'\n';
+
+                int regAddress = context.allocate(context.current_function_name);
+
+                dst<<"add $"<<regAddress<<",$"<<regOffset<<",$fp"<<'\n';
+
+                dst<<"sw $";
+                dst<<destReg;
+                dst<<",0($"<<regAddress<<")"<<'\n'; //store output register of the calculations in  respective stack location
+                //left->generateMIPS(dst, context, context.functions[context.current_function].variables_map[left->getId()].reg);
+            }else {
+                dst<<"#DEBUG : OTHER__________________________________________________________________"<<'\n';
+                right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+                //dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';
+                int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+                dst<<"sw $";
+                dst<<destReg;
+                dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+                //left->generateMIPS(dst, context, context.functions[context.current_function].variables_map[left->getId()].reg);
+            }
             // context.regFile.freeReg(context.functions[context.current_function].variables_map[left->getId()].reg);
 
         }else if (middle == "*="){
