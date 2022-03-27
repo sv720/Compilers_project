@@ -30,6 +30,9 @@ public:
         delete size;
     }
 
+    std::string getId() const override
+    { return id->getId(); }
+
     ExpressionPtr getSize() const
     { return size; }
 
@@ -62,11 +65,12 @@ public:
         v.old_map_size = context.functions[context.current_function].variables_map.size(); //------------------------------
 
         context.current_array_label = id->getId();
-
+        dst<<"#DEBUG: adding to map in ARRAYDECLARATOR" << '\n';
         context.functions[context.current_function].variables_map.insert({id->getId(), v});
         for(int i = 1; i<array_size; i++){
             //dst<<"#DEBUG i = " << i <<'\n';
             std::string item_id = id->getId() + std::to_string(i); 
+            dst<<"#DEBUG: adding to map in ARRAYDECLARATOR (loop)" << '\n';
             context.functions[context.current_function].variables_map.insert({item_id, v});
 
         }
@@ -155,6 +159,9 @@ public:
         delete id;
         delete index;
     }
+
+    std::string getId() const override
+    { return id->getId(); }
 
 
     ExpressionPtr getSize() const //not sure what this does
