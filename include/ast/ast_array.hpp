@@ -33,7 +33,7 @@ public:
     std::string getId() const override
     { return id->getId(); }
 
-    ExpressionPtr getSize() const
+    virtual ExpressionPtr getSize() const override
     { return size; }
 
     virtual void print(std::ostream &dst) const override
@@ -164,7 +164,7 @@ public:
     { return id->getId(); }
 
 
-    ExpressionPtr getSize() const //not sure what this does
+    virtual ExpressionPtr getSize() const override //not sure what this does
     { return index; }
 
     virtual std::string getNature() const override
@@ -181,7 +181,7 @@ public:
         if(!is_digit){
             return "Variable_Indexed_Array"; 
         }
-        else{ return "OTHER TYPE OF ARRAY INDEX";}
+        else{ return "Constant_Indexed_Array";}
     }
 
     virtual void print(std::ostream &dst) const override

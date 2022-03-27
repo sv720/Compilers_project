@@ -41,6 +41,9 @@ public:
     virtual int getValue() const //for enums, as they are not considered in the mips generation, all of its assignments are done in compiler
     { return NULL; }
 
+    virtual ExpressionPtr getSize() const //for enums, as they are not considered in the mips generation, all of its assignments are done in compiler
+    { return NULL; }
+
     virtual void generateENUM(int counter, Context &context) const
     { }
 };
