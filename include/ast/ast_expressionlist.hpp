@@ -148,36 +148,41 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        // if (context.current_function != context.previous_function){
-            // context.previous_function = context.current_function;
-            function f = context.functions[context.current_function];
+            function f;
+            f.variables_map = context.functions[context.current_function].variables_map;
+            f.iteration_selection_statement = context.functions[context.current_function].iteration_selection_statement;
+            f.previous_function = context.current_function;
             std::string scope_label = context.makeLabel("Scope "+context.current_function);
             context.functions.insert({scope_label, f});
             context.current_function = scope_label;
+            context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
 
                 //this should be before condition
-            dst<<"#DEBUG enter SCOPE - "<<context.current_function<<'\n';
+            dst<<"#DEBUG enter SCOPE - "<<context.current_function<<"; prev: "<<context.functions[context.current_function].previous_function
+                                        <<"; return fp reg: "<< context.functions[context.current_function].fp_reg <<'\n';
             // dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
             // dst<<"sw $fp,4($sp)"<<'\n';
             // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-            dst<<"move $24,$fp"<< '\n'; //make a copy of old fp in register 24
-            // dst<<"move $fp,$sp"<<'\n';
-            context.regFile.useReg(24);
+        // if (!context.functions[context.current_function].iteration_selection_statement){
+            // dst<<"addiu $2,$sp,0"<<'\n';//<<4*(context.functions[context.current_function].variables_map.size()-1) <<'\n'; // -8 is sqr; -4 is hi; 0 is i; 4 is 64 
+            dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n'; //make a copy of old fp in register 24
         // }
+            // dst<<"move $fp,$sp"<<'\n';
+            // context.regFile.useReg(24);
 
         for (ExpressionPtr i : list){
             i->generateMIPS(dst, context, destReg);
         } 
 
         if (!context.functions[context.current_function].iteration_selection_statement){
-            dst<<"move $fp,$24"<< '\n';
-            dst<<"move $sp,$24"<<'\n';
+            dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+            dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
             dst<<"sw $25,4($sp)"<<'\n';
             dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-            context.regFile.freeReg(24);
-            context.functions.erase(context.current_function);
+            context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+            // context.functions.erase(context.current_function);
             dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-            context.current_function = std::prev(context.functions.end())->first;
+            context.current_function = context.functions[context.current_function].previous_function;
             dst<<", now in "<<context.current_function<<'\n';
         }
         

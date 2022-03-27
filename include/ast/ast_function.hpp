@@ -142,15 +142,16 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-
-        function f;
         context.functions_names.push_back(id->getId());
         std::string function_label = context.makeLabel(id->getId());
+        function f;
+        f.previous_function = function_label;
         context.functions.insert({function_label, f});
         context.current_function = function_label;
         context.current_function_name = id->getId();
+        
         // storing argument parameters in stack
-
+        dst<<"#DEBUG Function Declarator: label "<<context.current_function<< " " << context.functions[context.current_function].previous_function<<'\n';
         dst<<context.current_function_name<<":"<<'\n';
         dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
         dst<<"sw $fp,4($sp)"<<'\n';

@@ -45,28 +45,28 @@ public:
         context.functions[context.current_function].iteration_selection_statement = true;
 
         condition->generateMIPS(dst, context, regA);
-        
-        dst<<WHILElabel<<":"<<'\n';
         dst<<"beq $"<<regA<<",$0,"<<endWhileLabel<<'\n';
         dst<<"nop"<<'\n';
+        
+        dst<<WHILElabel<<":"<<'\n';
         statement->generateMIPS(dst, context, destReg);
         condition->generateMIPS(dst, context, regA);
         dst<<"bne $"<<regA<<",$0,"<<WHILElabel<<'\n';
         // dst<<"j "<<WHILElabel<<'\n';
         dst<<"nop"<<'\n';
+        dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        dst<<"sw $25,4($sp)"<<'\n';
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // context.functions.erase(context.current_function);
+        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        context.current_function = context.functions[context.current_function].previous_function;
+        dst<<", now in "<<context.current_function<<'\n';
 
         dst<<endWhileLabel<<":"<<'\n';
         
         context.regFile.freeReg(regA);
-
-        dst<<"move $fp,$24"<< '\n';
-        dst<<"move $sp,$24"<<'\n';
-        dst<<"sw $25,4($sp)"<<'\n';
-        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        context.functions.erase(context.current_function);
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-        if(!context.functions.empty())    context.current_function = (--context.functions.end())->first;
-        dst<<", now in "<<context.current_function<<'\n';
 
     }
 };
@@ -128,11 +128,11 @@ public:
 
         conditionInit->generateMIPS(dst, context, regStep);
         condition->generateMIPS(dst, context, regCondition);
+        dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
+        dst<<"nop"<<'\n';
+
 
         dst<<FORlabel<<":"<<'\n';
-        
-        dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
-        // dst<<"nop"<<'\n';
         dst<<"#DEBUG FOR step value: "<<conditionStep->getId()<<'\n';
         if (conditionStep->getId() == "pre++" || conditionStep->getId() == "pre--"){
             conditionStep->generateMIPS(dst, context, regStep);
@@ -155,20 +155,21 @@ public:
         dst<<"bne $"<<regCondition<<",$0,"<<FORlabel<<'\n';
         // dst<<"nop"<<'\n';
 
+        dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        dst<<"sw $25,4($sp)"<<'\n';
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // context.functions.erase(context.current_function);
+        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        context.current_function = context.functions[context.current_function].previous_function;
+        dst<<", now in "<<context.current_function<<'\n';
+
         dst<<endForLabel<<":"<<'\n';
 
         // context.regFile.freeReg(regA);
         context.regFile.freeReg(regCondition);
         // context.regFile.freeReg(regStep);
-
-        dst<<"move $fp,$24"<< '\n';
-        dst<<"move $sp,$24"<<'\n';
-        dst<<"sw $25,4($sp)"<<'\n';
-        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        context.functions.erase(context.current_function);
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-        if(!context.functions.empty())    context.current_function = (--context.functions.end())->first;
-        dst<<", now in "<<context.current_function<<'\n';
     }
 };
 

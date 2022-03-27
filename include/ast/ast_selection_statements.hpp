@@ -38,27 +38,28 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        context.functions[context.current_function].iteration_selection_statement = true;
+        // context.functions[context.current_function].iteration_selection_statement = true;
         int regA = context.allocate(context.current_function);
         condition->generateMIPS(dst, context, regA);
         dst<<"nop"<<'\n';
         std::string endIfLabel = context.makeLabel("endIF");
         dst<<"beq $0,$"<<regA<<","<<endIfLabel<<'\n';
+
         statement->generateMIPS(dst, context, destReg);
+        // dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        // dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        // dst<<"sw $25,4($sp)"<<'\n';
+        // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        // context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // // context.functions.erase(context.current_function);
+        // dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        // context.current_function = context.functions[context.current_function].previous_function;
+        // dst<<", now in "<<context.current_function<<'\n';
 
         dst<<endIfLabel<<":"<<'\n';
         dst<<"nop"<<'\n';
 
         context.regFile.freeReg(regA);
-
-        dst<<"move $fp,$24"<< '\n';
-        dst<<"move $sp,$24"<<'\n';
-        dst<<"sw $25,4($sp)"<<'\n';
-        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        context.functions.erase(context.current_function);
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-        if(!context.functions.empty())    context.current_function = (--context.functions.end())->first;
-        dst<<", now in "<<context.current_function<<'\n';
     }
 };
 
@@ -96,22 +97,22 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        context.functions[context.current_function].iteration_selection_statement = true;
+        // context.functions[context.current_function].iteration_selection_statement = true;
         int regA = context.allocate(context.current_function);
         condition->generateMIPS(dst, context, regA);
         std::string ELSElabel = context.makeLabel("ELSE");
         dst<<"beq $"<<regA<<",$0,"<<ELSElabel<<'\n';
 
         statement->generateMIPS(dst, context, destReg);
-        dst<<"move $fp,$24"<< '\n';
-        dst<<"move $sp,$24"<<'\n';
-        dst<<"sw $25,4($sp)"<<'\n';
-        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        // context.functions.erase(context.current_function);
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-        if(!context.functions.empty())    context.current_function = (--context.functions.end())->first;
-        dst<<", now in "<<context.current_function<<'\n';
-
+        // dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        // dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        // dst<<"sw $25,4($sp)"<<'\n';
+        // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        // context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // // context.functions.erase(context.current_function);
+        // dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        // context.current_function = context.functions[context.current_function].previous_function;
+        // dst<<", now in "<<context.current_function<<'\n';
 
         std::string endIfLabel = context.makeLabel("endIFELSE");
         dst<<"j "<<endIfLabel<<'\n';
@@ -119,20 +120,21 @@ public:
 
         dst<<ELSElabel<<":"<<'\n';
         elseStatement->generateMIPS(dst, context, destReg);
+        // dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        // dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        // dst<<"sw $25,4($sp)"<<'\n';
+        // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        // context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // // context.functions.erase(context.current_function);
+        // dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        // context.current_function = context.functions[context.current_function].previous_function;
+        // dst<<", now in "<<context.current_function<<'\n';
 
         dst<<endIfLabel<<":"<<'\n';
 
 
         context.regFile.freeReg(regA);
 
-        dst<<"move $fp,$24"<< '\n';
-        dst<<"move $sp,$24"<<'\n';
-        dst<<"sw $25,4($sp)"<<'\n';
-        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        context.functions.erase(context.current_function);
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-        if(!context.functions.empty())    context.current_function = (--context.functions.end())->first;
-        dst<<", now in "<<context.current_function<<'\n';
     }
 };
 
