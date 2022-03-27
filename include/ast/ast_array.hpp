@@ -63,7 +63,7 @@ public:
         variable v;
         v.reg = destReg;
         v.size = array_size*4;
-        v.old_map_size = context.functions[context.current_function].variables_map.size(); //------------------------------
+        v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
 
         context.current_array_label = id->getId();
         context.functions[context.current_function].variables_map.insert({id->getId(), v});
@@ -201,6 +201,7 @@ public:
         int element_offset = index->getValue()*4;
         dst << "#DEBUG current map size = " << context.functions[context.current_function].variables_map.size() << '\n';
         dst << "#DEBUG old map size = " << context.functions[context.current_function].variables_map[id->getId()].old_map_size << '\n';
+        dst<<"#DEBUG element_offset = "<<element_offset <<'\n';
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
         dst<<curr_offset-element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
     }
