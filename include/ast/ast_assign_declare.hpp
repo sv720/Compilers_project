@@ -41,7 +41,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-
+            dst<<"#DEBUG : Adding to stack"<<'\n';
             dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
             dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
             dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
@@ -213,7 +213,7 @@ public:
             // v.old_map_size = context.functions[context.current_function].variables_map.size()+1; //------------------------------
             // context.functions[context.current_function].variables_map.insert({left->getId(), v});
             
-
+            dst<<"#DEBUG : left->getNature = " << left->getNature() << '\n';
 
              if (left->getNature() != "Variable_Indexed_Array"){
 
@@ -232,7 +232,7 @@ public:
                 dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
                 //left->generateMIPS(dst, context, context.functions[context.current_function].variables_map[left->getId()].reg);
             }else {
-
+                dst<<"#DEBUG : Variable_Indexed_Array"<<'\n';
                 //TODO : ADD CODE FOR REGISTER STYLE
                 right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
                 //dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';

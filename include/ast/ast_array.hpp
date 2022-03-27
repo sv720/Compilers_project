@@ -48,9 +48,10 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         dst << "#DEBUG: ARRAYDECLARATOR "<<'\n';
+
         dst << "#DEBUG: adding array to stack "<<'\n';
         int array_size = size->getValue();
-        dst << "addiu $sp,$sp,-"<< (array_size)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : no -1 as need to free exactly number of words present
+        dst << "addiu $sp,$sp,-"<< (array_size-1)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : agree about the -1 (can use the slot made available just before)
         //Scott: we want to keep old_fp and sp and bottom of allocated stack
         dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
         dst<< "sw $25,4($fp)"<< '\n'; //we move the old (out of function) frame pointer just above the new fp
@@ -65,12 +66,10 @@ public:
         v.old_map_size = context.functions[context.current_function].variables_map.size(); //------------------------------
 
         context.current_array_label = id->getId();
-        dst<<"#DEBUG: adding to map in ARRAYDECLARATOR" << '\n';
         context.functions[context.current_function].variables_map.insert({id->getId(), v});
         for(int i = 1; i<array_size; i++){
             //dst<<"#DEBUG i = " << i <<'\n';
             std::string item_id = id->getId() + std::to_string(i); 
-            dst<<"#DEBUG: adding to map in ARRAYDECLARATOR (loop)" << '\n';
             context.functions[context.current_function].variables_map.insert({item_id, v});
 
         }
@@ -128,6 +127,7 @@ public:
             // get the address of where we declared the array (label)
 
             int regElement = context.allocate(context.current_function_name);
+            dst<<"#DEBUG : genrateMIPS ArrayINIT"<<'\n';
             elements->list[i]->generateMIPS(dst, context, regElement);
 
             //once we know the address, we can store the value stored in regElement into specific memory location
@@ -169,14 +169,24 @@ public:
 
     virtual std::string getNature() const override
     { 
-        if(index->getNature() == "Variable"){
+        bool is_digit = true;
+        for (char c : index->getId()){
+            if(!isdigit(c)){
+                is_digit = false;
+            }
+        }
+        if(index->getId() == "<NULL>"){ //TODO : find a cleaner way of handling this
+            is_digit = true;
+        }
+        if(!is_digit){
             return "Variable_Indexed_Array"; 
         }
-        else{ return "Constant_Indexed_Array";}
+        else{ return "OTHER TYPE OF ARRAY INDEX";}
     }
 
     virtual void print(std::ostream &dst) const override
     {
+        dst<<"index->getId() = "<< index->getId()<<'\n';
         id->print(dst);
         dst<<"[";
         index->print(dst);
