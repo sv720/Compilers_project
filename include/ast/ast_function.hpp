@@ -60,7 +60,6 @@ public:
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
-        //dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
         dst<<"jr $31"<<'\n';
         dst<<"nop"<<'\n';
     }
@@ -143,6 +142,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+
         function f;
         context.functions_names.push_back(id->getId());
         context.functions.insert({context.makeLabel(id->getId()), f});
@@ -164,23 +164,25 @@ public:
                 arg->list[i]->generateMIPS(dst, context, start_reg+i);
             }
         } else {
-            for (int i = 0; i <= 4; i++){
+            for (int i = 0; i <= 3; i++){
                 arg->list[i]->generateMIPS(dst, context, start_reg+i);
             }
-            for (int i = 5; i < arg->list.size(); i++){
+            for (int i = 4; i < arg->list.size(); i++){
                 int regParam = context.allocate(context.current_function);
-                variable v;
-                v.reg = context.allocate(context.current_function);
-                v.size = 4; //only for int !!!
-                if (v.reg == -1) v.reg = context.allocate(context.current_function);
-                v.old_map_size = context.functions[context.current_function].variables_map.size()+1; //------------------------------
-                context.functions[context.current_function].variables_map.insert({arg->list[i]->getId(), v});
+                // variable v;
+                // v.reg = context.allocate(context.current_function);
+                // v.size = 4; //only for int !!!
+                // if (v.reg == -1) v.reg = context.allocate(context.current_function);
+                // v.old_map_size = context.functions[context.current_function].variables_map.size()+1; //------------------------------
+                // context.functions[context.current_function].variables_map.insert({arg->list[i]->getId(), v});
 
                 arg->list[i]->generateMIPS(dst, context, regParam);
-                int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[arg->list[i]->getId()].old_map_size) + 12;
-                dst<<"sw $";
-                dst<<destReg;
-                dst<<","<<curr_offset<<"($fp)"<<'\n'; 
+                // int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[arg->list[i]->getId()].old_map_size) + 12;
+                // dst<<"sw $";
+                // dst<<v.reg;
+                // dst<<","<<curr_offset<<"($fp)"<<'\n'; 
+
+                context.regFile.freeReg(regParam);
             }
         }
 
@@ -290,14 +292,14 @@ public:
                 args->list[i]->generateMIPS(dst, context, start_reg+i);
             }
         } else {
-            for (int i = 0; i <= 4; i++){
+            for (int i = 0; i <= 3; i++){
                 args->list[i]->generateMIPS(dst, context, start_reg+i);
             }
             int regParam = context.allocate(context.current_function);
-            for (int i = 5; i < args->list.size(); i++){
+            for (int i = 4; i < args->list.size(); i++){
                 args->list[i]->generateMIPS(dst, context, regParam);
-                int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[args->list[i]->getId()].old_map_size) + 12;
-                dst<<"sw $"<<regParam<<","<<curr_offset<<"($fp)"<<'\n';
+                // int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[args->list[i]->getId()].old_map_size) + 12;
+                // dst<<"sw $"<<regParam<<","<<curr_offset<<"($fp)"<<'\n';
             }
             context.regFile.freeReg(regParam);
         }

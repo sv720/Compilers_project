@@ -3,6 +3,7 @@ int f();
 
 int main()
 {
+    int x;
     printf("%d", f());
-    return !(f()==5678);
+    return !(f()==8);
 }

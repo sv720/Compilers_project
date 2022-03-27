@@ -152,7 +152,7 @@ public:
             }
         }
 
-        int found_var = false;
+        bool found_var = false;
         for (int i = 0; i < context.functions[context.current_function].variables_map.size() && !found_var; i++) {
             if (context.functions[context.current_function].variables_map.find(id) !=  context.functions[context.current_function].variables_map.end()) {
                 found_var = true;

@@ -102,5 +102,71 @@ public:
     }
 };
 
+class Scope
+    : public ExpressionList
+{
+   
+public:
+    std::vector<ExpressionPtr> list;
+
+    //CONSTRUCTORS
+    Scope() 
+    { list = {}; }
+
+    Scope(ExpressionListPtr in_list)
+        : list (in_list->list)
+    {}
+
+    virtual ~Scope()
+    {
+        for (ExpressionPtr i : list){
+            delete i;
+        }
+    }
+
+    virtual void append(ExpressionPtr new_elem)
+    {
+       list.push_back(new_elem);
+    }
+
+    virtual std::vector<ExpressionPtr> getListVector()
+    {
+        return list;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+
+        //std::cout<<"DEBUG in print; list.size() = " << list.size() << std::endl;
+        for (ExpressionPtr i : list){
+            //std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
+            dst<<"SCOPE( ";
+            i->print(dst);
+            dst<<" )";
+        }
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        std::string top_function = context.current_function_name;
+        function f = context.functions[context.current_function_name];
+        context.functions.insert({context.makeLabel("Scope "+context.current_function_name), f});
+        context.current_function_name = context.current_function_name;
+
+        dst<<"#DEBUG enter SCOPE - "<<context.current_function_name<<'\n';
+        dst<<"move $fp,$sp"<<'\n';
+        dst<<"move $25,$sp"<< '\n'; //make a copy of old fp in register 25
+
+        for (ExpressionPtr i : list){
+            i->generateMIPS(dst, context, destReg);
+        }
+
+        context.functions.erase(context.current_function_name);
+        context.current_function_name = top_function;
+        dst<<"move $fp,$25"<<'\n';
+        dst<<"move $sp,$fp"<<'\n';
+        dst<<"#DEBUG exited SCOPE - "<<context.current_function_name<<'\n';
+    }
+};
 
 #endif

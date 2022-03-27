@@ -70,5 +70,12 @@ https://www.cs.tufts.edu/comp/140/lectures/Day_3/mips_summary.pdf //high level m
 ### 25 Mar 2022
 - all assignment operations completed (eg %= , /=) and written testcases for everyone of them
 
+### 26 - 27 Mar 2022
+- worked on 5 agruments function call, and passing internal testcase. have an assumption that our own stack/frame pointer methodology is conflicting the gcc one to get more than 4 parameters (so rest from stack of main function)
+- have a draft of scopes, needs looking at how we reset the sp and fp after exiting the scope; when entering it we copy the parent scope/variables_map
+- Wokring on arrays indexing but not fully understand why is not working, mips looks ok
+- internal recursive function's mips looks perfectly fine but seg faults as godbolts'. Need more understanding
+- tried debugging with gdb and taken some tutorials on how to work with it, installed specific qemu-user pachages for it. Need more work but interesting either way
+
 TODO:   switch
         arrays

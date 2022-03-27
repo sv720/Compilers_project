@@ -102,9 +102,9 @@ for testcase in test/working/${basefolder}/*; do
     
     echo "=============MIPS-LINUX-GNU-GCC on ${name} (${index})=============="
     # MIPS conversion 
-    mips-linux-gnu-gcc -mfp32 -o test/objects/${basefolder}/${name}.o -c test/working/${basefolder}/${name}.s
+    mips-linux-gnu-gcc -g -mfp32 -o test/objects/${basefolder}/${name}.o -c test/working/${basefolder}/${name}.s
 
-    mips-linux-gnu-gcc -mfp32 -static -o test/objects/${basefolder}/${name} test/objects/${basefolder}/${name}.o compiler_tests/${basefolder}/${name}_driver.c
+    mips-linux-gnu-gcc -g -mfp32 -static -o test/objects/${basefolder}/${name} test/objects/${basefolder}/${name}.o compiler_tests/${basefolder}/${name}_driver.c
     qemu-mips test/objects/${basefolder}/${name}
 
     errMsg=$?
