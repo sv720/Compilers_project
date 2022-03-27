@@ -4,9 +4,11 @@ int f()
     int hi = 10;
     int val = 8;
     int x_mid;
+    int mid;
+    int sqr;
     while(lo+1 < hi){
-        int mid=(lo+hi)>>1;
-        int sqr=mid;
+        mid=(lo+hi)>>1;
+        sqr=mid;
         x_mid = mid;
         lo = mid;
     }

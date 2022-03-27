@@ -148,24 +148,39 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        std::string top_function = context.current_function_name;
-        function f = context.functions[context.current_function_name];
-        context.functions.insert({context.makeLabel("Scope "+context.current_function_name), f});
-        context.current_function_name = context.current_function_name;
+        // if (context.current_function != context.previous_function){
+            // context.previous_function = context.current_function;
+            function f = context.functions[context.current_function];
+            std::string scope_label = context.makeLabel("Scope "+context.current_function);
+            context.functions.insert({scope_label, f});
+            context.current_function = scope_label;
 
-        dst<<"#DEBUG enter SCOPE - "<<context.current_function_name<<'\n';
-        dst<<"move $fp,$sp"<<'\n';
-        dst<<"move $25,$sp"<< '\n'; //make a copy of old fp in register 25
+                //this should be before condition
+            dst<<"#DEBUG enter SCOPE - "<<context.current_function<<'\n';
+            // dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
+            // dst<<"sw $fp,4($sp)"<<'\n';
+            // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+            dst<<"move $24,$fp"<< '\n'; //make a copy of old fp in register 24
+            // dst<<"move $fp,$sp"<<'\n';
+            context.regFile.useReg(24);
+        // }
 
         for (ExpressionPtr i : list){
             i->generateMIPS(dst, context, destReg);
-        }
+        } 
 
-        context.functions.erase(context.current_function_name);
-        context.current_function_name = top_function;
-        dst<<"move $fp,$25"<<'\n';
-        dst<<"move $sp,$fp"<<'\n';
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function_name<<'\n';
+        if (!context.functions[context.current_function].iteration_selection_statement){
+            dst<<"move $fp,$24"<< '\n';
+            dst<<"move $sp,$24"<<'\n';
+            dst<<"sw $25,4($sp)"<<'\n';
+            dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+            context.regFile.freeReg(24);
+            context.functions.erase(context.current_function);
+            dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+            context.current_function = std::prev(context.functions.end())->first;
+            dst<<", now in "<<context.current_function<<'\n';
+        }
+        
     }
 };
 

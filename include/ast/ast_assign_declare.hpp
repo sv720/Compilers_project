@@ -41,22 +41,12 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        //if (right->getId() != "<NULL>"){ //don't want to add "<NULL> to map" BUT THIS IS NEEDED TO PASS MANY TESTCASES
-            // dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
-            // dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
-            // dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
-            // dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
 
-            // variable v;
-            // v.reg = destReg; 
-            // v.size = 4; // only for int !!!
-            // v.old_map_size = context.functions[context.current_function].variables_map.size() +1 ; //------------------------------
-            // context.functions[context.current_function].variables_map.insert({right->getId(), v});
-            // dst<<"#DEBUG Declare: adding to map at address " << right->getId() << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
-            
+            dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
+            dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
+            dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
+            dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
 
-            // dst<<"sw $"<<context.functions[context.current_function].variables_map[right->getId()].reg<<",12($fp)"<<'\n';
-            // dst<<"#DEBUG: reg of argument="<<context.functions[context.current_function].variables_map[right->getId()].reg<< " "<< right->getId() <<'\n';
             right->generateMIPS(dst, context, destReg);
         //}
 
@@ -83,6 +73,9 @@ public:
         delete right;
     }
 
+    std::string getId() const override
+    { return left->getId(); }
+
     virtual void print(std::ostream &dst) const override
     {   dst<<"INITDECLARATOR \n";
         left->print(dst);
@@ -92,11 +85,6 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        dst<< "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
-        dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
-        dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
-        dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
-
         variable v;
         v.size = 4; //only for int !!!
         v.reg = v.reg = context.allocate(context.current_function);
@@ -139,12 +127,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        //assigning the variable to an address
-        // dst<<"DEBUG : function "<<id << '\n';
-        // variables_map[id] = variables_map.size()*4+4;
-        // dst<<"DEBUG : added to map "<< variables_map[id];
         //dst<< "#DEBUG : IN DECLARATOR \n";
-        //dst<<id; //prints out labels (when we have a function definition) and gives variable name
         int found_enum_index = -1;
         for (int i = 0; i < context.enums.size(); i++) {
             if (context.enums[i].id == id) {
@@ -164,30 +147,27 @@ public:
             dst<<"li $"<<destReg<<","<<context.enums[found_enum_index].value<<'\n';
         }
         else if ( found_var ) {
-
+            dst<<"#DEBUG Declarator: FOUND_VAR, adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
             int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
             dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
             dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
-            
+        
         } else {
-            dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
-            dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
-            dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
-            dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
+        //     dst << "addiu $sp,$sp,-4 \n"; //have a new variable so need to make some space on the stack 
+        //     dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
+        //     dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
+        //     dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
 
             variable v;
             v.reg = destReg;
             v.size = 4; //only for int !!!
             v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
             context.functions[context.current_function].variables_map.insert({id, v});
-            dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+            dst<<"#DEBUG Declarator: NOT_FOUND_VAR, adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
 
             int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
             dst<<"sw $"<<context.functions[context.current_function].variables_map[id].reg<<",12($fp)"<<'\n';
             dst<<"#DEBUG: reg of argument="<<context.functions[context.current_function].variables_map[id].reg<< " "<< id <<'\n';
-
-            // dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-            // dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
         }
         
     }

@@ -42,20 +42,32 @@ public:
         int regA = context.allocate(context.current_function);
         std::string WHILElabel = context.makeLabel("WHILE");
         std::string endWhileLabel = context.makeLabel("endWHILE");
+        context.functions[context.current_function].iteration_selection_statement = true;
 
-        dst<<WHILElabel<<":"<<'\n';
         condition->generateMIPS(dst, context, regA);
+        
+        dst<<WHILElabel<<":"<<'\n';
         dst<<"beq $"<<regA<<",$0,"<<endWhileLabel<<'\n';
         dst<<"nop"<<'\n';
         statement->generateMIPS(dst, context, destReg);
-        // condition->generateMIPS(dst, context, regA);
-        // dst<<"bne $"<<regA<<",$0,"<<WHILElabel<<'\n';
-        dst<<"j "<<WHILElabel<<'\n';
+        condition->generateMIPS(dst, context, regA);
+        dst<<"bne $"<<regA<<",$0,"<<WHILElabel<<'\n';
+        // dst<<"j "<<WHILElabel<<'\n';
         dst<<"nop"<<'\n';
 
         dst<<endWhileLabel<<":"<<'\n';
         
         context.regFile.freeReg(regA);
+
+        dst<<"move $fp,$24"<< '\n';
+        dst<<"move $sp,$24"<<'\n';
+        dst<<"sw $25,4($sp)"<<'\n';
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        context.functions.erase(context.current_function);
+        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        if(!context.functions.empty())    context.current_function = (--context.functions.end())->first;
+        dst<<", now in "<<context.current_function<<'\n';
+
     }
 };
 
@@ -104,16 +116,20 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+
+        dst<<"#DEBUG enter FOR SCOPE - "<<context.current_function<<'\n';
+
         int regA = context.allocate(context.current_function);
         int regCondition = context.allocate(context.current_function);
         int regStep = context.allocate(context.current_function);
         std::string FORlabel = context.makeLabel("FOR");
         std::string endForLabel = context.makeLabel("endFOR");
+        context.functions[context.current_function].iteration_selection_statement = true;
 
         conditionInit->generateMIPS(dst, context, regStep);
+        condition->generateMIPS(dst, context, regCondition);
 
         dst<<FORlabel<<":"<<'\n';
-        condition->generateMIPS(dst, context, regCondition);
         
         dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
         // dst<<"nop"<<'\n';
@@ -134,9 +150,7 @@ public:
             // dst<<"sw $";
             // dst<<regStep;
             // dst<<","<<curr_offset<<"($fp)"<<'\n';
-        }
-
-        
+        }        
         
         dst<<"bne $"<<regCondition<<",$0,"<<FORlabel<<'\n';
         // dst<<"nop"<<'\n';
@@ -146,6 +160,15 @@ public:
         // context.regFile.freeReg(regA);
         context.regFile.freeReg(regCondition);
         // context.regFile.freeReg(regStep);
+
+        dst<<"move $fp,$24"<< '\n';
+        dst<<"move $sp,$24"<<'\n';
+        dst<<"sw $25,4($sp)"<<'\n';
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        context.functions.erase(context.current_function);
+        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        if(!context.functions.empty())    context.current_function = (--context.functions.end())->first;
+        dst<<", now in "<<context.current_function<<'\n';
     }
 };
 

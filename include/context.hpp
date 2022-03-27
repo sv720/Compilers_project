@@ -76,6 +76,7 @@ struct function
     unsigned int size;                 // Total size of arguments
     std::vector<unsigned int> argSize; // Individual size of each argument
     std::map<std::string, variable> variables_map; 
+    bool iteration_selection_statement = false;
 };
 
 struct enumeration
@@ -96,10 +97,11 @@ struct Context
     std::map<std::string, std::vector<enumeration>> global_enums;      // Tracks enums globally with spefific enum label
     std::vector<enumeration> enums;                 // track all enums independent of their label
     std::map<std::string, function> functions;     // tracks the size of the arguments
-    std::string current_function;
+    std::string current_function;// previous_function;
     std::vector<std::string> functions_names;
     std::string current_function_name;
     std::string current_array_label;
+    // bool iteration_selection_statement;
 
     // MIPS Register file
     registers regFile;

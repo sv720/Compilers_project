@@ -8,7 +8,9 @@ int bsqrt(int lo, int hi, int val)
         }else{
             hi=mid;
         }
+        return hi;
     }
+    return lo;
     if( lo*lo < val ) {
         return hi;
     }else{

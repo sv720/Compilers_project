@@ -145,8 +145,9 @@ public:
 
         function f;
         context.functions_names.push_back(id->getId());
-        context.functions.insert({context.makeLabel(id->getId()), f});
-        context.current_function = context.makeLabel(id->getId());
+        std::string function_label = context.makeLabel(id->getId());
+        context.functions.insert({function_label, f});
+        context.current_function = function_label;
         context.current_function_name = id->getId();
         // storing argument parameters in stack
 
@@ -230,7 +231,8 @@ public:
     {
         
         function f;
-        context.functions.insert({context.makeLabel(label_args->getId()), f});
+        std::string function_label = context.makeLabel(label_args->getId());
+        context.functions.insert({function_label, f});
         // label_args->generateMIPS(dst, context, destReg);
         // //dst<<"end_"<<label_args->getId()<<":"<<'\n';
         // dst<<"move $sp,$fp"<<'\n';
