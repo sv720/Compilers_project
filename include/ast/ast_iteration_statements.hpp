@@ -127,11 +127,12 @@ public:
         conditionInit->generateMIPS(dst, context, regStep);
         condition->generateMIPS(dst, context, regCondition);
         
+        dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
+        dst<<"nop"<<'\n';
 
         dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
         dst<<FORlabel<<":"<<'\n';
-        dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
-        dst<<"nop"<<'\n';
+        
 
         dst<<"#DEBUG FOR step value: "<<conditionStep->getId()<<'\n';
         if (conditionStep->getId() == "pre++" || conditionStep->getId() == "pre--"){

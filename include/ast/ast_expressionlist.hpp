@@ -156,7 +156,7 @@ public:
 
         std::string scope_label = context.makeLabel("Scope "+context.current_function);
         context.functions.insert({scope_label, f});
-        context.current_function = scope_label;  //TESTING
+        context.current_function = scope_label;  //TESTING SCOPES
 
             //this should be before condition
         dst<<"#DEBUG enter SCOPE - "<<context.current_function<<"; prev: "<<context.functions[context.current_function].previous_function

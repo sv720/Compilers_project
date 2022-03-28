@@ -47,7 +47,7 @@ public:
         dst << "#DEBUG: ARRAYDECLARATOR "<<'\n';
         dst << "#DEBUG: adding array to stack "<<'\n';
         int array_size = size->getValue();
-        dst << "addiu $sp,$sp,-"<< (array_size)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : no -1 as need to free exactly number of words present
+        dst << "addiu $sp,$sp,-"<< (array_size-1)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : no -1 as need to free exactly number of words present
         //Scott: we want to keep old_fp and sp and bottom of allocated stack
         dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
         dst<< "sw $25,4($fp)"<< '\n'; //we move the old (out of function) frame pointer just above the new fp
@@ -59,7 +59,8 @@ public:
         variable v;
         v.reg = destReg;
         v.size = array_size*4;
-        v.old_map_size = context.functions[context.current_function].variables_map.size(); //------------------------------
+        v.declared_in_function = context.current_function;
+        v.old_map_size = context.functions[context.current_function].variables_map.size() + 1; //------------------------------
 
         context.current_array_label = id->getId();
 
@@ -123,7 +124,8 @@ public:
         for ( int i = 0; i < elements->list.size(); i++ ) {
             // get the address of where we declared the array (label)
 
-            int regElement = context.allocate(context.current_function_name);
+            int regElement = context.allocate(context.current_function);
+            dst<<"#DEBUG : genrateMIPS ArrayINIT"<<'\n';
             elements->list[i]->generateMIPS(dst, context, regElement);
 
             //once we know the address, we can store the value stored in regElement into specific memory location
@@ -156,20 +158,20 @@ public:
         delete index;
     }
 
+    std::string getId() const override
+    { return id->getId(); }
 
-    ExpressionPtr getSize() const //not sure what this does
+    virtual ExpressionPtr getSize() const override //not sure what this does
     { return index; }
 
     virtual std::string getNature() const override
     { 
-        if(index->getNature() == "Variable"){
-            return "Variable_Indexed_Array"; 
-        }
-        else{ return "Constant_Indexed_Array";}
+        return "ArrayCall";
     }
 
     virtual void print(std::ostream &dst) const override
     {
+        dst<<"index->getId() = "<< index->getId()<<'\n';
         id->print(dst);
         dst<<"[";
         index->print(dst);
@@ -180,12 +182,46 @@ public:
     {
         // x[a] == &x+a*4
         dst << "#DEBUG: ARRAYCALL "<<'\n';
-        int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id->getId()].old_map_size) + 12;
-        int element_offset = index->getValue()*4;
-        dst << "#DEBUG current map size = " << context.functions[context.current_function].variables_map.size() << '\n';
-        dst << "#DEBUG old map size = " << context.functions[context.current_function].variables_map[id->getId()].old_map_size << '\n';
+
+        int regIndex = context.allocate(context.current_function);
+        index->generateMIPS(dst, context, regIndex); // call what is between brackets and store in index register
+
+        // multiply regIndex by 4
+        int regMultiplier4 = context.allocate(context.current_function_name);
+        dst << "li $" << regMultiplier4 << ",4" << '\n';
+        dst << "mult $" << regIndex << ",$" << regMultiplier4 << '\n';
+        // context.regFile.freeReg(regMultiplier4);
+
+        dst << "mflo $" << regIndex << '\n';
+
+        int regOffset = context.allocate(context.current_function);
+        int curr_map_size = (context.functions[context.current_function].variables_map.size());
+        dst << "#DEBUG : curr_map_size = " << curr_map_size;
+
+        int old_map_size = (context.functions[context.current_function].variables_map[id->getId()].old_map_size);
+        dst << "#DEBUG : old_map_size =" << old_map_size << '\n';
+
+        int curr_offset = 4 * (curr_map_size - old_map_size) + 12;
+        dst << "addi $" << regOffset << ",$" << regIndex << ",-" << curr_offset << '\n';
+        dst << "sub $" << regOffset << ",$0,$" << regOffset << '\n';
+
+        int regAddress = context.allocate(context.current_function);
+        dst << "add $" << regAddress << ",$" << regOffset << ",$fp" << '\n';
+
+        // id->generateMIPS(dst, context, destReg);
+        // int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id->getId()].old_map_size) + 12;
+        // int element_offset = index->getValue()*4;
+        // dst << "#DEBUG current map size = " << context.functions[context.current_function].variables_map.size() << '\n';
+        // dst << "#DEBUG old map size = " << context.functions[context.current_function].variables_map[id->getId()].old_map_size << '\n';
+        // dst<<"#DEBUG element_offset = "<<element_offset <<'\n';
         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-        dst<<curr_offset-element_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+        dst<<"0($"<< regAddress <<")"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+
+        context.regFile.freeReg(regIndex);
+        context.regFile.freeReg(regOffset);
+        context.regFile.freeReg(regMultiplier4);
+        context.regFile.freeReg(regAddress);
+
     }
     
 };
