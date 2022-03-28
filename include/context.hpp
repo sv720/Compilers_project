@@ -68,6 +68,7 @@ struct variable
     int old_map_size;                      // To calculate the new relative offset from the current fp
     int reg;                               // Keeps track of which register the variable is in (-1 := not stored in reg)
     std::string type = "int";
+    std::string declared_in_function;
     // enum Specifier type = Specifier::_int; // keeps track of type, int by default (refactor this to enum if possible at some point)
 };
 
@@ -76,6 +77,9 @@ struct function
     unsigned int size;                 // Total size of arguments
     std::vector<unsigned int> argSize; // Individual size of each argument
     std::map<std::string, variable> variables_map; 
+    int fp_reg = -1;
+    std::string previous_function;
+    bool iteration_selection_statement = false;
 };
 
 struct enumeration

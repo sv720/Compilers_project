@@ -102,5 +102,92 @@ public:
     }
 };
 
+class Scope
+    : public ExpressionList
+{
+   
+public:
+    std::vector<ExpressionPtr> list;
+
+    //CONSTRUCTORS
+    Scope() 
+    { list = {}; }
+
+    Scope(ExpressionListPtr in_list)
+        : list (in_list->list)
+    {}
+
+    virtual ~Scope()
+    {
+        for (ExpressionPtr i : list){
+            delete i;
+        }
+    }
+
+    virtual void append(ExpressionPtr new_elem)
+    {
+       list.push_back(new_elem);
+    }
+
+    virtual std::vector<ExpressionPtr> getListVector()
+    {
+        return list;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+
+        //std::cout<<"DEBUG in print; list.size() = " << list.size() << std::endl;
+        for (ExpressionPtr i : list){
+            //std::cout << "DEBUG address of ExpressionPtr =" << i << std::endl;
+            dst<<"SCOPE( ";
+            i->print(dst);
+            dst<<" )";
+        }
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        function f;
+        f.iteration_selection_statement = context.functions[context.current_function].iteration_selection_statement;
+        dst<<"#DEBUG: SCOPES: iteration? "<<context.functions[context.current_function].iteration_selection_statement<<'\n';
+        f.previous_function = context.current_function;
+        f.fp_reg = context.functions[context.current_function].fp_reg ;
+        std::string scope_label = context.makeLabel("Scope "+context.current_function);
+        context.functions.insert({scope_label, f});
+        context.current_function = scope_label;  //TESTING
+
+            //this should be before condition
+        dst<<"#DEBUG enter SCOPE - "<<context.current_function<<"; prev: "<<context.functions[context.current_function].previous_function
+                                    <<"; return fp reg: "<< context.functions[context.current_function].fp_reg <<'\n';
+
+        dst<<"#DEBUG: SCOPES: iteration? "<<context.functions[context.current_function].iteration_selection_statement<<'\n';
+
+        if (!context.functions[context.current_function].iteration_selection_statement){
+            context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+            dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n'; //make a copy of old fp in register 24
+        }
+
+        for (ExpressionPtr i : list){
+            i->generateMIPS(dst, context, destReg);
+        } 
+
+        if (!context.functions[context.current_function].iteration_selection_statement){
+            dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+            dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+            // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
+            // dst<<"addiu $sp,$fp,"<< (4*(context.functions[context.current_function].variables_map.size()-parent_map_size))<<'\n';
+            dst<<"move $fp,$sp"<<'\n';
+            dst<<"sw $25,4($sp)"<<'\n';
+            dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+            context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+            // context.functions.erase(context.current_function);
+            dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+            context.current_function = context.functions[context.current_function].previous_function;
+            dst<<", now in "<<context.current_function<<'\n';
+        }
+        
+    }
+};
 
 #endif

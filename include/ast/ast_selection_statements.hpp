@@ -87,10 +87,13 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         int regA = context.allocate(context.current_function);
+        // context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+
         condition->generateMIPS(dst, context, regA);
         std::string ELSElabel = context.makeLabel("ELSE");
         dst<<"beq $"<<regA<<",$zero,"<<ELSElabel<<'\n';
 
+        // dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
         statement->generateMIPS(dst, context, destReg);
         std::string endIfLabel = context.makeLabel("endIFELSE");
         dst<<"j "<<endIfLabel<<'\n';

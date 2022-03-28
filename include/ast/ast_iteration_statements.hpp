@@ -42,15 +42,30 @@ public:
         int regA = context.allocate(context.current_function);
         std::string WHILElabel = context.makeLabel("WHILE");
         std::string endWhileLabel = context.makeLabel("endWHILE");
+        context.functions[context.current_function].iteration_selection_statement = true;
+        context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
 
         condition->generateMIPS(dst, context, regA);
         dst<<WHILElabel<<":"<<'\n';
+        dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
         dst<<"beq $"<<regA<<",$zero,"<<endWhileLabel<<'\n';
         statement->generateMIPS(dst, context, destReg);
         condition->generateMIPS(dst, context, regA);
         dst<<"bne $"<<regA<<",$zero,"<<WHILElabel<<'\n';
 
         dst<<endWhileLabel<<":"<<'\n';
+        dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
+        // dst<<"addiu $sp,$fp,"<< (4*(context.functions[context.current_function].variables_map.size()-parent_map_size))<<'\n';
+        dst<<"move $fp,$sp"<<'\n';
+        dst<<"sw $25,4($sp)"<<'\n';
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // context.functions.erase(context.current_function);
+        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        context.current_function = context.functions[context.current_function].previous_function;
+        dst<<", now in "<<context.current_function<<'\n';
         
         context.regFile.freeReg(regA);
     }
@@ -106,10 +121,13 @@ public:
         int regStep = context.allocate(context.current_function);
         std::string FORlabel = context.makeLabel("FOR");
         std::string endForLabel = context.makeLabel("endFOR");
+        context.functions[context.current_function].iteration_selection_statement = true;
+        context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
 
         conditionInit->generateMIPS(dst, context, regStep);
 
         dst<<FORlabel<<":"<<'\n';
+        dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
         condition->generateMIPS(dst, context, regCondition);
         
         dst<<"beq $"<<regCondition<<",$zero,"<<endForLabel<<'\n';
@@ -137,6 +155,18 @@ public:
         dst<<"bne $"<<regCondition<<",$zero,"<<FORlabel<<'\n';
 
         dst<<endForLabel<<":"<<'\n';
+        dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
+        // dst<<"addiu $sp,$fp,"<< (4*(context.functions[context.current_function].variables_map.size()-parent_map_size))<<'\n';
+        dst<<"move $fp,$sp"<<'\n';
+        dst<<"sw $25,4($sp)"<<'\n';
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // context.functions.erase(context.current_function);
+        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        context.current_function = context.functions[context.current_function].previous_function;
+        dst<<", now in "<<context.current_function<<'\n';
 
         // context.regFile.freeReg(regA);
         context.regFile.freeReg(regCondition);

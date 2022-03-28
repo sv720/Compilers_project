@@ -211,7 +211,7 @@ statement
 	| selection_statement	{ $$ = $1; }
 	| iteration_statement	{ $$ = $1; }
 	| jump_statement		{ $$ = $1; }
-	| compound_statement	{ $$ = $1; } 
+	| compound_statement	{ /* $$ = $1; */ $$ = new Scope($1); } 
 	;
 
 /* from statement */

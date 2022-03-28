@@ -41,6 +41,9 @@ public:
 
     virtual void generateENUM(int counter, Context &context) const
     { }
+    
+    virtual std::string found_in_f(Context &context, std::string id, std::string function) const 
+    { return "<NULL>"; }
 };
 
 class EmptyExpr
