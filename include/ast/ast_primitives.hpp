@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include "ast/ast_expressionlist.hpp"
 #include "context.hpp"
 
@@ -53,6 +54,72 @@ public:
     {}
 
     Integer(int _value)
+        : value(_value)
+    {}
+
+    int getValue() const
+    { return value; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<value;
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"li $"<<destReg<<","; // need to set other register
+        dst<<value<<'\n'; 
+    }
+};
+
+class Float
+    : public Expression
+{
+private:
+    float value;
+    int s; //sign
+    int e; //exponent plus 1023 
+    int f; //stores binary fration (with leading 1 implcit) e.g. 1.011=>011
+public:
+    Float()
+    {
+        if (value >= 0){
+            s=0;
+        }
+        else { s=1; }
+        
+        e = (int) log10(value);
+        f = (int) ((value/e)-1)*8388608; //should store the int value of 23 decimal points (large multiplier is 2^23 ; 23 is size of f field)
+    }
+
+    Float(float _value)
+        : value(_value)
+    {}
+
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"FLOAT VALUE = ";
+        dst<<value;
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"li $"<<destReg<<","; // need to set other register
+        dst<<value<<'\n'; 
+    }
+};
+
+class Double
+    : public Expression
+{
+private:
+    double value;
+public:
+    Double()
+    {}
+
+    Double(int _value)
         : value(_value)
     {}
 
