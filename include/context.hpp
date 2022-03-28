@@ -104,6 +104,7 @@ struct Context
     std::vector<std::string> functions_names;
     std::string current_function_name;
     std::string current_array_label;
+    bool in_loop_scope = false;
 
     // MIPS Register file
     registers regFile;

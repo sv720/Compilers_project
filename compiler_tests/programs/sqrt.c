@@ -11,7 +11,7 @@ int bsqrt(int lo, int hi, int val)
         }else{
             hi=mid;
         }
-        i++;
+        return sqr;
     }
     if( lo*lo < val ) {
         return hi;

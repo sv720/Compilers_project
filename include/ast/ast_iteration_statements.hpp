@@ -49,21 +49,20 @@ public:
         dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
         dst<<WHILElabel<<":"<<'\n';
         
-        dst<<"beq $"<<regA<<",$zero,"<<endWhileLabel<<'\n';
+        dst<<"beq $"<<regA<<",$0,"<<endWhileLabel<<'\n';
         statement->generateMIPS(dst, context, destReg);
         condition->generateMIPS(dst, context, regA);
-        dst<<"bne $"<<regA<<",$zero,"<<WHILElabel<<'\n';
+        dst<<"bne $"<<regA<<",$0,"<<WHILElabel<<'\n';
 
         dst<<endWhileLabel<<":"<<'\n';
         dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
         dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
-        // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
-        // dst<<"addiu $sp,$fp,"<< (4*(context.functions[context.current_function].variables_map.size()-parent_map_size))<<'\n';
         dst<<"move $fp,$sp"<<'\n';
         dst<<"sw $25,4($sp)"<<'\n';
         dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
         context.regFile.freeReg(context.functions[context.current_function].fp_reg);
         // context.functions.erase(context.current_function);
+        context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
         dst<<"#DEBUG exited SCOPE - "<<context.current_function;
         context.current_function = context.functions[context.current_function].previous_function;
         dst<<", now in "<<context.current_function<<'\n';
@@ -160,6 +159,7 @@ public:
         dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
         context.regFile.freeReg(context.functions[context.current_function].fp_reg);
         // context.functions.erase(context.current_function);
+        context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
         dst<<"#DEBUG exited SCOPE - "<<context.current_function;
         context.current_function = context.functions[context.current_function].previous_function;
         dst<<", now in "<<context.current_function<<'\n';
