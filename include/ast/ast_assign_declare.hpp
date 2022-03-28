@@ -246,7 +246,14 @@ public:
                 int curr_offset_index = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getSize()->getId()].old_map_size) + 12;
                 dst<<"lw $"<<regIndex<<",";
                 dst<<curr_offset_index<<"($fp)"<<'\n';
+                
+                int regMultiplier4 = context.allocate(context.current_function_name);
+                dst<<"li $"<<regMultiplier4 <<",4"<<'\n';
 
+                dst<<"mult $"<<regIndex<<",$"<<regMultiplier4<<'\n';
+                context.regFile.freeReg(regMultiplier4);
+
+                dst<<"mflo $"<<regIndex<<'\n';
                 int regOffset = context.allocate(context.current_function_name);
                 int curr_map_size = (context.functions[context.current_function].variables_map.size());
                 dst<<"#DEBUG : curr_map_size = "<<curr_map_size;
