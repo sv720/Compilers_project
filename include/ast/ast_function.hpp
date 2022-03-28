@@ -60,7 +60,6 @@ public:
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
-        //dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
         dst<<"jr $31"<<'\n';
         dst<<"nop"<<'\n';
     }
@@ -157,7 +156,7 @@ public:
         dst<<context.current_function_name<<":"<<'\n';
         dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
         dst<<"sw $fp,4($sp)"<<'\n';
-        dst<<"sw $31, 8($sp)"<<'\n'; // stores pc above old_pc
+        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
         dst<<"move $25,$fp"<< '\n'; //make a copy of old fp in register 25
         dst<<"move $fp,$sp"<<'\n';
 
@@ -315,6 +314,7 @@ public:
         dst<<"jal "<<functionName->getId()<<'\n';
         dst<<"nop"<<'\n';
         dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
+        dst<<"nop"<<'\n';
     }
 };
 

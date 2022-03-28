@@ -70,6 +70,9 @@ public:
         delete right;
     }
 
+    std::string getId() const override
+    { return left->getId(); }
+
     virtual void print(std::ostream &dst) const override
     {   dst<<"INITDECLARATOR \n";
         left->print(dst);
@@ -137,6 +140,7 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        //dst<< "#DEBUG : IN DECLARATOR \n";
         int found_enum_index = -1;
         for (int i = 0; i < context.enums.size(); i++) {
             if (context.enums[i].id == id) {
@@ -144,7 +148,7 @@ public:
             }
         }
 
-        int found_var = false;
+        bool found_var = false;
         for (int i = 0; i < context.functions[context.current_function].variables_map.size() && !found_var; i++) {
             if (context.functions[context.current_function].variables_map.find(id) !=  context.functions[context.current_function].variables_map.end()) {
                 found_var = true;
@@ -225,7 +229,6 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-
         //check if variable exists in the function and if it has the same declared_in_scope
         int found_var_here = false;
         for (int i = 0; i < context.functions[context.current_function].variables_map.size() && !found_var_here; i++) {
@@ -245,20 +248,45 @@ public:
         }
 
         if (middle == "="){
-            dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << '\n';
+            dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << '\n';
 
-            right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
-            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
-            dst<<"sw $";
-            dst<<destReg;
-            dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
-            // left->generateMIPS(dst, context, context.functions[f].variables_map[left->getId()].reg);
 
+             if (left->getNature() == "Variable_Indexed_Array"){
+                dst<<"#DEBUG : Varaible_Indexed_Array__________________________________________________________________"<<'\n';
+                //TODO : ADD CODE FOR REGISTER STYLE
+                right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+                //dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.functions[f].variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';
+                dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << " was " << context.functions[f].variables_map[left->getId()].old_map_size << '\n';
+                int regIndex = context.allocate(context.current_function_name);
+
+                int regOffset = context.allocate(context.current_function_name);
+
+                //dst<<"addi $"<<regOffset<<",$"<<regIndex<<",-"<<curr_offset<<'\n';
+                dst<<"sub $"<<regOffset<<",$0,$"<<regOffset<<'\n';
+
+                int regAddress = context.allocate(context.current_function_name);
+
+                dst<<"add $"<<regAddress<<",$"<<regOffset<<",$fp"<<'\n';
+
+                dst<<"sw $";
+                dst<<destReg;
+                dst<<",0($"<<regAddress<<")"<<'\n'; //store output register of the calculations in  respective stack location
+                //left->generateMIPS(dst, context, context.functions[f].variables_map[left->getId()].reg);
+            }else {
+                dst<<"#DEBUG : OTHER__________________________________________________________________"<<'\n';
+                right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
+                //dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.functions[f].variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';
+                int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
+                dst<<"sw $";
+                dst<<destReg;
+                dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
+                //left->generateMIPS(dst, context, context.functions[f].variables_map[left->getId()].reg);
+            }
             // context.regFile.freeReg(context.functions[f].variables_map[left->getId()].reg);
 
         }else if (middle == "*="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -266,7 +294,7 @@ public:
             dst<<"mult $"<<regLeft<<", $"<<regRight<<'\n';
             dst<<"mflo $"<<regLeft<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -275,8 +303,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "/="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -284,7 +312,7 @@ public:
             dst<<"div $"<<regLeft<<", $"<<regRight<<'\n';
             dst<<"mflo $"<<regLeft<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -293,8 +321,8 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "%="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
@@ -302,7 +330,7 @@ public:
             dst<<"div $"<<regLeft<<", $"<<regRight<<'\n';
             dst<<"mfhi $"<<regLeft<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -311,15 +339,15 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "+="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
 
             dst<<"addu $"<<regLeft<<", $"<<regLeft<<", $"<<regRight<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -328,15 +356,15 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "-="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
 
             dst<<"subu $"<<regLeft<<", $"<<regLeft<<", $"<<regRight<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -345,15 +373,15 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "<<="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
 
             dst<<"sllv $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -362,15 +390,15 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == ">>="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
 
             dst<<"srlv $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -379,15 +407,15 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "&="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
 
             dst<<"and $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
@@ -396,15 +424,15 @@ public:
             context.regFile.freeReg(regLeft);
 
         }else if (middle == "^="){
-            int regLeft = context.allocate(context.current_function);
-            int regRight = context.allocate(context.current_function);
+            int regLeft = context.allocate(f);
+            int regRight = context.allocate(f);
 
             left->generateMIPS(dst, context, regLeft);
             right->generateMIPS(dst, context, regRight); 
 
             dst<<"xor $"<< regLeft << ",$"<<regLeft<<",$"<<regRight<<'\n';
 
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getId()].old_map_size) + 12;
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[left->getId()].old_map_size) + 12;
             dst<<"sw $";
             dst<<regLeft;
             dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location

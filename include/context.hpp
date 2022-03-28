@@ -14,7 +14,7 @@ struct variable;
 // contains information related to size of arguments of a function
 struct function;
 // Represents current scope
-struct stackFrame;
+// struct stackFrame;
 // Represents enumerations
 struct enumeration;
 
@@ -100,7 +100,7 @@ struct Context
     std::map<std::string, std::vector<enumeration>> global_enums;      // Tracks enums globally with spefific enum label
     std::vector<enumeration> enums;                 // track all enums independent of their label
     std::map<std::string, function> functions;     // tracks the size of the arguments
-    std::string current_function;
+    std::string current_function;// previous_function;
     std::vector<std::string> functions_names;
     std::string current_function_name;
     std::string current_array_label;
@@ -217,19 +217,19 @@ struct Context
     // };
 };
 
-struct stackFrame
-{
-    std::map<std::string, variable> varBindings; // Tracks variables in scope
-    unsigned int offset = 0;                     // Keeps track of size of frame to restore the stack pointer for blocks (i.e. while loops, if statements) -- MAKE SURE TO INCREMENT WHEN ALLOCATING VARIABLES
-    // bool inFrame(std::string varName)
-    // {
-    //     auto it = varBindings.find(varName);
-    //     return (it != varBindings.end());
-    // };                                           // Error checking, probably not necessary
-    std::string startLabel;                      // Used for continue statement (and case stuff for switch)
-    std::string endLabel;                        // Used for break statement
-    // enum Specifier returnType;                   // Used to track type being returned from function
-};
+// struct stackFrame
+// {
+//     std::map<std::string, variable> varBindings; // Tracks variables in scope
+//     unsigned int offset = 0;                     // Keeps track of size of frame to restore the stack pointer for blocks (i.e. while loops, if statements) -- MAKE SURE TO INCREMENT WHEN ALLOCATING VARIABLES
+//     // bool inFrame(std::string varName)
+//     // {
+//     //     auto it = varBindings.find(varName);
+//     //     return (it != varBindings.end());
+//     // };                                           // Error checking, probably not necessary
+//     std::string startLabel;                      // Used for continue statement (and case stuff for switch)
+//     std::string endLabel;                        // Used for break statement
+//     // enum Specifier returnType;                   // Used to track type being returned from function
+// };
 
 // std::ostream &operator<<(std::ostream &dst, stackFrame frame){
 //     dst << "Beginning of frame" << std::endl;

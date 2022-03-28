@@ -49,6 +49,10 @@ public:
     virtual const char *getOpcode() const override
     { return "-"; }
 
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"sub $"<<destReg<<",$0,$"<<destReg<<'\n';
+    }
 };
 
 #endif
