@@ -65,7 +65,7 @@
 
 %type <integer> INT_LITERAL // CHAR_LITERAL
 // %type <numberFloat> FLOAT_LITERAL
-%type <string> IDENTIFIER assignment_operator declaration_specifiers type_specifier
+%type <string> IDENTIFIER assignment_operator declaration_specifiers type_specifier CHAR_LITERAL
 
 // ASSOCIATIVITY
 %left '+' '-'
@@ -253,7 +253,7 @@ primary_expression
 	: IDENTIFIER			{ $$ = new Declarator( *$1 );}
 	| INT_LITERAL			{ $$ = new Integer( $1 );}
 	// | FLOAT_LITERAL			{ ;}
-	// | CHAR_LITERAL			{ $$ = new Integer($1);}
+	| CHAR_LITERAL			{ $$ = new Character( *$1 );}
 	| '(' expression ')'	{ $$ = $2; }
 	;
 
@@ -390,7 +390,7 @@ expression
 
 type_specifier
 	: VOID			{ $$ = new std::string("void"); }
-	| CHAR
+	| CHAR			{ $$ = new std::string("char"); }
 	| SHORT
 	| INT			{ $$ = new std::string("int"); }
 	| LONG
