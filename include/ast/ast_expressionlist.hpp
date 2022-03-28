@@ -148,11 +148,12 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        if (context.in_loop_scope) context.functions[context.current_function].iteration_selection_statement = true;
+        else context.functions[context.current_function].iteration_selection_statement = false;
         function f;
-        f.iteration_selection_statement = context.functions[context.current_function].iteration_selection_statement;
-        dst<<"#DEBUG: SCOPES: iteration? "<<context.functions[context.current_function].iteration_selection_statement<<'\n';
+        dst<<"#DEBUG: SCOPES: iteration? "<<f.iteration_selection_statement<<'\n';
         f.previous_function = context.current_function;
-        f.fp_reg = context.functions[context.current_function].fp_reg ;
+        f.fp_reg = context.functions[context.current_function].fp_reg;
 
         std::string scope_label = context.makeLabel("Scope "+context.current_function);
         context.functions.insert({scope_label, f});
@@ -164,9 +165,8 @@ public:
 
         dst<<"#DEBUG: SCOPES: iteration? "<<context.functions[context.current_function].iteration_selection_statement<<'\n';
 
-        context.in_loop_scope = context.functions[context.current_function].iteration_selection_statement;
-
-        if (!context.in_loop_scope){
+        
+        if (!context.functions[context.current_function].iteration_selection_statement){
             context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
             dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n'; //make a copy of old fp in register 24
         }
@@ -175,9 +175,8 @@ public:
             i->generateMIPS(dst, context, destReg);
         } 
 
-        context.in_loop_scope = context.functions[context.current_function].iteration_selection_statement;
 
-        if (!context.in_loop_scope){
+        if (!context.functions[context.current_function].iteration_selection_statement){
             dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
             dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
             // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
@@ -187,7 +186,7 @@ public:
             dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
             context.regFile.freeReg(context.functions[context.current_function].fp_reg);
             // context.functions.erase(context.current_function);
-            context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
+            // context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
             dst<<"#DEBUG exited SCOPE - "<<context.current_function;
             context.current_function = context.functions[context.current_function].previous_function;
             dst<<", now in "<<context.current_function<<'\n';

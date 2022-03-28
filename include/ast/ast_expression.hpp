@@ -50,6 +50,11 @@ public:
     
     virtual std::string found_in_f(Context &context, std::string id, std::string function) const 
     { return "<NULL>"; }
+
+    virtual int maps_total_offsets(Context &context, std::string start_function, std::string end_function) const
+    {
+        return -1;
+    }
 };
 
 class EmptyExpr

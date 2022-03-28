@@ -1,7 +1,6 @@
 int bsqrt(int lo, int hi, int val)
 {
-    int i = 0;
-    while(lo+1 < hi && i < 2){
+    while(lo+1 < hi){
         int mid=(lo+hi)>>1;
         int sqr=mid*mid;
         if(sqr <= val){
@@ -9,7 +8,6 @@ int bsqrt(int lo, int hi, int val)
         }else{
             hi=mid;
         }
-        i++;
     }
     if( lo*lo < val ) {
         return hi;

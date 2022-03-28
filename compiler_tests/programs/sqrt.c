@@ -10,7 +10,6 @@ int bsqrt(int lo, int hi, int val)
         }else{
             hi=mid;
         }
-        return sqr;
     }
     if( lo*lo < val ) {
         return hi;

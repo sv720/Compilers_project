@@ -42,11 +42,13 @@ public:
         int regA = context.allocate(context.current_function);
         std::string WHILElabel = context.makeLabel("WHILE");
         std::string endWhileLabel = context.makeLabel("endWHILE");
-        context.functions[context.current_function].iteration_selection_statement = true;
-        context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+        // context.in_loop_scope = true;
+        // context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+
+        
 
         condition->generateMIPS(dst, context, regA);
-        dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
+        // dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
         dst<<WHILElabel<<":"<<'\n';
         
         dst<<"beq $"<<regA<<",$0,"<<endWhileLabel<<'\n';
@@ -55,17 +57,17 @@ public:
         dst<<"bne $"<<regA<<",$0,"<<WHILElabel<<'\n';
 
         dst<<endWhileLabel<<":"<<'\n';
-        dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
-        dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
-        dst<<"move $fp,$sp"<<'\n';
-        dst<<"sw $25,4($sp)"<<'\n';
-        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        context.regFile.freeReg(context.functions[context.current_function].fp_reg);
-        // context.functions.erase(context.current_function);
-        context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-        context.current_function = context.functions[context.current_function].previous_function;
-        dst<<", now in "<<context.current_function<<'\n';
+        // dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        // dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        // dst<<"move $fp,$sp"<<'\n';
+        // dst<<"sw $25,4($sp)"<<'\n';
+        // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        // context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // // context.functions.erase(context.current_function);
+        // // context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
+        // dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        // context.current_function = context.functions[context.current_function].previous_function;
+        // dst<<", now in "<<context.current_function<<'\n';
         
         context.regFile.freeReg(regA);
     }
@@ -121,18 +123,20 @@ public:
         int regStep = context.allocate(context.current_function);
         std::string FORlabel = context.makeLabel("FOR");
         std::string endForLabel = context.makeLabel("endFOR");
-        context.functions[context.current_function].iteration_selection_statement = true;
-        context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+        // context.functions[context.current_function].iteration_selection_statement = true;
+        // context.in_loop_scope = true;
+        // context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+
+        // dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
 
         conditionInit->generateMIPS(dst, context, regStep);
         condition->generateMIPS(dst, context, regCondition);
         
-        dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
-        dst<<"nop"<<'\n';
-
-        dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
+        
         dst<<FORlabel<<":"<<'\n';
         
+        dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
+        dst<<"nop"<<'\n';
 
         dst<<"#DEBUG FOR step value: "<<conditionStep->getId()<<'\n';
         if (conditionStep->getId() == "pre++" || conditionStep->getId() == "pre--"){
@@ -151,19 +155,19 @@ public:
         
         dst<<"bne $"<<regCondition<<",$0,"<<FORlabel<<'\n';
 
-        dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
-        dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
-        // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
-        // dst<<"addiu $sp,$sp,"<< (4*(context.functions[context.current_function].variables_map.size() - parent_map_size))<<'\n';
-        // dst<<"move $fp,$sp"<<'\n';
-        dst<<"sw $25,4($sp)"<<'\n';
-        dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        context.regFile.freeReg(context.functions[context.current_function].fp_reg);
-        // context.functions.erase(context.current_function);
-        context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
-        dst<<"#DEBUG exited SCOPE - "<<context.current_function;
-        context.current_function = context.functions[context.current_function].previous_function;
-        dst<<", now in "<<context.current_function<<'\n';
+        // dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
+        // dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+        // // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
+        // // dst<<"addiu $sp,$sp,"<< (4*(context.functions[context.current_function].variables_map.size() - parent_map_size))<<'\n';
+        // // dst<<"move $fp,$sp"<<'\n';
+        // dst<<"sw $25,4($sp)"<<'\n';
+        // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
+        // context.regFile.freeReg(context.functions[context.current_function].fp_reg);
+        // // context.functions.erase(context.current_function);
+        // // context.functions[context.current_function].iteration_selection_statement = context.functions[context.functions[context.current_function].previous_function].iteration_selection_statement;
+        // dst<<"#DEBUG exited SCOPE - "<<context.current_function;
+        // context.current_function = context.functions[context.current_function].previous_function;
+        // dst<<", now in "<<context.current_function<<'\n';
 
         dst<<endForLabel<<":"<<'\n';
 

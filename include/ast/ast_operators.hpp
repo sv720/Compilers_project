@@ -233,7 +233,7 @@ protected:
     virtual const char *getOpcode() const override
     { return ">>"; }
     virtual const char *getOpInstruction() const override
-    { return "srlv"; }
+    { return "sra"; } //srlv???
 public:
     RightShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)
@@ -247,7 +247,7 @@ public:
         left->generateMIPS(dst, context, regA);
         int regB = context.allocate(context.current_function);
         right->generateMIPS(dst, context, regB);
-        dst<<"srlv $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
+        dst<<"sra $"<< destReg << ",$"<<regA<<",$"<<regB<<'\n';
         context.regFile.freeReg(regA);
         context.regFile.freeReg(regB);
     }
