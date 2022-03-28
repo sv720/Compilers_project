@@ -131,6 +131,8 @@ public:
         dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
         dst<<"nop"<<'\n';
 
+        context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+        dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
 
         dst<<FORlabel<<":"<<'\n';
         dst<<"#DEBUG FOR step value: "<<conditionStep->getId()<<'\n';

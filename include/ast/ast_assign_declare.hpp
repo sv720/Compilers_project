@@ -125,6 +125,26 @@ public:
         dst<<id;
     }
 
+    std::string found_in_f(Context &context, std::string id, std::string function) const {
+        bool found_var = false;
+        
+        std::string found_in_function;
+        for (int i = 0; i < context.functions[function].variables_map.size() && !found_var; i++) {
+            if (context.functions[function].variables_map.find(id) !=  context.functions[function].variables_map.end()) {
+                found_var = true;
+                return function;
+            }
+        }
+        if (context.functions[function].previous_function == function) {
+            return "NOT_FOUND";
+        } else {
+            if (found_var == false) {
+                return found_in_f(context, id, context.functions[function].previous_function);
+            }
+        }
+        
+    }
+
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         //dst<< "#DEBUG : IN DECLARATOR \n";
@@ -146,9 +166,10 @@ public:
             dst<<"#DEBUG ENUM call: "<<context.enums[found_enum_index].id<<" <-> "<<context.enums[found_enum_index].value<<'\n';
             dst<<"li $"<<destReg<<","<<context.enums[found_enum_index].value<<'\n';
         }
-        else if ( found_var ) {
-            dst<<"#DEBUG Declarator: FOUND_VAR, adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
+        else if ( found_in_f(context, id, context.current_function) != "NOT_FOUND" ) {
+            std::string f = found_in_f(context, id, context.current_function);
+            dst<<"#DEBUG Declarator: FOUND_VAR, adding to map at address" << id << " from function "<< f <<'\n';
+            int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[id].old_map_size) + 12;
             dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
             dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
         
@@ -157,7 +178,7 @@ public:
         //     dst<< "sw $25,0($fp) \n"; //we move the old (out of function) frame pointer into the current fp value
         //     dst<< "sw $31,4($fp) \n"; //we store old_pc just above old_fp
         //     dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
-
+            
             variable v;
             v.reg = destReg;
             v.size = 4; //only for int !!!

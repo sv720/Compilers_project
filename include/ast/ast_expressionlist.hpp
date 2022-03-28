@@ -149,13 +149,13 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
             function f;
-            f.variables_map = context.functions[context.current_function].variables_map;
+            // f.variables_map = context.functions[context.current_function].variables_map;
             f.iteration_selection_statement = context.functions[context.current_function].iteration_selection_statement;
             f.previous_function = context.current_function;
             std::string scope_label = context.makeLabel("Scope "+context.current_function);
             context.functions.insert({scope_label, f});
             context.current_function = scope_label;
-            context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
+            // context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
 
                 //this should be before condition
             dst<<"#DEBUG enter SCOPE - "<<context.current_function<<"; prev: "<<context.functions[context.current_function].previous_function
@@ -163,10 +163,11 @@ public:
             // dst<<"addiu $sp,$sp,-12"<<'\n'; //now 12 to allow space for old pc
             // dst<<"sw $fp,4($sp)"<<'\n';
             // dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
-        // if (!context.functions[context.current_function].iteration_selection_statement){
+        if (!context.functions[context.current_function].iteration_selection_statement){
+            context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
             // dst<<"addiu $2,$sp,0"<<'\n';//<<4*(context.functions[context.current_function].variables_map.size()-1) <<'\n'; // -8 is sqr; -4 is hi; 0 is i; 4 is 64 
             dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n'; //make a copy of old fp in register 24
-        // }
+        }
             // dst<<"move $fp,$sp"<<'\n';
             // context.regFile.useReg(24);
 
@@ -177,6 +178,9 @@ public:
         if (!context.functions[context.current_function].iteration_selection_statement){
             dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
             dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
+            // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
+            // dst<<"addiu $sp,$fp,"<< (4*(context.functions[context.current_function].variables_map.size()-parent_map_size))<<'\n';
+            dst<<"move $fp,$sp"<<'\n';
             dst<<"sw $25,4($sp)"<<'\n';
             dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
             context.regFile.freeReg(context.functions[context.current_function].fp_reg);
