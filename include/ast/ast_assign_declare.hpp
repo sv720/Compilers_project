@@ -170,24 +170,24 @@ public:
                 dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
             }           
         } else {
-            // if ( f != "NOT_FOUND" && ) {
-            //     dst<<"#DEBUG Declarator: FOUND_VAR, " << id << " from function "<< f <<'\n';
-            //     int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[id].old_map_size) + 12;
-            //     dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-            //     dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
-            // } else {
+            if ( f != "NOT_FOUND" ) {
+                dst<<"#DEBUG Declarator: FOUND_VAR, " << id << " from function "<< f <<'\n';
+                int curr_offset = 4*(context.functions[f].variables_map.size() - context.functions[f].variables_map[id].old_map_size) + 12;
+                dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
+                dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector)
+            } else {
                 variable v;
                 v.reg = destReg;
                 v.size = 4; //only for int !!!
                 v.declared_in_function = context.current_function;
                 v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
                 context.functions[context.current_function].variables_map.insert({id, v});
-                dst<<"#DEBUG Declarator: adding to map "<< context.current_function<<" at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
+                dst<<"#DEBUG Declarator: adding to map "<< context.current_function<<" at address: " << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
 
                 int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
                 dst<<"sw $"<<destReg<<",12($fp)"<<'\n';
                 dst<<"#DEBUG: reg of argument="<<destReg<< " "<< id <<'\n';
-            // }
+            }
        }
         
     }

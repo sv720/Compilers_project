@@ -46,8 +46,9 @@ public:
         context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
 
         condition->generateMIPS(dst, context, regA);
-        dst<<WHILElabel<<":"<<'\n';
         dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
+        dst<<WHILElabel<<":"<<'\n';
+        
         dst<<"beq $"<<regA<<",$zero,"<<endWhileLabel<<'\n';
         statement->generateMIPS(dst, context, destReg);
         condition->generateMIPS(dst, context, regA);
@@ -125,12 +126,14 @@ public:
         context.functions[context.current_function].fp_reg = context.allocate(context.current_function);
 
         conditionInit->generateMIPS(dst, context, regStep);
-
-        dst<<FORlabel<<":"<<'\n';
-        dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
         condition->generateMIPS(dst, context, regCondition);
         
-        dst<<"beq $"<<regCondition<<",$zero,"<<endForLabel<<'\n';
+
+        dst<<"move $"<<context.functions[context.current_function].fp_reg<<",$sp"<< '\n';
+        dst<<FORlabel<<":"<<'\n';
+        dst<<"beq $"<<regCondition<<",$0,"<<endForLabel<<'\n';
+        dst<<"nop"<<'\n';
+
         dst<<"#DEBUG FOR step value: "<<conditionStep->getId()<<'\n';
         if (conditionStep->getId() == "pre++" || conditionStep->getId() == "pre--"){
             conditionStep->generateMIPS(dst, context, regStep);
@@ -142,24 +145,17 @@ public:
             condition->generateMIPS(dst, context, regCondition); 
         } else {
             statement->generateMIPS(dst, context, destReg);
-            condition->generateMIPS(dst, context, regCondition); 
             conditionStep->generateMIPS(dst, context, regStep);
-            // int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[conditionInit->getId()].old_map_size) + 12;
-            // dst<<"sw $";
-            // dst<<regStep;
-            // dst<<","<<curr_offset<<"($fp)"<<'\n';
+            condition->generateMIPS(dst, context, regCondition); 
         }
-
         
-        
-        dst<<"bne $"<<regCondition<<",$zero,"<<FORlabel<<'\n';
+        dst<<"bne $"<<regCondition<<",$0,"<<FORlabel<<'\n';
 
-        dst<<endForLabel<<":"<<'\n';
         dst<<"move $fp,$"<<context.functions[context.current_function].fp_reg<< '\n';
         dst<<"move $sp,$"<<context.functions[context.current_function].fp_reg<<'\n';
         // int parent_map_size = context.functions[context.functions[context.current_function].previous_function].variables_map.size();
-        // dst<<"addiu $sp,$fp,"<< (4*(context.functions[context.current_function].variables_map.size()-parent_map_size))<<'\n';
-        dst<<"move $fp,$sp"<<'\n';
+        // dst<<"addiu $sp,$sp,"<< (4*(context.functions[context.current_function].variables_map.size() - parent_map_size))<<'\n';
+        // dst<<"move $fp,$sp"<<'\n';
         dst<<"sw $25,4($sp)"<<'\n';
         dst<<"sw $31,8($sp)"<<'\n'; // stores pc above old_pc
         context.regFile.freeReg(context.functions[context.current_function].fp_reg);
@@ -167,6 +163,8 @@ public:
         dst<<"#DEBUG exited SCOPE - "<<context.current_function;
         context.current_function = context.functions[context.current_function].previous_function;
         dst<<", now in "<<context.current_function<<'\n';
+
+        dst<<endForLabel<<":"<<'\n';
 
         // context.regFile.freeReg(regA);
         context.regFile.freeReg(regCondition);

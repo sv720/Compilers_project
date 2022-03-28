@@ -153,6 +153,7 @@ public:
         dst<<"#DEBUG: SCOPES: iteration? "<<context.functions[context.current_function].iteration_selection_statement<<'\n';
         f.previous_function = context.current_function;
         f.fp_reg = context.functions[context.current_function].fp_reg ;
+        
         std::string scope_label = context.makeLabel("Scope "+context.current_function);
         context.functions.insert({scope_label, f});
         context.current_function = scope_label;  //TESTING
