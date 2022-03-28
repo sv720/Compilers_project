@@ -39,8 +39,6 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         int regA = context.allocate(context.current_function);
-        context.in_loop_scope = false;
-        // context.functions[context.current_function].iteration_selection_statement = false;
         condition->generateMIPS(dst, context, regA);
         dst<<"nop"<<'\n';
         std::string endIfLabel = context.makeLabel("endIF");
@@ -89,9 +87,6 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         int regA = context.allocate(context.current_function);
-        context.in_loop_scope = false;
-        // context.functions[context.current_function].iteration_selection_statement = false;
-
         condition->generateMIPS(dst, context, regA);
         std::string ELSElabel = context.makeLabel("ELSE");
         dst<<"beq $"<<regA<<",$zero,"<<ELSElabel<<'\n';

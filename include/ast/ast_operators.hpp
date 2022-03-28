@@ -233,7 +233,7 @@ protected:
     virtual const char *getOpcode() const override
     { return ">>"; }
     virtual const char *getOpInstruction() const override
-    { return "sra"; } //srlv???
+    { return "sra"; } //sra???
 public:
     RightShiftOperator(ExpressionPtr _left, ExpressionPtr _right)
         : Operator(_left, _right)

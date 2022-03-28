@@ -33,6 +33,11 @@ public:
     ExpressionPtr getSize() const
     { return size; }
 
+    virtual std::string getNature() const override
+    { 
+        return "ArrayDeclarator";
+    }
+
     virtual void print(std::ostream &dst) const override
     {
         dst<<"ARRAY: ";
@@ -47,27 +52,26 @@ public:
         dst << "#DEBUG: ARRAYDECLARATOR "<<'\n';
         dst << "#DEBUG: adding array to stack "<<'\n';
         int array_size = size->getValue();
-        dst << "addiu $sp,$sp,-"<< (array_size-1)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : no -1 as need to free exactly number of words present
+        dst << "addiu $sp,$sp,-"<< (array_size)*4 <<" \n"; //have a new array so need to make some space on the stack : Scott : no -1 as need to free exactly number of words present
         //Scott: we want to keep old_fp and sp and bottom of allocated stack
         dst<< "move $fp,$sp"<< '\n'; // move frame pointer back to the bottom
         dst<< "sw $25,4($fp)"<< '\n'; //we move the old (out of function) frame pointer just above the new fp
         dst<< "sw $31,8($fp)" << '\n'; //we store old_pc just above old_fp
         
    
-
         //declare the array as a normal variable, declarator could have been used
         variable v;
         v.reg = destReg;
-        v.size = array_size*4;
+        v.size = 4;
         v.declared_in_function = context.current_function;
         v.old_map_size = context.functions[context.current_function].variables_map.size() + 1; //------------------------------
 
         context.current_array_label = id->getId();
-
         context.functions[context.current_function].variables_map.insert({id->getId(), v});
+        
         for(int i = 1; i<array_size; i++){
             //dst<<"#DEBUG i = " << i <<'\n';
-            std::string item_id = id->getId() + std::to_string(i); 
+            std::string item_id = id->getId() + " " + std::to_string(i); 
             context.functions[context.current_function].variables_map.insert({item_id, v});
 
         }
