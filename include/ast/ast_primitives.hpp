@@ -20,9 +20,6 @@ public:
     virtual std::string getId() const override
     { return id; }
 
-    virtual std::string getNature() const override
-    { return "Variable"; }
-
     virtual void print(std::ostream &dst) const override
     {
         dst<<"VARAIBLE : ";

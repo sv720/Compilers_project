@@ -169,19 +169,7 @@ public:
 
     virtual std::string getNature() const override
     { 
-        bool is_digit = true;
-        for (char c : index->getId()){
-            if(!isdigit(c)){
-                is_digit = false;
-            }
-        }
-        if(index->getId() == "<NULL>"){ //TODO : find a cleaner way of handling this
-            is_digit = true;
-        }
-        if(!is_digit){
-            return "Variable_Indexed_Array"; 
-        }
-        else{ return "Constant_Indexed_Array";}
+        return "ArrayCall";
     }
 
     virtual void print(std::ostream &dst) const override

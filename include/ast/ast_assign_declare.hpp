@@ -214,46 +214,21 @@ public:
             // context.functions[context.current_function].variables_map.insert({left->getId(), v});
             
             dst<<"#DEBUG : left->getNature = " << left->getNature() << '\n';
-
-             if (left->getNature() == "Constant_Indexed_Array"){
-
-                dst<<"#DEBUG : CONSTANT_INDEXED_ARRAY___________________"<<'\n';
-                dst<<"#DEBUG AssignOperator: left->getSize->getValue() " << left->getSize()->getValue() <<'\n';
-                right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
-                dst<<"#DEBUG AssignOperator: map size after right is " <<context.functions[context.current_function].variables_map.size() <<'\n';
-                dst<<"#DEBUG : context.functions[context.current_function].variables_map.size() = " << context.functions[context.current_function].variables_map.size() <<'\n';
-                //dst<<"#DEBUG : context.functions[context.current_function].variables_map[left->getId()].old_map_size = " << context.functions[context.current_function].variables_map[left->getId()].old_map_size <<'\n';
-                
-                int curr_map_size = (context.functions[context.current_function].variables_map.size());
-                int old_map_size = (context.functions[context.current_function].variables_map[left->getId()].old_map_size);
-                int curr_offset = 4*( curr_map_size - old_map_size - left->getSize()->getValue()) + 12; //<- THIS LINE CAN CHANGE THE SIZE OF THE MAP?
-                dst<<"sw $";
-                dst<<destReg;
-                dst<<","<<curr_offset<<"($fp)"<<'\n'; //store output register of the calculations in  respective stack location
-                //left->generateMIPS(dst, context, context.functions[context.current_function].variables_map[left->getId()].reg);
-            }else if (left->getNature() == "Variable_Indexed_Array"){
-                
-                dst<<"#DEBUG : Variable_Indexed_Array"<<'\n';
-                
+            if(left->getNature() == "ArrayCall"){
                 right->generateMIPS(dst, context, destReg); //li or lw but we need to access register number, through a function
                 //dst<<"#DEBUG AssignOperator: after right->mips, in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << ", now " << v.old_map_size << '\n';
-                dst<<"#DEBUG AssignOperator: in variables_map for " << left->getId() << " was " << context.functions[context.current_function].variables_map[left->getId()].old_map_size << '\n';
-                dst<<"#DEBUG right->getId() = "<< right->getId()<<'\n';
-                dst<<"#DEBUG left->getId() = "<< left->getId()<<'\n';
 
                 int regIndex = context.allocate(context.current_function_name);
-                //dst<<"#DEBUG left->getSize()->getId()"<<left->getSize()->getId()<<'\n';
-                int curr_offset_index = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[left->getSize()->getId()].old_map_size) + 12;
-                dst<<"lw $"<<regIndex<<",";
-                dst<<curr_offset_index<<"($fp)"<<'\n';
+
+                left->getSize()->generateMIPS(dst, context, regIndex); //call what is between brackets and store in index register
                 
+                //multiply regIndex by 4
                 int regMultiplier4 = context.allocate(context.current_function_name);
                 dst<<"li $"<<regMultiplier4 <<",4"<<'\n';
-
-                dst<<"mult $"<<regIndex<<",$"<<regMultiplier4<<'\n';
+                dst<<"mult $"<<regIndex<<",$"<<regMultiplier4<<'\n'; 
                 context.regFile.freeReg(regMultiplier4);
-
                 dst<<"mflo $"<<regIndex<<'\n';
+
                 int regOffset = context.allocate(context.current_function_name);
                 int curr_map_size = (context.functions[context.current_function].variables_map.size());
                 dst<<"#DEBUG : curr_map_size = "<<curr_map_size;
@@ -271,8 +246,9 @@ public:
                 dst<<destReg;
                 dst<<",0($"<<regAddress<<")"<<'\n'; //store output register of the calculations in  respective stack location
                 //left->generateMIPS(dst, context, context.functions[context.current_function].variables_map[left->getId()].reg);
+
             }
-            // context.regFile.freeReg(context.functions[context.current_function].variables_map[left->getId()].reg);
+
             else {
                 dst<<"#DEBUG : OTHER__________________________________________________________________"<<'\n';
                 dst<<"#DEBUG AssignOperator: map size is " <<context.functions[context.current_function].variables_map.size() <<'\n';
