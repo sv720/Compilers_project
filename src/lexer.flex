@@ -94,7 +94,7 @@ IS			    (u|U|l|L)*
 [0-9]+                        { yylval.integer=strtod(yytext, 0); return INT_LITERAL; }
 {LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return IDENTIFIER; }
 
-
+'([^'\\\n]|\\.)'            { yylval.string=new std::string(yytext) ; return(CHAR_LITERAL);}
 [ \t\r\n]+		{;}
 
 .               { fprintf(stderr, "Invalid token\n"); exit(1); }
@@ -102,7 +102,7 @@ IS			    (u|U|l|L)*
 
 void yyerror (char const *s)
 {
-  // '(\\.|[^'\\])'          	    {yylval.number=strtod(yytext, 0); return(CHAR_LITERAL); }
+  // '(\\.|[^'\\])'          	    {yylval.integer=strtod(yytext, 0); return(CHAR_LITERAL); }
   fprintf (stderr, "Parse error : %s\n", s);
   exit(1);
 }

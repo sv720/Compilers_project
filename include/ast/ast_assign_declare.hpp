@@ -46,10 +46,19 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        dst << "addiu $sp,$sp,-4 \n";  // have a new variable so need to make some space on the stack
-        dst << "sw $25,0($fp) \n";     // we move the old (out of function) frame pointer into the current fp value
-        dst << "sw $31,4($fp) \n";     // we store old_pc just above old_fp
-        dst << "move $fp,$sp" << '\n'; // move frame pointer back to the bottom
+        if ( (left == "int") || (left == "char") ){
+            dst << "addiu $sp,$sp,-4 \n";  // have a new variable so need to make some space on the stack
+            dst << "sw $25,0($fp) \n";     // we move the old (out of function) frame pointer into the current fp value
+            dst << "sw $31,4($fp) \n";     // we store old_pc just above old_fp
+            dst << "move $fp,$sp" << '\n'; // move frame pointer back to the bottom
+        }
+        else {
+            dst << "addiu $sp,$sp,-4 \n";  // have a new variable so need to make some space on the stack
+            dst << "sw $25,0($fp) \n";     // we move the old (out of function) frame pointer into the current fp value
+            dst << "sw $31,4($fp) \n";     // we store old_pc just above old_fp
+            dst << "move $fp,$sp" << '\n'; // move frame pointer back to the bottom
+        }
+        
 
         right->generateMIPS(dst, context, destReg);
     }

@@ -69,8 +69,47 @@ public:
         dst<<"li $"<<destReg<<","; // need to set other register
         dst<<value<<'\n'; 
     }
-
 };
+
+
+class Character
+    : public Expression
+{
+private:
+    std::string id;
+    char c;
+
+public:
+    Character(const std::string &_id)
+        : id(_id)
+    {
+        c = id[1];
+    }
+
+    std::string getId() const override
+    {
+        return id;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"id = "<<id<< "and";
+        dst<<"CHAR_LITERAL c = "<<c;
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"li $"<<destReg<<","; // need to set other register
+        dst<<(int)c<<'\n'; 
+    }
+
+
+   // int getValue() const
+    //{
+     //   return int(c); //should return ASCII value of the character
+    //}
+};
+
 
 //________________________________________________
 
