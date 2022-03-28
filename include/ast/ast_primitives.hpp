@@ -7,42 +7,6 @@
 #include "ast/ast_expressionlist.hpp"
 #include "context.hpp"
 
-// class Variable
-//     : public Expression
-// {
-// private:
-//     std::string id;
-// public:
-//     Variable(const std::string &_id)
-//         : id(_id)
-//     {}
-
-//     virtual std::string getId() const override
-//     { return id; }
-
-//     virtual void print(std::ostream &dst) const override
-//     {
-//         dst<<"VARAIBLE : ";
-//         dst<<id;
-//     }
-
-//     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-//     {
-//         variable v;
-//         v.reg = destReg;
-//         v.old_map_size = context.functions[context.current_function].variables_map.size() +1; //------------------------------
-//         context.functions[context.current_function].variables_map.insert({id, v});
-//         dst<<"#DEBUG Declarator: adding to map at address" << id << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
-
-//         //TODO: check if valid
-//         int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[id].old_map_size) + 12;
-//         dst<<"lw $"<<destReg<<","; // need to set other register, depending on free
-//         dst<<curr_offset<<"($fp)"<<'\n'; //specific location in stack for the variable (to check in alive variables vector) //S: Does this do anything? TODO : check if can remove
-//     }
-   
-// };
-
-
 class Integer
     : public Expression
 {
@@ -83,7 +47,7 @@ public:
     Character(const std::string &_id)
         : id(_id)
     {
-        c = id[1];
+        c = id[1]; // not index 0????????
     }
 
     std::string getId() const override
@@ -132,7 +96,7 @@ public:
     
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        dst<<"#DEBUG: calling generateMIPS on arg is return \n";
+        dst<<"#DEBUG: calling generateMIPS on arg in return \n";
         arg->generateMIPS(dst, context, 2);
         
         dst<<"j end_"<<context.current_function_name<<'\n';
@@ -172,6 +136,122 @@ public:
 
 };
 
+//________________________________________________
+
+class SizeOf
+    : public Expression
+{
+private:
+    ExpressionPtr id;
+public:
+    SizeOf(ExpressionPtr _id)
+        : id(_id)
+    {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"sizeof: ";
+        id->print(dst);
+    }
+    
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#DEBUG: calling generateMIPS on arg is return \n";
+        
+        if (id->getId() == "int" || id->getId() == "char") {
+            int reg = context.allocate(context.current_function);
+            id->generateMIPS(dst, context, reg);
+            dst<<"move $"<<destReg<<", $"<<reg<<'\n';
+            context.regFile.freeReg(reg);
+        } 
+        else {
+            dst<<"li $"<<destReg<<", "<<context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].size<<'\n';
+        }
+    }
+
+};
+
+//________________________________________________
+
+class TypeSpecifier
+    : public Expression
+{
+private:
+    std::string id;
+public:
+    TypeSpecifier(std::string _id)
+        : id(_id)
+    {}
+
+    std::string getId() const override
+    {
+        return id;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"TypeSpecifier: "<<id;
+    }
+    
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        // sizes of the types
+        if (id == "int") {
+            dst<<"li $"<<destReg<<", "<<4<<'\n';
+        } else
+        if (id == "unsigned int") {
+            dst<<"li $"<<destReg<<", "<<4<<'\n';
+        } else
+        if (id == "char") {
+            dst<<"li $"<<destReg<<", "<<1<<'\n';
+        } else
+        if (id == "double") {
+            dst<<"li $"<<destReg<<", "<<8<<'\n';
+        } else
+        if (id == "float") {
+            dst<<"li $"<<destReg<<", "<<4<<'\n';
+        } 
+        
+    }
+
+};
+
+//________________________________________________
+
+class ChangeType
+    : public Expression
+{
+private:
+    std::string new_type;
+    ExpressionPtr id;
+public:
+    ChangeType(std::string _type, ExpressionPtr id)
+        : new_type(_type)
+        , id (id)
+    {}
+
+    std::string getId() const override
+    {
+        return id->getId();
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"ChangeType: "<<id;
+    }
+    
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].type = new_type;
+        if (new_type == "int") {
+            context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].size = 4;
+        } else
+        if (new_type == "char") {
+            context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].size = 1;
+        }
+    }
+
+};
 
 
 #endif

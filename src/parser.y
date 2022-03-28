@@ -124,7 +124,7 @@ parameter_list
 parameter_declaration
 	: declaration_specifiers declarator				{ $$ = new Declare(*$1, $2);}
 	| declaration_specifiers abstract_declarator	{ $$ = new Declare(*$1, $2);}
-	| declaration_specifiers
+	| declaration_specifiers						{ ; }
 	;
 
 constant_expression
@@ -140,7 +140,7 @@ declaration
 /* from init_declarator & parameter_declaration*/
 declaration_specifiers
 	: type_specifier									{ $$ == $1; }
-	| type_specifier declaration_specifiers
+	| type_specifier declaration_specifiers				{ $$ == new std::string( *$1 + " " + *$2); } /* can split the string */
 	| TYPEDEF
 	| TYPEDEF declaration_specifiers
 	;
@@ -217,8 +217,8 @@ statement
 /* from statement */
 labeled_statement
 	: IDENTIFIER ':' statement
-	| CASE constant_expression ':' statement
-	| DEFAULT ':' statement
+	| CASE constant_expression ':' statement	{ $$ = new Case($2, $4); }
+	| DEFAULT ':' statement						{ $$ = new Case($3); }
 	;
 /* from statement */
 expression_statement
@@ -229,14 +229,14 @@ expression_statement
 selection_statement
 	: IF '(' expression ')' statement %prec NOELSE		{ $$ = new If($3, $5); }
 	| IF '(' expression ')' statement ELSE statement	{ $$ = new IfElse($3, $5, $7); /* dangling else problem */ }
-	| SWITCH '(' expression ')' statement				{ $$ = new SwitchCase($3, $5); }
+	| SWITCH '(' expression ')' compound_statement				{ $$ = new SwitchCase($3, $5); }
 	;
 /* from statement */
 iteration_statement
 	: WHILE '(' expression ')' statement											{ $$ = new WhileLoop($3, $5); }
 	| DO statement WHILE '(' expression ')' ';'
 	| FOR '(' expression_statement expression_statement ')' statement				{ $$ = new ForLoop($3, $4, new EmptyExpr(), $6); }
-	| FOR '(' expression_statement expression_statement expression ')' statement	{ $$ = new ForLoop($3, $4, $5, $7); /* interior initialisation eg. int x=0, breakes the parser*/ }
+	| FOR '(' expression_statement expression_statement expression ')' statement	{ $$ = new ForLoop($3, $4, $5, $7); /* interior initialisation eg. for(int x=0;...;...), breakes the parser*/ }
 	;
 /* from statement */
 jump_statement
@@ -279,8 +279,9 @@ unary_expression
 	| DECREMENT_OP unary_expression		{ $$ = new PreDecrementOperator($2);}
 	| unary_operator cast_expression	{ /* HOW */ }
 	| '-' unary_expression				{ $$ = new NegOperator($2); }
-	| SIZEOF unary_expression
-	| SIZEOF '(' type_name ')'
+	| SIZEOF unary_expression			{ $$ = new SizeOf($2); }
+	// | SIZEOF '(' type_name ')'			{ $$ = new SizeOf($3);} 
+	| SIZEOF '(' declaration_specifiers ')'			{ $$ = new SizeOf(new TypeSpecifier(*$3)); }
 	;
 
 unary_operator
@@ -294,7 +295,8 @@ unary_operator
 
 cast_expression
 	: unary_expression					{ $$ = $1; }
-	| '(' type_name ')' cast_expression
+	// | '(' type_name ')' cast_expression	{ /* $$ = new ChangeType(*$1, $2); */ }
+	| '(' type_specifier ')' cast_expression	{  $$ = new ChangeType(*$2, $4);  }
 	;
 
 multiplicative_expression
@@ -391,13 +393,13 @@ expression
 type_specifier
 	: VOID			{ $$ = new std::string("void"); }
 	| CHAR			{ $$ = new std::string("char"); }
-	| SHORT
+	| SHORT			{ $$ = new std::string("short"); }
 	| INT			{ $$ = new std::string("int"); }
-	| LONG
-	| FLOAT
-	| DOUBLE
-	| SIGNED
-	| UNSIGNED
+	| LONG			{ $$ = new std::string("long"); }
+	| FLOAT			{ $$ = new std::string("float"); }
+	| DOUBLE		{ $$ = new std::string("double"); }
+	| SIGNED		{ $$ = new std::string("signed"); }
+	| UNSIGNED		{ $$ = new std::string("unsigned"); }
 	// | struct_specifier
 	// | enum_specifier		{ $$ = $1; } // moved to full function
 	;
@@ -482,8 +484,9 @@ identifier_list
 	;
 
 type_name
-	: specifier_qualifier_list
-	| specifier_qualifier_list abstract_declarator
+	: specifier_qualifier_list						{ ; }
+	| specifier_qualifier_list abstract_declarator	{ ; }
+	| type_specifier								{ $$ = new TypeSpecifier(*$1); }
 	;
 
 

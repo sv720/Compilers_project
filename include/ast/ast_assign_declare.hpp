@@ -48,7 +48,6 @@ public:
     {
         
         
-
         right->generateMIPS(dst, context, destReg);
 
         if (right->getNature() != "ArrayDeclarator") {
@@ -59,8 +58,13 @@ public:
                 dst << "sw $25,0($fp) \n";     // we move the old (out of function) frame pointer into the current fp value
                 dst << "sw $31,4($fp) \n";     // we store old_pc just above old_fp
                 dst << "move $fp,$sp" << '\n'; // move frame pointer back to the bottom
-                if (left == "int") v.size = 4; // only for int !!!
-                else if (left == "char") v.size = 1;
+                if (left == "int") {
+                    v.size = 4; // only for int !!!
+                    v.type = "int";
+                }else if (left == "char") {
+                    v.size = 1;
+                    v.type = "char";
+                }
             }
             else {
                 dst << "addiu $sp,$sp,-4 \n";  // have a new variable so need to make some space on the stack

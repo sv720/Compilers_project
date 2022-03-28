@@ -82,6 +82,10 @@ public:
         return list;
     }
 
+    virtual int getValue() const override {
+        return list.size();
+    }
+
     virtual void print(std::ostream &dst) const override
     {
 
@@ -132,6 +136,10 @@ public:
     virtual std::vector<ExpressionPtr> getListVector()
     {
         return list;
+    }
+
+    virtual int getValue() const override {
+        return list.size();
     }
 
     virtual void print(std::ostream &dst) const override

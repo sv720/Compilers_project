@@ -112,9 +112,9 @@ class SwitchCase
 {
 private:
     ExpressionPtr condition;
-    ExpressionPtr statement;  
+    ExpressionListPtr statement;  
 public:
-    SwitchCase(ExpressionPtr _condition, ExpressionPtr _statement)
+    SwitchCase(ExpressionPtr _condition, ExpressionListPtr _statement)
         : condition(_condition)
         , statement(_statement)
     {}
@@ -135,7 +135,77 @@ public:
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        int conditionReg = context.allocate(context.current_function);
+
+        int nb_cases = statement->getValue();
+        std::vector<std::string> caseLabels;
+        for (int i = 0; i < nb_cases; i++) {
+            std::string switch_case_label = context.makeLabel("SWITCHCASE");
+            caseLabels.push_back(switch_case_label);
+        } 
+
+        for (int i = 0; i < nb_cases; i++) {
+            std::string switch_case_label = caseLabels[i];
+            condition->generateMIPS(dst, context, conditionReg);
+            dst<<"li $"<<destReg<<","<< i+1 <<'\n';
+            dst<<"beq $"<<destReg<<",$"<<conditionReg<<", "<<  switch_case_label <<'\n';
+            dst<<"nop"<<'\n';
+        }
+        context.regFile.freeReg(conditionReg);
+
+        std::string ENDswitch_label = context.makeLabel("endSWITCH");
+        dst<<"j "<<  ENDswitch_label <<'\n';
+        dst<<"nop"<<'\n';
+
+        for (int i = 0; i < nb_cases; i++) {
+            dst<<caseLabels[i]<<":"<<'\n';
+            statement->list[i]->generateMIPS(dst, context, destReg);
+            dst<<"j "<<  ENDswitch_label <<'\n';
+            dst<<"nop"<<'\n';
+        }
+
+        dst<<ENDswitch_label<<":"<<'\n';
+    }
+};
+
+class Case
+    : public Expression
+{
+private:
+    ExpressionPtr expression;
+    ExpressionPtr statement;    
+public:
+
+    Case(ExpressionPtr _condition, ExpressionPtr _statement)
+        : expression(_condition)
+        , statement(_statement)
     {}
+
+    Case(ExpressionPtr _statement)
+        : statement(_statement)
+    {}
+
+    virtual ~Case()
+    {
+        delete expression;
+        delete statement;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"SWITCH (";
+        expression->print(dst);
+        dst<<") { ";
+        statement->print(dst);
+        dst<<" } ";
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {        
+        statement->generateMIPS(dst, context, destReg);
+
+    }
 };
 
 #endif

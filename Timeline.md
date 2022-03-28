@@ -77,5 +77,11 @@ https://www.cs.tufts.edu/comp/140/lectures/Day_3/mips_summary.pdf //high level m
 - internal recursive function's mips looks perfectly fine but seg faults as godbolts'. Need more understanding
 - tried debugging with gdb and taken some tutorials on how to work with it, installed specific qemu-user pachages for it. Need more work but interesting either way
 
+### 28 Mar 2022
+- scopes 90% implemented, some problems in arrays variable indexing
+- arrays 90% implemented
+- small tasks completed: sizeOf(), changing types of variables, simple switch case, adapted variables to be of more types (not just int)
+- prepared for implementing floats and doubles
+
 TODO:   switch
         arrays

@@ -55,6 +55,9 @@ public:
     {
         return -1;
     }
+
+    virtual std::vector<ExpressionPtr> getListVector()
+    { }
 };
 
 class EmptyExpr
