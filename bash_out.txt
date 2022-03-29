@@ -1700,7 +1700,7 @@ Input file : compiler_tests/misc/switch1.c
 compiler_tests/misc/switch1.c <-> test/working/misc/switch1.s
 
 Intermediate Language:
-( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :x ) SWITCH (DECALARATOR :x) { ( SWITCH (1) { return 10 }  )( SWITCH (2) { return 11 }  ) }  ) )
+( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :x ) SWITCH (DECALARATOR :x) { ( Case (1) { return 10 }  )( Case (2) { return 11 }  ) }  ) )
 
 MIPS GENERATED:
 
@@ -1714,8 +1714,11 @@ Input file : compiler_tests/misc/switch2.c
 compiler_tests/misc/switch2.c <-> test/working/misc/switch2.s
 
 Intermediate Language:
-139
- ERROR - seg fault
+( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :t ) ( int DECALARATOR :x )( DECALARATOR :x = 0 )( SWITCH (DECALARATOR :t) { ( Case (0) { DECALARATOR :x = 1 }  )( BREAK )( Case (2) { DECALARATOR :x = 2 }  )( Case (1) { DECALARATOR :x = ( DECALARATOR :x + 1 ) }  )( BREAK )( Default () { DECALARATOR :x = ( DECALARATOR :t + 1 ) }  ) }  )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
+0
  
 ============= TESTCASE 5 parsing ==============
 
@@ -1740,7 +1743,7 @@ compiler_tests/misc/typedef2.c <-> test/working/misc/typedef2.s
 1
  ERROR - parsing syntax 
 ########################################
- Nb of files PARSING succesfully: 4 out of 6
+ Nb of files PARSING succesfully: 5 out of 6
  
 =============MIPS-LINUX-GNU-GCC on enum1 (1)==============
 QEMU-MIPS:  0
@@ -2271,7 +2274,7 @@ QEMU-MIPS:  0
  Nb of files COMPILED succesfully: 5 out of 5
 
 ########################################
- Nb of files COMPILED succesfully: 86 out of 101 PARSED from 5 total
+ Nb of files COMPILED succesfully: 86 out of 102 PARSED from 5 total
 
 
 Warning: This appears not to be the target environment
