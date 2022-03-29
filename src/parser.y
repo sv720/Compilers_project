@@ -226,7 +226,7 @@ statement
 labeled_statement
 	: IDENTIFIER ':' statement
 	| CASE constant_expression ':' statement	{ $$ = new Case($2, $4); }
-	| DEFAULT ':' statement						{ $$ = new Case($3); }
+	| DEFAULT ':' statement						{ $$ = new Default($3); }
 	;
 /* from statement */
 expression_statement

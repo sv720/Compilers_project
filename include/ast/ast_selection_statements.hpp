@@ -142,7 +142,7 @@ public:
         int nb_cases = statement->getValue();
         std::vector<std::string> caseLabels;
         for (int i = 0; i < nb_cases; i++) {
-            std::string switch_case_label = context.makeLabel("SWITCHCASE");
+            std::string switch_case_label  = context.makeLabel("SWITCHCASE");
             caseLabels.push_back(switch_case_label);
         } 
 
@@ -150,12 +150,9 @@ public:
             std::string switch_case_label = caseLabels[i];
             condition->generateMIPS(dst, context, conditionReg);
             dst<<"li $"<<destReg<<","<< i+1 <<'\n';
-            dst<<"beq $"<<destReg<<",$"<<conditionReg<<", "<<  switch_case_label <<'\n';
+            dst<<"beq $"<<destReg<<",$"<<conditionReg<<", "<< switch_case_label <<'\n';
             dst<<"nop"<<'\n';
 
-            // if (caseLabels[i]) {
-
-            // }
         }
         context.regFile.freeReg(conditionReg);
 
@@ -192,14 +189,10 @@ public:
         , statement(_statement)
     {}
 
-    Case(ExpressionPtr _statement)
-        : statement(_statement)
-    {}
-
-    // std::string getId() const override
-    // {
-    //     return ";"
-    // }
+    virtual std::string getId() const override
+    {
+        return "case;";
+    }
 
     virtual ~Case()
     {
@@ -209,8 +202,44 @@ public:
 
     virtual void print(std::ostream &dst) const override
     {
-        dst<<"SWITCH (";
+        dst<<"Case (";
         expression->print(dst);
+        dst<<") { ";
+        statement->print(dst);
+        dst<<" } ";
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {        
+        statement->generateMIPS(dst, context, destReg);
+
+    }
+};
+
+class Default
+    : public Expression
+{
+private:
+    ExpressionPtr statement;    
+public:
+
+    Default(ExpressionPtr _statement)
+        : statement(_statement)
+    {}
+
+    virtual std::string getId() const override
+    {
+        return "default;";
+    }
+
+    virtual ~Default()
+    {
+        delete statement;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"Default (";
         dst<<") { ";
         statement->print(dst);
         dst<<" } ";
