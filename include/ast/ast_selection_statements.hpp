@@ -40,13 +40,14 @@ public:
     {
         int regA = context.allocate(context.current_function);
         condition->generateMIPS(dst, context, regA);
-        dst<<"nop"<<'\n';
+        // dst<<"nop"<<'\n';
         std::string endIfLabel = context.makeLabel("endIF");
-        dst<<"beq $zero,$"<<regA<<","<<endIfLabel<<'\n';
+        dst<<"beq $0,$"<<regA<<","<<endIfLabel<<'\n';
+        dst<<"nop"<<'\n';
         statement->generateMIPS(dst, context, destReg);
 
         dst<<endIfLabel<<":"<<'\n';
-        // dst<<"nop"<<'\n';
+        
 
         context.regFile.freeReg(regA);
     }
@@ -89,7 +90,7 @@ public:
         int regA = context.allocate(context.current_function);
         condition->generateMIPS(dst, context, regA);
         std::string ELSElabel = context.makeLabel("ELSE");
-        dst<<"beq $"<<regA<<",$zero,"<<ELSElabel<<'\n';
+        dst<<"beq $"<<regA<<",$0,"<<ELSElabel<<'\n';
 
         
         statement->generateMIPS(dst, context, destReg);

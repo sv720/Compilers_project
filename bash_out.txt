@@ -1,0 +1,1357 @@
+/usr/bin/dos2unix
+========================================
+ Cleaning the temporaries and outputs
+rm -f src/*.o
+rm -f bin/*
+rm -f src/*.tab.cpp
+rm -f src/*.yy.cpp
+rm -f -r test/err/
+rm -f -r test/working/
+rm -f -r test/objects/
+========================================
+ Force building bin/compiler (all lexer, parser..)
+g++  -std=c++11 -W -Wall -g -Wno-unused-parameter -I include  -c -o src/c_compiler.o src/c_compiler.cpp
+bison -v -d src/parser.y -o src/parser.tab.cpp
+g++  -std=c++11 -W -Wall -g -Wno-unused-parameter -I include  -c -o src/parser.tab.o src/parser.tab.cpp
+flex -o src/lexer.yy.cpp  src/lexer.flex
+g++  -std=c++11 -W -Wall -g -Wno-unused-parameter -I include  -c -o src/lexer.yy.o src/lexer.yy.cpp
+mkdir -p bin
+g++ -std=c++11 -W -Wall -g -Wno-unused-parameter -I include -o bin/c_compiler src/c_compiler.o src/parser.tab.o src/lexer.yy.o
+
+========================================
+Compiling OUTPUTS...
+ 
+==================================================
+==================================================
+============= Running compiler_tests/array/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/array/array_constant.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/array/declare_global.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/array/declare_local.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/array/index_constant.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/array/index_constant_offsetcheck.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/array/index_non_loop_variable.c
+ 
+0
+ 
+============= TESTCASE 7 parsing ==============
+
+Input file : compiler_tests/array/index_variable.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 6 out of 7
+ 
+=============MIPS-LINUX-GNU-GCC on declare_global (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on declare_local (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on index_constant_offsetcheck (3)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on index_constant (4)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on index_non_loop_variable (5)==============
+2QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on index_variable (6)==============
+4198904 QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+########################################
+ Nb of files COMPILED succesfully: 5 out of 6
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/array_tests/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/array_tests/z_index_expression.c
+ 
+1
+ ERROR - parsing syntax 
+########################################
+ Nb of files PARSING succesfully: 0 out of 1
+ 
+=============MIPS-LINUX-GNU-GCC on z_index_expression (1)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+########################################
+ Nb of files COMPILED succesfully: 0 out of 1
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/control_flow/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/control_flow/for_incomplete.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/control_flow/for_increment.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/control_flow/for_multiple.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/control_flow/for_one.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/control_flow/for_zero_v1.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/control_flow/for_zero_v2.c
+ 
+0
+ 
+============= TESTCASE 7 parsing ==============
+
+Input file : compiler_tests/control_flow/if_else_false.c
+ 
+0
+ 
+============= TESTCASE 8 parsing ==============
+
+Input file : compiler_tests/control_flow/if_else_if.c
+ 
+0
+ 
+============= TESTCASE 9 parsing ==============
+
+Input file : compiler_tests/control_flow/if_else_if_scoped.c
+ 
+0
+ 
+============= TESTCASE 10 parsing ==============
+
+Input file : compiler_tests/control_flow/if_else_true.c
+ 
+0
+ 
+============= TESTCASE 11 parsing ==============
+
+Input file : compiler_tests/control_flow/if_false.c
+ 
+0
+ 
+============= TESTCASE 12 parsing ==============
+
+Input file : compiler_tests/control_flow/if_true.c
+ 
+0
+ 
+============= TESTCASE 13 parsing ==============
+
+Input file : compiler_tests/control_flow/sequence.c
+ 
+0
+ 
+============= TESTCASE 14 parsing ==============
+
+Input file : compiler_tests/control_flow/while_multiple.c
+ 
+0
+ 
+============= TESTCASE 15 parsing ==============
+
+Input file : compiler_tests/control_flow/while_once.c
+ 
+0
+ 
+============= TESTCASE 16 parsing ==============
+
+Input file : compiler_tests/control_flow/while_zero.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 16 out of 16
+ 
+=============MIPS-LINUX-GNU-GCC on for_incomplete (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_increment (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_multiple (3)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_one (4)==============
+19938 QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_zero_v1 (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_zero_v2 (6)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on if_else_false (7)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on if_else_if (8)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on if_else_if_scoped (9)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on if_else_true (10)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on if_false (11)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on if_true (12)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on sequence (13)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on while_multiple (14)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on while_once (15)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on while_zero (16)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 16 out of 16
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/default/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/default/test_ADD0.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/default/test_ADD1.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/default/test_CALL.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/default/test_LOCAL.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/default/test_RETURN.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 5 out of 5
+ 
+=============MIPS-LINUX-GNU-GCC on test_ADD0 (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on test_ADD1 (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on test_CALL (3)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on test_LOCAL (4)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on test_RETURN (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 4 out of 5
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/float/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/float/add_double.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/float/add.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/float/add_mul.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/float/mul_add.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/float/mul_double.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/float/mul.c
+ 
+0
+ 
+============= TESTCASE 7 parsing ==============
+
+Input file : compiler_tests/float/pow.c
+ 
+1
+ ERROR - parsing syntax 
+########################################
+ Nb of files PARSING succesfully: 6 out of 7
+ 
+=============MIPS-LINUX-GNU-GCC on add_double (1)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on add_mul (2)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on add (3)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on mul_add (4)==============
+QEMU-MIPS:  127
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on mul_double (5)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on mul (6)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+########################################
+ Nb of files COMPILED succesfully: 0 out of 6
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/for_loops/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/for_loops/for_decrement.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/for_loops/for_increment.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/for_loops/for_predecrement.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/for_loops/for_preincrement.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/for_loops/mult_div_eq.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/for_loops/postdecrement.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 6 out of 6
+ 
+=============MIPS-LINUX-GNU-GCC on for_decrement (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_increment (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_predecrement (3)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on for_preincrement (4)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on mult_div_eq (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on postdecrement (6)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 6 out of 6
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/functions/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/functions/call_constant_external.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/functions/call_constant_internal.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/functions/call_five_args_external.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/functions/call_five_args_internal.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/functions/call_identity_external.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/functions/call_identity_internal.c
+ 
+0
+ 
+============= TESTCASE 7 parsing ==============
+
+Input file : compiler_tests/functions/call_mutual_recursive.c
+ 
+0
+ 
+============= TESTCASE 8 parsing ==============
+
+Input file : compiler_tests/functions/call_nonrecursive_single.c
+ 
+0
+ 
+============= TESTCASE 9 parsing ==============
+
+Input file : compiler_tests/functions/call_recursive_internal.c
+ 
+0
+ 
+============= TESTCASE 10 parsing ==============
+
+Input file : compiler_tests/functions/call_recursive_single.c
+ 
+0
+ 
+============= TESTCASE 11 parsing ==============
+
+Input file : compiler_tests/functions/call_two_args_external.c
+ 
+0
+ 
+============= TESTCASE 12 parsing ==============
+
+Input file : compiler_tests/functions/call_two_args_internal.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 12 out of 12
+ 
+=============MIPS-LINUX-GNU-GCC on call_constant_external (1)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on call_constant_internal (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on call_five_args_external (3)==============
+QEMU-MIPS:  139
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on call_five_args_internal (4)==============
+15QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on call_identity_external (5)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on call_identity_internal (6)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on call_mutual_recursive (7)==============
+QEMU-MIPS:  139
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on call_nonrecursive_single (8)==============
+1QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on call_recursive_internal (9)==============
+1 2 9 15 15 QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on call_recursive_single (10)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on call_two_args_external (11)==============
+QEMU-MIPS:  139
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on call_two_args_internal (12)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 7 out of 12
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/integer/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/integer/add.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/integer/bitwise_and.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/integer/bitwise_or.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/integer/bitwise_xor.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/integer/div.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/integer/equal.c
+ 
+0
+ 
+============= TESTCASE 7 parsing ==============
+
+Input file : compiler_tests/integer/greater_than.c
+ 
+0
+ 
+============= TESTCASE 8 parsing ==============
+
+Input file : compiler_tests/integer/greater_than_equal.c
+ 
+0
+ 
+============= TESTCASE 9 parsing ==============
+
+Input file : compiler_tests/integer/leftshift.c
+ 
+0
+ 
+============= TESTCASE 10 parsing ==============
+
+Input file : compiler_tests/integer/less_than.c
+ 
+0
+ 
+============= TESTCASE 11 parsing ==============
+
+Input file : compiler_tests/integer/less_than_equal.c
+ 
+0
+ 
+============= TESTCASE 12 parsing ==============
+
+Input file : compiler_tests/integer/logical_and.c
+ 
+0
+ 
+============= TESTCASE 13 parsing ==============
+
+Input file : compiler_tests/integer/logical_or.c
+ 
+0
+ 
+============= TESTCASE 14 parsing ==============
+
+Input file : compiler_tests/integer/maths.c
+ 
+0
+ 
+============= TESTCASE 15 parsing ==============
+
+Input file : compiler_tests/integer/mod.c
+ 
+0
+ 
+============= TESTCASE 16 parsing ==============
+
+Input file : compiler_tests/integer/mul.c
+ 
+0
+ 
+============= TESTCASE 17 parsing ==============
+
+Input file : compiler_tests/integer/rightshift.c
+ 
+0
+ 
+============= TESTCASE 18 parsing ==============
+
+Input file : compiler_tests/integer/sub.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 18 out of 18
+ 
+=============MIPS-LINUX-GNU-GCC on add (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on bitwise_and (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on bitwise_or (3)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on bitwise_xor (4)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on div (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on equal (6)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on greater_than_equal (7)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on greater_than (8)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on leftshift (9)==============
+QEMU-MIPS:  64
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on less_than_equal (10)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on less_than (11)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on logical_and (12)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on logical_or (13)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on maths (14)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on mod (15)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on mul (16)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on rightshift (17)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on sub (18)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 17 out of 18
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/local_var/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/local_var/1line_init.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/local_var/2line_declaration.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/local_var/constant_initialiser.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/local_var/dual_var.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/local_var/expression_initialiser.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/local_var/identity.c
+ 
+0
+ 
+============= TESTCASE 7 parsing ==============
+
+Input file : compiler_tests/local_var/return_constant.c
+ 
+0
+ 
+============= TESTCASE 8 parsing ==============
+
+Input file : compiler_tests/local_var/scoped_var.c
+ 
+0
+ 
+============= TESTCASE 9 parsing ==============
+
+Input file : compiler_tests/local_var/scoped_var_dual_assign.c
+ 
+0
+ 
+============= TESTCASE 10 parsing ==============
+
+Input file : compiler_tests/local_var/single_var.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 10 out of 10
+ 
+=============MIPS-LINUX-GNU-GCC on 1line_init (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on 2line_declaration (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on constant_initialiser (3)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on dual_var (4)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on expression_initialiser (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on identity (6)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on return_constant (7)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on scoped_var_dual_assign (8)==============
+1QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on scoped_var (9)==============
+5678QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on single_var (10)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 10 out of 10
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/misc/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/misc/enum1.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/misc/enum2.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/misc/switch1.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/misc/switch2.c
+ 
+139
+ ERROR - seg fault
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/misc/typedef1.c
+ 
+0
+ 
+============= TESTCASE 6 parsing ==============
+
+Input file : compiler_tests/misc/typedef2.c
+ 
+1
+ ERROR - parsing syntax 
+########################################
+ Nb of files PARSING succesfully: 4 out of 6
+ 
+=============MIPS-LINUX-GNU-GCC on enum1 (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on enum2 (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on switch1 (3)==============
+11 , 11 QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on switch2 (4)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on typedef1 (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 3 out of 5
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/pointer/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/pointer/addressof.c
+ 
+139
+ ERROR - seg fault
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/pointer/arithmetic.c
+ 
+139
+ ERROR - seg fault
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/pointer/assign.c
+ 
+139
+ ERROR - seg fault
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/pointer/dereference.c
+ 
+139
+ ERROR - seg fault
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/pointer/index.c
+ 
+139
+ ERROR - seg fault
+ 
+########################################
+ Nb of files PARSING succesfully: 0 out of 5
+ 
+=============MIPS-LINUX-GNU-GCC on addressof (1)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on arithmetic (2)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on assign (3)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on dereference (4)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on index (5)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+########################################
+ Nb of files COMPILED succesfully: 0 out of 5
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/programs/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/programs/fibonacci.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/programs/multiply.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/programs/sqrt.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/programs/sqrtedit.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 4 out of 4
+ 
+=============MIPS-LINUX-GNU-GCC on fibonacci (1)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on multiply (2)==============
+0 QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on sqrtedit (3)==============
+8QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on sqrt (4)==============
+8QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 2 out of 4
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/strings/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/strings/chliteral.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/strings/escaped.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/strings/literal.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/strings/puts.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/strings/search.c
+ 
+139
+ ERROR - seg fault
+ 
+########################################
+ Nb of files PARSING succesfully: 1 out of 5
+ 
+=============MIPS-LINUX-GNU-GCC on chliteral (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on search (2)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+########################################
+ Nb of files COMPILED succesfully: 1 out of 2
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/struct/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/struct/sizeof.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/struct/struct_inst.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/struct/struct_member_get.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/struct/struct_member_set.c
+ 
+1
+ ERROR - parsing syntax 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/struct/struct_two_members.c
+ 
+1
+ ERROR - parsing syntax 
+########################################
+ Nb of files PARSING succesfully: 0 out of 5
+ 
+=============MIPS-LINUX-GNU-GCC on * (1)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+########################################
+ Nb of files COMPILED succesfully: 0 out of 1
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/testing/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/testing/for_in_for.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/testing/negative.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/testing/not.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/testing/onescomp.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/testing/while_multiple.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 5 out of 5
+ 
+=============MIPS-LINUX-GNU-GCC on for_in_for (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on negative (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on not (3)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on onescomp (4)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on while_multiple (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 5 out of 5
+
+ 
+==================================================
+==================================================
+============= Running compiler_tests/types/ ==============
+==================================================
+==================================================
+============= TESTCASE 1 parsing ==============
+
+Input file : compiler_tests/types/sizeof_char_inst.c
+ 
+0
+ 
+============= TESTCASE 2 parsing ==============
+
+Input file : compiler_tests/types/sizeof_char_type.c
+ 
+0
+ 
+============= TESTCASE 3 parsing ==============
+
+Input file : compiler_tests/types/sizeof_int_inst.c
+ 
+0
+ 
+============= TESTCASE 4 parsing ==============
+
+Input file : compiler_tests/types/sizeof_int_type.c
+ 
+0
+ 
+============= TESTCASE 5 parsing ==============
+
+Input file : compiler_tests/types/unsigned.c
+ 
+0
+ 
+########################################
+ Nb of files PARSING succesfully: 5 out of 5
+ 
+=============MIPS-LINUX-GNU-GCC on sizeof_char_inst (1)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on sizeof_char_type (2)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on sizeof_int_inst (3)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on sizeof_int_type (4)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on unsigned (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+########################################
+ Nb of files COMPILED succesfully: 5 out of 5
+
+########################################
+ Nb of files COMPILED succesfully: 81 out of 98 PARSED from 5 total
+
+
+Warning: This appears not to be the target environment
+         Make sure you do a final run on a lab machine or an Ubuntu VM

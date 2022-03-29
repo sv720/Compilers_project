@@ -17,10 +17,10 @@ struct registers
     int usedRegs[32] =
         {1,                      // $0  [0]
          1,                      // $at [1]
-         1, 1,                   // $v0-$v1, return values => changed by function calls so not suitable to evaluate temporaries [2-3]
-         1, 1, 1, 1,             // $a0-$a3, function arguments, just use them for that [4-7]
+         1, 1,                   // $v0-$v1, return values [2-3]
+         1, 1, 1, 1,             // $a0-$a3, function arguments [4-7]
          0, 0, 0, 0, 0, 0, 0, 0, // $t0-$t7, temporary registers, do what you want [8-15]
-         1, 1, 1, 1, 1, 1, 1, 1, // $s0-$s7, values preserved across function calls [16-23]
+         1, 1, 1, 1, 1, 1, 1, 1, // $s0-$s7, values preserved across function calls [16-23] eg. f(int &a) where a is stored in these regs
          0, 1,                   // $t8-$t9, more temporaries [24-25], [25] used for old_fp
          1, 1,                   // $k0-$k1, kernel registers [26-27]
          1,                      // $gp, for static globals [28]

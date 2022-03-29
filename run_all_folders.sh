@@ -18,6 +18,7 @@ else
     # DOS2UNIX="cat"
 fi
 
+
 echo "========================================"
 echo " Cleaning the temporaries and outputs"
 make clean
@@ -29,17 +30,20 @@ make clean
 # make parser
 echo "========================================"
 echo " Force building bin/compiler (all lexer, parser..)"
-make -B bin/c_compiler
+make -B bin/c_compiler # 2> /dev/null
 if [[ "$?" -ne 0 ]]; then
     echo "Build failed.";
 fi
 echo ""
 echo "========================================"
-
+echo "Compiling OUTPUTS..."
+# echo $2 | bin/compiler 
+# cat $2 | ./bin/compiler 2> /dev/null 1> $4
 
 # -------------------------
-index=1
-CHECKED=0
+T_index=1
+T_CHECKED=0
+T_PASSED=0
 
 for testfolder in compiler_tests/*/; do  
     echo " "
@@ -48,9 +52,103 @@ for testfolder in compiler_tests/*/; do
     echo "============= Running ${testfolder} =============="
     echo "=================================================="
     echo "=================================================="
-    ./run_folder.sh ${testfolder}
+    # ./run_folder.sh ${testfolder}
+
+
+    basefolder=$(basename $testfolder)
+    mkdir -p test/working/${basefolder}/
+    mkdir -p test/err/${basefolder}/
+    mkdir -p test/objects/${basefolder}/
+
+    # -------------------------
+    index=1
+    CHECKED=0
+
+    for testcase in compiler_tests/${basefolder}/*_driver.c; do
+        base=$(basename ${testcase});
+        name=${base%_driver.c}
+        file=${testcase%_driver.c}.c
+        
+        
+        echo "============= TESTCASE ${index} parsing =============="
+        echo ""
+        echo "Input file : ${file}"
+        # echo "Testing ${name}:"
+        # cat ${file}
+        echo " "
+        echo " ------------"
+        # echo "OUTPUT PRINT: "
+        bin/c_compiler -S ${file} -o test/working/${basefolder}/${name}.s 2> test/err/${basefolder}/${name}.err
+        # cat test/working/${basefolder}/${name}.s
+        # cat ${file} | bin/c_compiler 2> test/err/${basefolder}/${name}.err
+        errMsg=$?
+        echo $errMsg    
+        if [[ $errMsg -eq "139" ]]; then
+            echo " ERROR - seg fault"
+        else
+            if (cmp -s test/err/${basefolder}/${name}.err test/ErrorMSG.txt); then # 0 when equal
+            CHECKED=$(( ${CHECKED}+1 )); 
+            else
+                echo -n " ERROR - parsing syntax"
+            fi
+        fi
+        index=$((${index}+1));
+        # cat ${file} | bin/c_compiler 2> test/err/local_var/$name.err 1> test/working/local_var/$name.o
+        # cat ${file} | bin/c_compiler 1> test/working/local_var/$name.o
+
+        # AIM:
+        # cat $2 | ./bin/compiler 2> /dev/null 1> $4
+        # bin/c_compiler -S ${file} -o test/working/local_var/${name}.s
+                            # $2          $4
+
+        echo " "
+    done
+
+    echo "########################################"
+    echo " Nb of files PARSING succesfully: ${CHECKED} out of $((${index}-1))"
+    echo " "
+
+    T_CHECKED=$((${T_CHECKED} + ${CHECKED}))
+
+    index=1
+    PASSED=0
+    for testcase in test/working/${basefolder}/*; do
+        base=$(basename ${testcase});
+        name=${base%.s}    
+        
+        echo "=============MIPS-LINUX-GNU-GCC on ${name} (${index})=============="
+        # MIPS conversion 
+        mips-linux-gnu-gcc -g -mfp32 -o test/objects/${basefolder}/${name}.o -c test/working/${basefolder}/${name}.s
+
+        mips-linux-gnu-gcc -g -mfp32 -static -o test/objects/${basefolder}/${name} test/objects/${basefolder}/${name}.o compiler_tests/${basefolder}/${name}_driver.c
+        qemu-mips test/objects/${basefolder}/${name}
+
+        errMsg=$?
+        echo "QEMU-MIPS: " $errMsg    
+        if [[ $errMsg -eq "0" ]]; then
+            echo " QEMU-MIPS: TESTCASE + driver compiler succesfully"
+            PASSED=$(( ${PASSED}+1 )); 
+        else
+            echo " QEMU-MIPS: ERROR"
+        fi
+        echo " "
+        index=$((${index}+1));
+    done
+
+    echo "########################################"
+    echo " Nb of files COMPILED succesfully: ${PASSED} out of $((${index}-1))"
+    echo ""
+
+    T_PASSED=$((${T_PASSED} + ${PASSED}))
+    T_index=$((${T_index} + ${index}))
 
 done
+
+echo "########################################"
+    echo " Nb of files COMPILED succesfully: ${T_PASSED} out of ${T_CHECKED} PARSED from $((${index}-1)) total"
+    echo ""
+
+    T_PASSED=$((${T_PASSED} + ${PASSED}))
 
 RELEASE=$(lsb_release -d)
 if [[ $? -ne 0 ]]; then

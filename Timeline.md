@@ -85,5 +85,7 @@ https://www.cs.tufts.edu/comp/140/lectures/Day_3/mips_summary.pdf //high level m
 
 
 ### 29 Mar 2022
-- implemented typedef
-- floats in progress
+- implemented typedef as a special vector in the context which keeps track of every type_id and specific type
+- floats in progress (declaration and assignments however return of floats crashes)
+- array initialisation of form a[] = {1,2,3,} is added in the grammar but not responding
+- succesfully run function call (recursive), however it would break the external calls, hence we decided to pursue the external functions as they would be more impportant than recursions.

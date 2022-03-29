@@ -56,7 +56,7 @@ public:
             }
         }
 
-        if (right->getNature() != "ArrayDeclarator") {
+        if (right->getNature() != "ArrayDeclarator"|| right->getNature() != "ArrayStaticDeclarator") {
             variable v;
 
             if ( (type == "int") || (type == "char") ){
@@ -140,6 +140,9 @@ public:
         right->generateMIPS(dst, context, destReg); // li or lw but we need to access register number, through a function
         // dst<<"#DEBUG : in variables_map for " << left->getId() << " " << context.functions[context.current_function].variables_map[left->getId()].offset << " " << v.offset << '\n';
         
+        if (left->getNature() == "ArrayStaticDeclarator") {
+            left->generateMIPS(dst, context, destReg);
+        }
         // dst << "sw $";
         // dst << destReg;
         // dst << ",12($fp)" << '\n'; // store output register of the calculations in  respective stack location
@@ -255,7 +258,7 @@ public:
         // {
             if ( f != "NOT_FOUND" )
             {
-                dst << "#DEBUG Declarator: NOT_FOUND_VAR, but found, " << id << " from function " << f << '\n';
+                dst << "#DEBUG Declarator: FOUND_VAR, found, " << id << " from function " << f << '\n';
                 int maps_offsets = maps_total_offsets(context, context.current_function, f);
                 dst<<"#DEBUG : maps_offsets: "<<maps_offsets<<" ; context.functions[f].variables_map.size(): "<<context.functions[f].variables_map.size()<<" ; context.functions[f].variables_map[id].old_map_size: "<<context.functions[f].variables_map[id].old_map_size<<'\n';
                 int curr_offset = 4 * (context.functions[f].variables_map.size() - context.functions[f].variables_map[id].old_map_size) + 12 + 4 * maps_offsets;

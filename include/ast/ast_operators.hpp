@@ -506,6 +506,40 @@ public:
 
 };
 
+class OnesComplementOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "~"; }
+    virtual const char *getOpInstruction() const override
+    { return "1scomplement"; }
+public:
+    OnesComplementOperator(ExpressionPtr _left)
+        : Operator(_left)
+    {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<" ~( ";
+        left->print(dst);
+        dst<<" )";
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#OnesComplementOperator generateMIPS Called"<<'\n';
+        int regA = context.allocate(context.current_function);
+        left->generateMIPS(dst, context, regA);
+        dst<<"and $"<< destReg<<",$"<<regA<<", $"<<regA<<'\n';
+        dst<<"not $"<< destReg<<'\n';
+
+        context.regFile.freeReg(regA);
+    }
+
+
+};
+
 // LOGICAL -----------------------------------
 
 class LogicalANDOperator
@@ -575,6 +609,37 @@ public:
         context.regFile.freeReg(regD);
         
     }
+
+};
+
+class LogicalNOTOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "!"; }
+    virtual const char *getOpInstruction() const override
+    { return "not"; }
+public:
+    LogicalNOTOperator(ExpressionPtr _left)
+        : Operator(_left)
+    {}
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<" !( ";
+        left->print(dst);
+        dst<<" )";
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"#LogicalNOTOperator generateMIPS Called"<<'\n';
+        left->generateMIPS(dst, context, destReg);
+        dst<<"not $"<< destReg<<'\n';
+        // dst<<"nor $"<< destReg<<", $"<<destReg<<", $"<<destReg<<'\n';
+    }
+
 
 };
 

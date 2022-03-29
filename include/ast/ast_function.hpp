@@ -57,6 +57,7 @@ public:
         right->generateMIPS(dst, context, destReg);
 
         dst<<"end_"<<context.current_function_name<<":"<<'\n';
+        // dst<<"move $s0, $2"<<'\n';
         dst<<"move $sp,$fp"<<'\n';
         dst<<"lw $fp,4($sp)"<<'\n'; // check alive variables vector
         dst<<"move $sp,$25"<<'\n';
@@ -178,17 +179,12 @@ public:
                 // if (v.reg == -1) v.reg = context.allocate(context.current_function);
                 // v.old_map_size = context.functions[context.current_function].variables_map.size()+1; //------------------------------
                 // context.functions[context.current_function].variables_map.insert({arg->list[i]->getId(), v});
-
+                
                 arg->list[i]->generateMIPS(dst, context, regParam);
-                // int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[arg->list[i]->getId()].old_map_size) + 12;
-                // dst<<"sw $";
-                // dst<<destReg;
-                // dst<<","<<curr_offset<<"($fp)"<<'\n'; 
 
                 context.regFile.freeReg(regParam);
             }
         }
-
         
 
     }
@@ -294,10 +290,12 @@ public:
         if (args->list.size() <= 4){
             for (int i = 0; i < args->list.size(); i++){
                 args->list[i]->generateMIPS(dst, context, start_reg+i);
+                // dst<<"move $s"<< i+1 <<", $"<<start_reg+i+1<<'\n';
             }
         } else {
             for (int i = 0; i <= 3; i++){
                 args->list[i]->generateMIPS(dst, context, start_reg+i);
+                // dst<<"move $s"<< i+1 <<", $"<<start_reg+i+1<<'\n';
             }
             int regParam = context.allocate(context.current_function);
             for (int i = 4; i < args->list.size(); i++){
@@ -308,13 +306,17 @@ public:
             context.regFile.freeReg(regParam);
         }
 
-        // functionName->generateMIPS(dst, context, destReg);
-
+        // dst<<"move $s0, $2"<<'\n';
         // dst<<"sw $31,8($sp)"<<'\n'; //we store old pc in memory NOT SURE IF NEEDED HERE (probably not)
         dst<<"jal "<<functionName->getId()<<'\n';
-        dst<<"nop"<<'\n';
-        dst<<"lw $31,8($sp)"<<'\n';// get old_pc before jumping
-        dst<<"nop"<<'\n';
+        // dst<<"nop"<<'\n';
+        dst<<"lw $31,8($fp)"<<'\n';// get old_pc before jumping
+
+        //UNCOMMENT TO TEST RECURSION
+        // dst<<"add $2, $s0, $s2"<<'\n';
+        
+        dst<<"move $"<<destReg<<", $2"<<'\n';
+        // dst<<"add $"<<destReg<<",$"<<destReg<<", $s1"<<'\n';
     }
 };
 

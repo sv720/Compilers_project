@@ -24,7 +24,7 @@
   yytokentype token;
 }
 
-%token IDENTIFIER INT_LITERAL CHAR_LITERAL SIZEOF
+%token IDENTIFIER INT_LITERAL CHAR_LITERAL SIZEOF STRING_LITERAL
 %token POINTER_OP INCREMENT_OP DECREMENT_OP LEFTSHIFT_OP RIGHTSHIFT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFTSHIFT_ASSIGN RIGHTSHIFT_ASSIGN AND_ASSIGN
@@ -97,7 +97,7 @@ function_definition
 	: declaration_specifiers declarator compound_statement 	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
 	| declaration_specifiers declarator	';'					{ $$ = new Function_Call_Definition(*$1, $2);}
 	| enum_specifier ';'									{ $$ = $1; }
-	| TYPEDEF declaration_specifiers IDENTIFIER ';'					{ $$ = new TypeDef(*$2, *$3); }
+	| TYPEDEF declaration_specifiers IDENTIFIER ';'			{ $$ = new TypeDef(*$2, *$3); }
 	| declarator 
 	;
 
@@ -110,7 +110,7 @@ direct_declarator
 	: IDENTIFIER										{ $$ = new Declarator(*$1);}
 	| '(' declarator ')'								{ $$ = $2; }
 	| direct_declarator '[' constant_expression ']'		{ $$ = new ArrayDeclarator($1, $3); }
-	| direct_declarator '[' ']'							{ $$ = new ArrayDeclarator($1); }
+	// | direct_declarator '[' ']'							{ $$ = new ArrayStaticDeclarator($1); }
 	| direct_declarator '(' parameter_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
 	| direct_declarator '(' identifier_list ')'			{ $$ = new FunctionDeclarator($1, ($3));}
 	| direct_declarator '(' ')'							{ $$ = new FunctionDeclarator($1);}
@@ -152,15 +152,17 @@ declaration_specifiers
 
 /* from declaration */
 init_declarator
-	: declarator						{ $$ = $1; }
-	| declarator '=' initializer		{ $$ = new InitDeclarator($1, $3); }
+	: declarator									{ $$ = $1; }
+	| declarator '=' initializer					{ $$ = new InitDeclarator($1, $3); }
+	| direct_declarator '[' ']'	'=' '{' initializer_list '}'			{ $$ = new ArrayInit($1, $6);}
+	| direct_declarator '[' ']'	'=' '{' initializer_list ',' '}'		{ $$ = new ArrayInit($1, $6);}
 	;
 
 /* from init_declarator */
 initializer
 	: assignment_expression			{ $$ = $1; }
-	| '{' initializer_list '}'		{ $$ = new ArrayInit($2); }
-	| '{' initializer_list ',' '}'	{ $$ = new ArrayInit($2); }
+	// | '{' initializer_list '}'		{ $$ = new ExpressionList($2); }
+	// | '{' initializer_list ',' '}'	{ $$ = new ExpressionList($2); }
 	;
 
 initializer_list
@@ -178,7 +180,7 @@ direct_abstract_declarator
 	: '(' abstract_declarator ')'						{ $$ = $2; }
 	| '[' ']'													{ ; }
 	| '[' constant_expression ']'								{ ; }
-	| direct_abstract_declarator '[' ']'						{ $$ = new ArrayDeclarator($1); }
+	// | direct_abstract_declarator '[' ']'						{ $$ = new ArrayStaticDeclarator($1); }
 	| direct_abstract_declarator '[' constant_expression ']'	{ $$ = new ArrayDeclarator($1, $3); }
 	| '(' ')'													{ ; }
 	| '(' parameter_list ')'									{ ; }
@@ -281,8 +283,10 @@ unary_expression
 	: postfix_expression				{ $$ = $1; }
 	| INCREMENT_OP unary_expression		{ $$ = new PreIncrementOperator($2);}
 	| DECREMENT_OP unary_expression		{ $$ = new PreDecrementOperator($2);}
-	| unary_operator cast_expression	{ /* HOW */ }
+	| unary_operator cast_expression	{ ; }
 	| '-' unary_expression				{ $$ = new NegOperator($2); }
+	| '!' unary_expression				{ $$ = new LogicalNOTOperator($2); }
+	| '~' unary_expression				{ $$ = new OnesComplementOperator($2); }
 	| SIZEOF unary_expression			{ $$ = new SizeOf($2); }
 	// | SIZEOF '(' type_name ')'			{ $$ = new SizeOf($3);} 
 	| SIZEOF '(' declaration_specifiers ')'			{ $$ = new SizeOf(new TypeSpecifier(*$3)); }
@@ -404,6 +408,7 @@ type_specifier
 	| DOUBLE		{ $$ = new std::string("double"); }
 	| SIGNED		{ $$ = new std::string("signed"); }
 	| UNSIGNED		{ $$ = new std::string("unsigned"); }
+	| CHAR '*'		{ $$ = new std::string("string"); }
 	// | struct_specifier
 	// | enum_specifier		{ $$ = $1; } // moved to full function
 	;

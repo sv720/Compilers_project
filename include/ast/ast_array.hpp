@@ -76,21 +76,6 @@ public:
 
         }
         dst<<"#DEBUG ARRAYDeclarator: adding to map at address of ARRAY " << id->getId() << " making map size = "<< context.functions[context.current_function].variables_map.size() <<'\n';
-/*
-        //TODO: check if valid
-        int curr_offset = 4*(context.functions[context.current_function].variables_map[id->getId()].old_map_size - context.functions[context.current_function].variables_map.size() ) + 12;
-        dst<<"#DEBUG array declarator: curr_map_array: "<<context.functions[context.current_function].variables_map.size()<<'\n';
-        dst<<"#DEBUG array declarator: old_map_size: "<<context.functions[context.current_function].variables_map[id->getId()].old_map_size<<'\n';
-        dst<<"#DEBUG array declarator: curr_offset: "<<curr_offset<<'\n';
-        dst<<"sw $";
-        dst<<destReg;
-        dst<<","<<curr_offset<<"($fp)"<<'\n';
-
-        //Scott: Don't think we need to store anything here (in MIPS)?
-
-        // context.regFile.freeReg(context.functions[context.current_function].variables_map[left->getId()].reg);
-
-        */
     }
     
 };
@@ -98,19 +83,19 @@ public:
 class ArrayInit
     : public Expression
 {
-private:
+protected:
+    ExpressionPtr id;
     ExpressionListPtr elements;
 public:
-    ArrayInit(ExpressionListPtr _elements)
-        : elements(_elements)
+    ArrayInit(ExpressionPtr id, ExpressionListPtr _elements)
+        : id(id)
+        , elements(_elements)
     {}
 
     ~ArrayInit(){
+        delete id;
         delete elements;
     }
-
-    ExpressionListPtr getElements() const
-    { return elements; }
 
     virtual void print(std::ostream &dst) const override
     {
@@ -124,23 +109,40 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        //declare the array as a normal variable, declarator could have been used
+        // variable v;
+        // v.reg = destReg;
+        // v.size = 4;
+        // v.declared_in_function = context.current_function;
+        // v.old_map_size = context.functions[context.current_function].variables_map.size() + 1; //------------------------------
+
+        // context.current_array_label = id->getId();
+        // context.functions[context.current_function].variables_map.insert({id->getId(), v});
+        
+        // for(int i = 1; i<elements->list.size(); i++){
+        //     //dst<<"#DEBUG i = " << i <<'\n';
+        //     std::string item_id = id->getId() + " " + std::to_string(i); 
+        //     context.functions[context.current_function].variables_map.insert({item_id, v});
+
+        // }
+
         dst << "#DEBUG: ARRAYINIT "<<'\n';
-        for ( int i = 0; i < elements->list.size(); i++ ) {
-            // get the address of where we declared the array (label)
+        // for ( int i = 0; i < elements->list.size(); i++ ) {
+        //     // get the address of where we declared the array (label)
 
-            int regElement = context.allocate(context.current_function);
-            dst<<"#DEBUG : genrateMIPS ArrayINIT"<<'\n';
-            elements->list[i]->generateMIPS(dst, context, regElement);
+        //     int regElement = context.allocate(context.current_function);
+        //     dst<<"#DEBUG : genrateMIPS ArrayINIT"<<'\n';
+        //     elements->list[i]->generateMIPS(dst, context, regElement);
 
-            //once we know the address, we can store the value stored in regElement into specific memory location
-            // i*4 is the offset from the initial array label (only int)
+        //     //once we know the address, we can store the value stored in regElement into specific memory location
+        //     // i*4 is the offset from the initial array label (only int)
 
-            //would this be the address where we declare the start of the array????
-            int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[context.current_array_label].old_map_size) + 12;
-            dst<<"#DEBUG ARRAY INIT: adding element "<<elements->list[i] << " in array " << context.current_array_label<< '\n';
-            dst<<"#DEBUG ARRAY offset = "<< curr_offset << " , element offset = "<< i*4 << '\n';
-            dst<<"lw $"<<regElement<<","<<i*4+curr_offset<<"($fp)"<<'\n'; 
-        }
+        //     //would this be the address where we declare the start of the array????
+        //     int curr_offset = 4*(context.functions[context.current_function].variables_map.size() - context.functions[context.current_function].variables_map[context.current_array_label].old_map_size) + 12;
+        //     dst<<"#DEBUG ARRAY INIT: adding element "<<elements->list[i] << " in array " << context.current_array_label<< '\n';
+        //     dst<<"#DEBUG ARRAY offset = "<< curr_offset << " , element offset = "<< i*4 << '\n';
+        //     dst<<"lw $"<<regElement<<","<<i*4+curr_offset<<"($fp)"<<'\n'; 
+        // }
     }
     
 };
