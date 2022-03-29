@@ -1,5 +1,5 @@
-int f(){
+float f(){
     float l;
     l = 2.3f;
-    return 1;  
+    return l;  
 }

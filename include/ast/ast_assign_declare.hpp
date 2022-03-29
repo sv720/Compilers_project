@@ -51,16 +51,27 @@ public:
 
         right->generateMIPS(dst, context, destReg);
 
-        if (right->getNature() != "ArrayDeclarator") {
+        if (right->getNature(context) != "ArrayDeclarator") {
             variable v;
 
-            if ( (left == "int") || (left == "char") ){
+            if ( (left == "int") || (left == "char") || (left == "float") ){
                 dst << "addiu $sp,$sp,-4 \n";  // have a new variable so need to make some space on the stack
                 dst << "sw $25,0($fp) \n";     // we move the old (out of function) frame pointer into the current fp value
                 dst << "sw $31,4($fp) \n";     // we store old_pc just above old_fp
                 dst << "move $fp,$sp" << '\n'; // move frame pointer back to the bottom
-                if (left == "int") v.size = 4; // only for int !!!
-                else if (left == "char") v.size = 1;
+                if (left == "int"){
+                    v.size = 4; // only for int !!!
+                    v.type = "int";
+
+                } 
+                else if (left == "char"){
+                    v.size = 1;
+                    v.type = "char";
+                }
+                else if (left == "float"){
+                    v.size = 4;
+                    v.type = "float";
+                }
             }
             else {
                 dst << "addiu $sp,$sp,-4 \n";  // have a new variable so need to make some space on the stack
@@ -153,6 +164,14 @@ public:
     {
         return id;
     }
+
+    virtual std::string getNature(Context &context) const override
+    {
+        //THIS BREAK EVERYTHING FOR SOME REASON 
+        //return context.functions[context.current_function].variables_map[id].type; //returns the nature (type) of the Declarator
+        return "<NULL>";
+    }
+     
 
     virtual std::string found_in_f(Context &context, std::string id, std::string function) const override
     {
@@ -327,8 +346,8 @@ public:
         {
             dst << "#DEBUG AssignOperator: in variables_map for " << left->getId() << '\n';
 
-            dst << "#DEBUG : left->getNature = " << left->getNature() << '\n';
-            if (left->getNature() == "ArrayCall")
+            dst << "#DEBUG : left->getNature = " << left->getNature(context) << '\n';
+            if (left->getNature(context) == "ArrayCall")
             {
 
                 right->generateMIPS(dst, context, destReg); // li or lw but we need to access register number, through a function

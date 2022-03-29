@@ -67,7 +67,6 @@
 %type <numberFloat> FLOAT_LITERAL
 
 %type <integer> INT_LITERAL // CHAR_LITERAL
-// %type <numberFloat> FLOAT_LITERAL
 %type <string> IDENTIFIER assignment_operator declaration_specifiers type_specifier CHAR_LITERAL
 
 // ASSOCIATIVITY
@@ -255,7 +254,7 @@ jump_statement
 primary_expression
 	: IDENTIFIER			{ $$ = new Declarator( *$1 );}
 	| INT_LITERAL			{ $$ = new Integer( $1 );}
-	| FLOAT_LITERAL			{ /*$$ = new Float( $1 );*/ }
+	//| FLOAT_LITERAL			{ $$ = new Float( $1 ); }
 	| CHAR_LITERAL			{ $$ = new Character( *$1 );}
 	| '(' expression ')'	{ $$ = $2; }
 	;

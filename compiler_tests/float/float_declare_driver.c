@@ -1,7 +1,7 @@
 
-float f();
+int f();
 
 int main()
 {
-    return !(f()==2.32);
+    return !(f()==1);
 }

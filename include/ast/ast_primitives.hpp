@@ -5,8 +5,22 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <math.h>
 #include "ast/ast_expressionlist.hpp"
 #include "context.hpp"
+
+
+typedef union {
+
+        float f;
+        struct
+        {
+            unsigned int f : 23;
+            unsigned int e : 8;
+            unsigned int s : 1;
+
+        } ieee754;
+    } myfloat;
 
 // class Variable
 //     : public Expression
@@ -77,36 +91,55 @@ class Float
 {
 private:
     float value;
-    int s; //sign
-    int e; //exponent plus 1023 
-    int f; //stores binary fration (with leading 1 implcit) e.g. 1.011=>011
+    myfloat var; 
+    unsigned int float_word;
+
 public:
     Float()
-    {
-        if (value >= 0){
-            s=0;
-        }
-        else { s=1; }
-        
-        e = (int) log10(value);
-        f = (int) ((value/e)-1)*8388608; //should store the int value of 23 decimal points (large multiplier is 2^23 ; 23 is size of f field)
-    }
+    {    }
 
     Float(float _value)
         : value(_value)
-    {}
+    {
+        var.f = value;
+
+        float_word = (1&var.ieee754.s)*4294967296 + (255&var.ieee754.e)*8388608 + (8388607&var.ieee754.f);
+        //float_word = var.ieee754.s<<32 + var.ieee754.e<<23 + var.ieee754.f;
+    }
 
 
     virtual void print(std::ostream &dst) const override
     {
         dst<<"FLOAT VALUE = ";
         dst<<value;
+
+        dst<<"s = "<< var.ieee754.s << "e = "<< var.ieee754.e << " manista = "<< var.ieee754.f <<'\n';
+        dst<<"float_word = "<< float_word;
+    }
+
+    virtual std::string getNature(Context &context) const override
+    {
+        return "Float";
     }
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
-    {
-        dst<<"li $"<<destReg<<","; // need to set other register
-        dst<<value<<'\n'; 
+    {  
+        if (destReg == -1){ //MEANS WE WANT TO RETURN so write to $f0
+            dst<<"li $f0,"; // need to set other register
+            dst<<(0xFFFF&float_word)<<'\n'; 
+
+            dst<<"lui $f0,";
+            dst<< (unsigned(0xFFFF0000&float_word))/65536<<'\n';
+
+        } 
+        else { //other times we use regular registers
+            dst<<"li $"<<destReg<<","; // need to set other register
+            dst<<(0xFFFF&float_word)<<'\n'; 
+
+            dst<<"lui $"<<destReg<<",";
+            dst<< (unsigned(0xFFFF0000&float_word))/65536<<'\n'; //TODO: check that here division is always unsigned division (used to do LSR)
+        }     
+        
     }
 };
 
@@ -199,8 +232,22 @@ public:
     
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        //if (context.functions[context.current_function].variables_map.find(arg->getId()) != context.functions[context.current_function].variables_map.end())
+        //{
+          //dst <<"#DEBUG : found in map"<< '\n';
+      //dst<<"#DEBUG : context.functions[context.current_function].variables_map.arg->getId()].type = "<<context.functions[context.current_function].variables_map[arg->getId()].type <<'\n';
+        //}
+
+        dst << "#DEBUG : arg->getNature(context) = " << arg->getNature(context)<< '\n';
+        
         dst<<"#DEBUG: calling generateMIPS on arg is return \n";
-        arg->generateMIPS(dst, context, 2);
+        //if(context.functions[context.current_function].variables_map[arg->getId()].type == "float"){
+        //    arg->generateMIPS(dst, context, -1);
+        //}
+        //else {
+            arg->generateMIPS(dst, context, 2);
+        //}
+        
         
         dst<<"j end_"<<context.current_function_name<<'\n';
         dst<<"nop"<<'\n';
