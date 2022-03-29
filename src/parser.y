@@ -19,12 +19,13 @@
   Expression *expr;
   ExpressionList *expressionList;
   int integer;
-  double numberFloat;
+  float numberFloat;
+  double numberDouble;
   std::string *string;
   yytokentype token;
 }
 
-%token IDENTIFIER INT_LITERAL CHAR_LITERAL SIZEOF STRING_LITERAL
+%token IDENTIFIER INT_LITERAL CHAR_LITERAL SIZEOF FLOAT_LITERAL
 %token POINTER_OP INCREMENT_OP DECREMENT_OP LEFTSHIFT_OP RIGHTSHIFT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFTSHIFT_ASSIGN RIGHTSHIFT_ASSIGN AND_ASSIGN
@@ -63,8 +64,9 @@
 %type <expressionList> enumerator_list parameter_list init_declarator_list
 %type <expressionList> identifier_list initializer_list declaration_list statement_list
 
+%type <numberFloat> FLOAT_LITERAL
+
 %type <integer> INT_LITERAL // CHAR_LITERAL
-// %type <numberFloat> FLOAT_LITERAL
 %type <string> IDENTIFIER assignment_operator declaration_specifiers type_specifier CHAR_LITERAL
 
 // ASSOCIATIVITY
@@ -248,7 +250,7 @@ iteration_statement
 jump_statement
 	: GOTO IDENTIFIER ';'	{ ; }
 	| CONTINUE ';'			{ ; }
-	| BREAK ';'				{ ; }
+	| BREAK ';'				{ $$ = new Break(); }
 	| RETURN ';' 			{ $$ = new Return(new Integer()); }
 	| RETURN expression ';' { $$ = new Return($2); }
 	;
@@ -258,7 +260,7 @@ jump_statement
 primary_expression
 	: IDENTIFIER			{ $$ = new Declarator( *$1 );}
 	| INT_LITERAL			{ $$ = new Integer( $1 );}
-	// | FLOAT_LITERAL			{ ;}
+	| FLOAT_LITERAL			{ $$ = new Float( $1 ); }
 	| CHAR_LITERAL			{ $$ = new Character( *$1 );}
 	| '(' expression ')'	{ $$ = $2; }
 	;

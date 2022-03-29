@@ -4,8 +4,25 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cmath>
+#include <math.h>
 #include "ast/ast_expressionlist.hpp"
 #include "context.hpp"
+
+
+typedef union {
+
+        float f;
+        struct
+        {
+            unsigned int f : 23;
+            unsigned int e : 8;
+            unsigned int s : 1;
+
+        } ieee754;
+    } myfloat;
+
+
 
 class Integer
     : public Expression
@@ -17,6 +34,91 @@ public:
     {}
 
     Integer(int _value)
+        : value(_value)
+    {}
+
+    int getValue() const
+    { return value; }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<value;
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        dst<<"li $"<<destReg<<","; // need to set other register
+        dst<<value<<'\n'; 
+    }
+};
+
+class Float
+    : public Expression
+{
+private:
+    float value;
+    myfloat var; 
+    unsigned int float_word;
+
+public:
+    Float()
+    {    }
+
+    Float(float _value)
+        : value(_value)
+    {
+        var.f = value;
+
+        float_word = (1&var.ieee754.s)*4294967296 + (255&var.ieee754.e)*8388608 + (8388607&var.ieee754.f);
+        //float_word = var.ieee754.s<<32 + var.ieee754.e<<23 + var.ieee754.f;
+    }
+
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"FLOAT VALUE = ";
+        dst<<value;
+
+        dst<<"s = "<< var.ieee754.s << "e = "<< var.ieee754.e << " manista = "<< var.ieee754.f <<'\n';
+        dst<<"float_word = "<< float_word;
+    }
+
+    virtual std::string getNature(Context &context) const override
+    {
+        return "Float";
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {  
+        if (destReg == -1){ //MEANS WE WANT TO RETURN so write to $f0
+            dst<<"li $f0,"; // need to set other register
+            dst<<(0xFFFF&float_word)<<'\n'; 
+
+            dst<<"lui $f0,";
+            dst<< (unsigned(0xFFFF0000&float_word))/65536<<'\n';
+
+        } 
+        else { //other times we use regular registers
+            dst<<"li $"<<destReg<<","; // need to set other register
+            dst<<(0xFFFF&float_word)<<'\n'; 
+
+            dst<<"lui $"<<destReg<<",";
+            dst<< (unsigned(0xFFFF0000&float_word))/65536<<'\n'; //TODO: check that here division is always unsigned division (used to do LSR)
+        }     
+        
+    }
+};
+
+class Double
+    : public Expression
+{
+private:
+    double value;
+public:
+    Double()
+    {}
+
+    Double(int _value)
         : value(_value)
     {}
 
@@ -96,8 +198,22 @@ public:
     
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
+        //if (context.functions[context.current_function].variables_map.find(arg->getId()) != context.functions[context.current_function].variables_map.end())
+        //{
+          //dst <<"#DEBUG : found in map"<< '\n';
+      //dst<<"#DEBUG : context.functions[context.current_function].variables_map.arg->getId()].type = "<<context.functions[context.current_function].variables_map[arg->getId()].type <<'\n';
+        //}
+
+        dst << "#DEBUG : arg->getNature(context) = " << arg->getNature(context)<< '\n';
+        
         dst<<"#DEBUG: calling generateMIPS on arg in return \n";
-        arg->generateMIPS(dst, context, 2);
+        //if(context.functions[context.current_function].variables_map[arg->getId()].type == "float"){
+        //    arg->generateMIPS(dst, context, -1);
+        //}
+        //else {
+            arg->generateMIPS(dst, context, 2);
+        //}
+        
         
         dst<<"j end_"<<context.current_function_name<<'\n';
         dst<<"nop"<<'\n';
@@ -158,7 +274,7 @@ public:
     {
         dst<<"#DEBUG: calling generateMIPS on arg is return \n";
         
-        if (id->getId() == "int" || id->getId() == "char") {
+        if (id->getId() == "int" || id->getId() == "char" || id->getId() == "float") {
             int reg = context.allocate(context.current_function);
             id->generateMIPS(dst, context, reg);
             dst<<"move $"<<destReg<<", $"<<reg<<'\n';
@@ -243,11 +359,18 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].type = new_type;
+
         if (new_type == "int") {
             context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].size = 4;
         } else
         if (new_type == "char") {
             context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].size = 1;
+        } else
+        if (new_type == "float") {
+            context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].size = 4;
+        } else
+        if (new_type == "double") {
+            context.functions[id->found_in_f(context, id->getId(), context.current_function)].variables_map[id->getId()].size = 8;
         }
     }
 
@@ -280,6 +403,33 @@ public:
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
         context.typedefs.insert({typedef_id,type});
+    }
+
+};
+
+//________________________________________________
+
+class Break
+    : public Expression
+{
+private:
+    ExpressionListPtr arg;
+public:
+    Break()
+    {}
+
+    std::string getId() const override
+    {
+        return "break;" ;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"BREAK";
+    }
+
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
     }
 
 };

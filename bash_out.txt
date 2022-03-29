@@ -30,42 +30,102 @@ Compiling OUTPUTS...
 
 Input file : compiler_tests/array/array_constant.c
  
+ ------------
+compiler_tests/array/array_constant.c <-> test/working/array/array_constant.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/array/declare_global.c
  
+ ------------
+compiler_tests/array/declare_global.c <-> test/working/array/declare_global.s
+
+Intermediate Language:
+( int ARRAY: DECALARATOR :x[8] )( ( int DEBUG id = DECALARATOR :fend of check return 11 ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/array/declare_local.c
  
+ ------------
+compiler_tests/array/declare_local.c <-> test/working/array/declare_local.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :y )( int ARRAY: DECALARATOR :x[8] )( DECALARATOR :y = 13 )( return DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/array/index_constant.c
  
+ ------------
+compiler_tests/array/index_constant.c <-> test/working/array/index_constant.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int ARRAY: DECALARATOR :x[8] )( index->getId() = <NULL>
+DECALARATOR :x[0] = 23 )( return index->getId() = <NULL>
+DECALARATOR :x[0] ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/array/index_constant_offsetcheck.c
  
+ ------------
+compiler_tests/array/index_constant_offsetcheck.c <-> test/working/array/index_constant_offsetcheck.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :i=2 )( int ARRAY: DECALARATOR :x[8] )( index->getId() = <NULL>
+DECALARATOR :x[1] = 23 )( return index->getId() = <NULL>
+DECALARATOR :x[1] ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
 Input file : compiler_tests/array/index_non_loop_variable.c
  
+ ------------
+compiler_tests/array/index_non_loop_variable.c <-> test/working/array/index_non_loop_variable.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :i=2 )( int ARRAY: DECALARATOR :x[8] )( index->getId() = i
+DECALARATOR :x[DECALARATOR :i] = DECALARATOR :i )( return index->getId() = <NULL>
+DECALARATOR :x[2] ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 7 parsing ==============
 
 Input file : compiler_tests/array/index_variable.c
  
+ ------------
+compiler_tests/array/index_variable.c <-> test/working/array/index_variable.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :i )( int ARRAY: DECALARATOR :x[8] )( FOR (DECALARATOR :i = 0 ; ( DECALARATOR :i < 8 ) ; ( DECALARATOR :i ++ ) ) { SCOPE( index->getId() = i
+DECALARATOR :x[DECALARATOR :i] = DECALARATOR :i ) }  )( return index->getId() = <NULL>
+DECALARATOR :x[4] ) ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -92,7 +152,7 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on index_variable (6)==============
-4198904 QEMU-MIPS:  1
+4198920 QEMU-MIPS:  1
  QEMU-MIPS: ERROR
  
 ########################################
@@ -108,8 +168,13 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/array_tests/z_index_expression.c
  
-1
- ERROR - parsing syntax 
+ ------------
+compiler_tests/array_tests/z_index_expression.c <-> test/working/array_tests/z_index_expression.s
+
+Intermediate Language:
+139
+ ERROR - seg fault
+ 
 ########################################
  Nb of files PARSING succesfully: 0 out of 1
  
@@ -130,96 +195,227 @@ QEMU-MIPS:  1
 
 Input file : compiler_tests/control_flow/for_incomplete.c
  
+ ------------
+compiler_tests/control_flow/for_incomplete.c <-> test/working/control_flow/for_incomplete.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :x=0 )( int DECALARATOR :y )( DECALARATOR :y = 0 )( FOR ( ; ( DECALARATOR :x < 10 ) ;  ) { SCOPE( DECALARATOR :y = ( DECALARATOR :y - 1 ) )SCOPE( DECALARATOR :x = ( DECALARATOR :x + 1 ) ) }  )( return DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/control_flow/for_increment.c
  
+ ------------
+compiler_tests/control_flow/for_increment.c <-> test/working/control_flow/for_increment.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 1 ) ; ( DECALARATOR :x ++ ) ) {  }  )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/control_flow/for_multiple.c
  
+ ------------
+compiler_tests/control_flow/for_multiple.c <-> test/working/control_flow/for_multiple.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( int DECALARATOR :y )( DECALARATOR :y = 0 )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 10 ) ; DECALARATOR :x = ( DECALARATOR :x + 1 ) ) { SCOPE( DECALARATOR :y = ( DECALARATOR :y - 1 ) ) }  )( return DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/control_flow/for_one.c
  
+ ------------
+compiler_tests/control_flow/for_one.c <-> test/working/control_flow/for_one.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 1 ) ; DECALARATOR :x = ( DECALARATOR :x + 1 ) ) {  }  )( return ( DECALARATOR :x + 19937 ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/control_flow/for_zero_v1.c
  
+ ------------
+compiler_tests/control_flow/for_zero_v1.c <-> test/working/control_flow/for_zero_v1.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 0 ) ; DECALARATOR :x = ( DECALARATOR :x + 1 ) ) { SCOPE( return 1 ) }  )( return 19937 ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
 Input file : compiler_tests/control_flow/for_zero_v2.c
  
+ ------------
+compiler_tests/control_flow/for_zero_v2.c <-> test/working/control_flow/for_zero_v2.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 0 ) ; ( DECALARATOR :x ++ ) ) { SCOPE( return 1 ) }  )( return 19937 ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 7 parsing ==============
 
 Input file : compiler_tests/control_flow/if_else_false.c
  
+ ------------
+compiler_tests/control_flow/if_else_false.c <-> test/working/control_flow/if_else_false.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check IF (0) { SCOPE( return 11 ) } ELSE {SCOPE( return 10 ) }  ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 8 parsing ==============
 
 Input file : compiler_tests/control_flow/if_else_if.c
  
+ ------------
+compiler_tests/control_flow/if_else_if.c <-> test/working/control_flow/if_else_if.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x ) IF (( DECALARATOR :x == 0 )) { SCOPE( return 0 ) } ELSE {IF (( ( DECALARATOR :x == 1 ) || ( DECALARATOR :x == 2 ) )) { SCOPE( IF (( DECALARATOR :x == 1 )) { return 1 }  ) } ELSE {return 10 }  }  ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 9 parsing ==============
 
 Input file : compiler_tests/control_flow/if_else_if_scoped.c
  
+ ------------
+compiler_tests/control_flow/if_else_if_scoped.c <-> test/working/control_flow/if_else_if_scoped.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x ) ( int INITDECLARATOR 
+DECALARATOR :y=0 )( IF (( DECALARATOR :x == 0 )) { SCOPE( return 0 ) } ELSE {IF (( ( DECALARATOR :x == 1 ) || ( DECALARATOR :x == 2 ) )) { SCOPE( IF (( DECALARATOR :x == 1 )) { return 1 }  ) } ELSE {SCOPE( ( int INITDECLARATOR 
+DECALARATOR :y=1 ) )SCOPE( ( return ( 11 - DECALARATOR :y ) ) ) }  }  ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 10 parsing ==============
 
 Input file : compiler_tests/control_flow/if_else_true.c
  
+ ------------
+compiler_tests/control_flow/if_else_true.c <-> test/working/control_flow/if_else_true.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check IF (1) { SCOPE( return 11 ) } ELSE {SCOPE( return 10 ) }  ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 11 parsing ==============
 
 Input file : compiler_tests/control_flow/if_false.c
  
+ ------------
+compiler_tests/control_flow/if_false.c <-> test/working/control_flow/if_false.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check IF (0) { SCOPE( return 11 ) } return 10 ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 12 parsing ==============
 
 Input file : compiler_tests/control_flow/if_true.c
  
+ ------------
+compiler_tests/control_flow/if_true.c <-> test/working/control_flow/if_true.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check IF (1) { SCOPE( return 11 ) } return 10 ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 13 parsing ==============
 
 Input file : compiler_tests/control_flow/sequence.c
  
+ ------------
+compiler_tests/control_flow/sequence.c <-> test/working/control_flow/sequence.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( DECALARATOR :x = 1 )( DECALARATOR :x = ( DECALARATOR :x + DECALARATOR :x ) )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 14 parsing ==============
 
 Input file : compiler_tests/control_flow/while_multiple.c
  
+ ------------
+compiler_tests/control_flow/while_multiple.c <-> test/working/control_flow/while_multiple.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( DECALARATOR :x = 20 )( WHILE (( DECALARATOR :x > 10 )) { SCOPE( DECALARATOR :x = ( DECALARATOR :x - 1 ) ) }  )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 15 parsing ==============
 
 Input file : compiler_tests/control_flow/while_once.c
  
+ ------------
+compiler_tests/control_flow/while_once.c <-> test/working/control_flow/while_once.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( DECALARATOR :x = 1 )( WHILE (DECALARATOR :x) { SCOPE( DECALARATOR :x = 0 ) }  )( return 19937 ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 16 parsing ==============
 
 Input file : compiler_tests/control_flow/while_zero.c
  
+ ------------
+compiler_tests/control_flow/while_zero.c <-> test/working/control_flow/while_zero.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check WHILE (0) {  } return 19937 ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -302,30 +498,70 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/default/test_ADD0.c
  
+ ------------
+compiler_tests/default/test_ADD0.c <-> test/working/default/test_ADD0.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :a )( int DECALARATOR :b ) return ( DECALARATOR :a + DECALARATOR :b ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/default/test_ADD1.c
  
+ ------------
+compiler_tests/default/test_ADD1.c <-> test/working/default/test_ADD1.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :a ) return ( DECALARATOR :a + 10 ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/default/test_CALL.c
  
+ ------------
+compiler_tests/default/test_CALL.c <-> test/working/default/test_CALL.s
+
+Intermediate Language:
+( int DEBUG id = DECALARATOR :gend of check )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(::) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/default/test_LOCAL.c
  
+ ------------
+compiler_tests/default/test_LOCAL.c <-> test/working/default/test_LOCAL.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :ffffend of check ( int DECALARATOR :x )( DECALARATOR :x = 10 )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/default/test_RETURN.c
  
+ ------------
+compiler_tests/default/test_RETURN.c <-> test/working/default/test_RETURN.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check return 10 ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -340,8 +576,8 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on test_CALL (3)==============
-QEMU-MIPS:  1
- QEMU-MIPS: ERROR
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on test_LOCAL (4)==============
 QEMU-MIPS:  0
@@ -352,7 +588,7 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 ########################################
- Nb of files COMPILED succesfully: 4 out of 5
+ Nb of files COMPILED succesfully: 5 out of 5
 
  
 ==================================================
@@ -364,46 +600,135 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/float/add_double.c
  
+ ------------
+compiler_tests/float/add_double.c <-> test/working/float/add_double.s
+
+Intermediate Language:
+( ( double DEBUG id = DECALARATOR :fend of check( double DECALARATOR :x )( double DECALARATOR :y ) return ( DECALARATOR :x + DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/float/add.c
  
+ ------------
+compiler_tests/float/add.c <-> test/working/float/add.s
+
+Intermediate Language:
+( ( float DEBUG id = DECALARATOR :fend of check( float DECALARATOR :x )( float DECALARATOR :y ) return ( DECALARATOR :x + DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/float/add_mul.c
  
+ ------------
+compiler_tests/float/add_mul.c <-> test/working/float/add_mul.s
+
+Intermediate Language:
+( ( float DEBUG id = DECALARATOR :fend of check( float DECALARATOR :x )( float DECALARATOR :y )( float DECALARATOR :z ) return ( DECALARATOR :x + ( DECALARATOR :y * DECALARATOR :z ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
-Input file : compiler_tests/float/mul_add.c
+Input file : compiler_tests/float/basic_float.c
  
+ ------------
+compiler_tests/float/basic_float.c <-> test/working/float/basic_float.s
+
+Intermediate Language:
+( ( float DEBUG id = DECALARATOR :fend of check ( float DECALARATOR :l )( DECALARATOR :l = FLOAT VALUE = 2.3s = 0e = 128 manista = 1258291
+float_word = 1075000115 )( return DECALARATOR :l ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
-Input file : compiler_tests/float/mul_double.c
+Input file : compiler_tests/float/float_declare.c
  
+ ------------
+compiler_tests/float/float_declare.c <-> test/working/float/float_declare.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( float DECALARATOR :l )( DECALARATOR :l = FLOAT VALUE = 2.3s = 0e = 128 manista = 1258291
+float_word = 1075000115 )( return 1 ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
-Input file : compiler_tests/float/mul.c
+Input file : compiler_tests/float/mul_add.c
  
+ ------------
+compiler_tests/float/mul_add.c <-> test/working/float/mul_add.s
+
+Intermediate Language:
+( ( float DEBUG id = DECALARATOR :fend of check( float DECALARATOR :x )( float DECALARATOR :y )( float DECALARATOR :z ) return ( ( DECALARATOR :x * DECALARATOR :y ) + DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 7 parsing ==============
 
+Input file : compiler_tests/float/mul_double.c
+ 
+ ------------
+compiler_tests/float/mul_double.c <-> test/working/float/mul_double.s
+
+Intermediate Language:
+( ( double DEBUG id = DECALARATOR :fend of check( double DECALARATOR :x )( double DECALARATOR :y ) return ( DECALARATOR :x * DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
+0
+ 
+============= TESTCASE 8 parsing ==============
+
+Input file : compiler_tests/float/mul.c
+ 
+ ------------
+compiler_tests/float/mul.c <-> test/working/float/mul.s
+
+Intermediate Language:
+( ( float DEBUG id = DECALARATOR :fend of check( float DECALARATOR :x )( float DECALARATOR :y ) return ( DECALARATOR :x * DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
+0
+ 
+============= TESTCASE 9 parsing ==============
+
 Input file : compiler_tests/float/pow.c
  
-1
- ERROR - parsing syntax 
+ ------------
+compiler_tests/float/pow.c <-> test/working/float/pow.s
+
+Intermediate Language:
+( ( float DEBUG id = DECALARATOR :fend of check( float DECALARATOR :x )( int DECALARATOR :n ) ( float INITDECLARATOR 
+DECALARATOR :acc=FLOAT VALUE = 1s = 0e = 127 manista = 0
+float_word = 1065353216 )( int INITDECLARATOR 
+DECALARATOR :i=0 )( WHILE (( DECALARATOR :i < DECALARATOR :n )) { SCOPE( ( DECALARATOR :i ++ ) )SCOPE( DECALARATOR :acc = ( DECALARATOR :acc * DECALARATOR :x ) ) }  )( return DECALARATOR :acc ) ) )
+
+MIPS GENERATED:
+
+0
+ 
 ########################################
- Nb of files PARSING succesfully: 6 out of 7
+ Nb of files PARSING succesfully: 9 out of 9
  
 =============MIPS-LINUX-GNU-GCC on add_double (1)==============
 QEMU-MIPS:  1
@@ -417,20 +742,32 @@ QEMU-MIPS:  1
 QEMU-MIPS:  1
  QEMU-MIPS: ERROR
  
-=============MIPS-LINUX-GNU-GCC on mul_add (4)==============
+=============MIPS-LINUX-GNU-GCC on basic_float (4)==============
+0.000000QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on float_declare (5)==============
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
+ 
+=============MIPS-LINUX-GNU-GCC on mul_add (6)==============
 QEMU-MIPS:  127
  QEMU-MIPS: ERROR
  
-=============MIPS-LINUX-GNU-GCC on mul_double (5)==============
+=============MIPS-LINUX-GNU-GCC on mul_double (7)==============
 QEMU-MIPS:  1
  QEMU-MIPS: ERROR
  
-=============MIPS-LINUX-GNU-GCC on mul (6)==============
+=============MIPS-LINUX-GNU-GCC on mul (8)==============
+QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
+ 
+=============MIPS-LINUX-GNU-GCC on pow (9)==============
 QEMU-MIPS:  1
  QEMU-MIPS: ERROR
  
 ########################################
- Nb of files COMPILED succesfully: 0 out of 6
+ Nb of files COMPILED succesfully: 1 out of 9
 
  
 ==================================================
@@ -442,36 +779,89 @@ QEMU-MIPS:  1
 
 Input file : compiler_tests/for_loops/for_decrement.c
  
+ ------------
+compiler_tests/for_loops/for_decrement.c <-> test/working/for_loops/for_decrement.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 10 ; ( DECALARATOR :x > 5 ) ; ( DECALARATOR :x -- ) ) {  }  )( return ( DECALARATOR :x -- ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/for_loops/for_increment.c
  
+ ------------
+compiler_tests/for_loops/for_increment.c <-> test/working/for_loops/for_increment.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 3 ) ; ( DECALARATOR :x ++ ) ) {  }  )( return ( DECALARATOR :x ++ ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/for_loops/for_predecrement.c
  
+ ------------
+compiler_tests/for_loops/for_predecrement.c <-> test/working/for_loops/for_predecrement.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 10 ; ( DECALARATOR :x > 5 ) ; ( -- DECALARATOR :x ) ) {  }  )( return ( -- DECALARATOR :x ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/for_loops/for_preincrement.c
  
+ ------------
+compiler_tests/for_loops/for_preincrement.c <-> test/working/for_loops/for_preincrement.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 3 ) ; ( ++ DECALARATOR :x ) ) {  }  )( return ( ++ DECALARATOR :x ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/for_loops/mult_div_eq.c
  
+ ------------
+compiler_tests/for_loops/mult_div_eq.c <-> test/working/for_loops/mult_div_eq.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :x=1 )( int INITDECLARATOR 
+DECALARATOR :y=24 )( int INITDECLARATOR 
+DECALARATOR :z=1 )( FOR ( ; ( DECALARATOR :x < 4 ) ; ( DECALARATOR :x ++ ) ) { SCOPE( DECALARATOR :y /= DECALARATOR :x )SCOPE( DECALARATOR :z *= DECALARATOR :x ) }  )( return ( ( DECALARATOR :z * 4 ) / DECALARATOR :y ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
 Input file : compiler_tests/for_loops/postdecrement.c
  
+ ------------
+compiler_tests/for_loops/postdecrement.c <-> test/working/for_loops/postdecrement.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( int INITDECLARATOR 
+DECALARATOR :y=0 )( int INITDECLARATOR 
+DECALARATOR :z=1 )( FOR (DECALARATOR :x = 10 ; ( DECALARATOR :x > 7 ) ; ( DECALARATOR :x -- ) ) { SCOPE( DECALARATOR :y += DECALARATOR :x )SCOPE( DECALARATOR :z *= DECALARATOR :x ) }  )( return ( 2 + ( DECALARATOR :y -- ) ) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -514,80 +904,176 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/functions/call_constant_external.c
  
+ ------------
+compiler_tests/functions/call_constant_external.c <-> test/working/functions/call_constant_external.s
+
+Intermediate Language:
+( int DEBUG id = DECALARATOR :gend of check )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(::) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/functions/call_constant_internal.c
  
+ ------------
+compiler_tests/functions/call_constant_internal.c <-> test/working/functions/call_constant_internal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :gend of check return 20 ) )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(::) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/functions/call_five_args_external.c
  
+ ------------
+compiler_tests/functions/call_five_args_external.c <-> test/working/functions/call_five_args_external.s
+
+Intermediate Language:
+( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :a )( int DECALARATOR :b )( int DECALARATOR :c )( int DECALARATOR :d )( int DECALARATOR :e ) )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(:12345:) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/functions/call_five_args_internal.c
  
+ ------------
+compiler_tests/functions/call_five_args_internal.c <-> test/working/functions/call_five_args_internal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :a )( int DECALARATOR :b )( int DECALARATOR :c )( int DECALARATOR :d )( int DECALARATOR :e ) return ( ( ( ( DECALARATOR :a + DECALARATOR :b ) + DECALARATOR :c ) + DECALARATOR :d ) + DECALARATOR :e ) ) )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(:12345:) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/functions/call_identity_external.c
  
+ ------------
+compiler_tests/functions/call_identity_external.c <-> test/working/functions/call_identity_external.s
+
+Intermediate Language:
+( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :x ) )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(:10:) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
 Input file : compiler_tests/functions/call_identity_internal.c
  
+ ------------
+compiler_tests/functions/call_identity_internal.c <-> test/working/functions/call_identity_internal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :x ) return DECALARATOR :x ) )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(:10:) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 7 parsing ==============
 
 Input file : compiler_tests/functions/call_mutual_recursive.c
  
+ ------------
+compiler_tests/functions/call_mutual_recursive.c <-> test/working/functions/call_mutual_recursive.s
+
+Intermediate Language:
+( int DEBUG id = DECALARATOR :r2end of check( int DECALARATOR :n ) )( ( int DEBUG id = DECALARATOR :r1end of check( int DECALARATOR :n ) IF (( DECALARATOR :n == 0 )) { SCOPE( return 1 ) } ELSE {SCOPE( return ( DECALARATOR :r2(:( DECALARATOR :n - 1 ):) + DECALARATOR :r2(:( DECALARATOR :n - 1 ):) ) ) }  ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 8 parsing ==============
 
 Input file : compiler_tests/functions/call_nonrecursive_single.c
  
+ ------------
+compiler_tests/functions/call_nonrecursive_single.c <-> test/working/functions/call_nonrecursive_single.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :n ) return DECALARATOR :n ) )( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :n ) return ( DECALARATOR :n + DECALARATOR :g(:( DECALARATOR :n - 1 ):) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 9 parsing ==============
 
 Input file : compiler_tests/functions/call_recursive_internal.c
  
+ ------------
+compiler_tests/functions/call_recursive_internal.c <-> test/working/functions/call_recursive_internal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :n ) IF (( DECALARATOR :n == 0 )) { SCOPE( return 0 ) } return ( DECALARATOR :n + DECALARATOR :f(:( DECALARATOR :n - 1 ):) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 10 parsing ==============
 
 Input file : compiler_tests/functions/call_recursive_single.c
  
+ ------------
+compiler_tests/functions/call_recursive_single.c <-> test/working/functions/call_recursive_single.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :n ) IF (( DECALARATOR :n == 0 )) { SCOPE( return 0 ) } return ( DECALARATOR :n + DECALARATOR :f(:( DECALARATOR :n - 1 ):) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 11 parsing ==============
 
 Input file : compiler_tests/functions/call_two_args_external.c
  
+ ------------
+compiler_tests/functions/call_two_args_external.c <-> test/working/functions/call_two_args_external.s
+
+Intermediate Language:
+( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :x )( int DECALARATOR :y ) )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(:1020:) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 12 parsing ==============
 
 Input file : compiler_tests/functions/call_two_args_internal.c
  
+ ------------
+compiler_tests/functions/call_two_args_internal.c <-> test/working/functions/call_two_args_internal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x + DECALARATOR :y ) ) )( ( int DEBUG id = DECALARATOR :fend of check return DECALARATOR :g(:1020:) ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
  Nb of files PARSING succesfully: 12 out of 12
  
 =============MIPS-LINUX-GNU-GCC on call_constant_external (1)==============
-QEMU-MIPS:  1
- QEMU-MIPS: ERROR
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on call_constant_internal (2)==============
 QEMU-MIPS:  0
@@ -602,8 +1088,8 @@ QEMU-MIPS:  139
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on call_identity_external (5)==============
-QEMU-MIPS:  1
- QEMU-MIPS: ERROR
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on call_identity_internal (6)==============
 QEMU-MIPS:  0
@@ -618,8 +1104,8 @@ QEMU-MIPS:  139
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on call_recursive_internal (9)==============
-1 2 9 15 15 QEMU-MIPS:  0
- QEMU-MIPS: TESTCASE + driver compiler succesfully
+1 2 3 4 5 QEMU-MIPS:  1
+ QEMU-MIPS: ERROR
  
 =============MIPS-LINUX-GNU-GCC on call_recursive_single (10)==============
 QEMU-MIPS:  0
@@ -634,7 +1120,7 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 ########################################
- Nb of files COMPILED succesfully: 7 out of 12
+ Nb of files COMPILED succesfully: 8 out of 12
 
  
 ==================================================
@@ -646,108 +1132,252 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/integer/add.c
  
+ ------------
+compiler_tests/integer/add.c <-> test/working/integer/add.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x + DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/integer/bitwise_and.c
  
+ ------------
+compiler_tests/integer/bitwise_and.c <-> test/working/integer/bitwise_and.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x & DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/integer/bitwise_or.c
  
+ ------------
+compiler_tests/integer/bitwise_or.c <-> test/working/integer/bitwise_or.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) ( int DECALARATOR :z )( DECALARATOR :z = ( DECALARATOR :x | DECALARATOR :y ) )( return DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/integer/bitwise_xor.c
  
+ ------------
+compiler_tests/integer/bitwise_xor.c <-> test/working/integer/bitwise_xor.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x ^ DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/integer/div.c
  
+ ------------
+compiler_tests/integer/div.c <-> test/working/integer/div.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x / DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
 Input file : compiler_tests/integer/equal.c
  
+ ------------
+compiler_tests/integer/equal.c <-> test/working/integer/equal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x == DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 7 parsing ==============
 
 Input file : compiler_tests/integer/greater_than.c
  
+ ------------
+compiler_tests/integer/greater_than.c <-> test/working/integer/greater_than.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x > DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 8 parsing ==============
 
 Input file : compiler_tests/integer/greater_than_equal.c
  
+ ------------
+compiler_tests/integer/greater_than_equal.c <-> test/working/integer/greater_than_equal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) ( int DECALARATOR :z )( DECALARATOR :z = ( DECALARATOR :x >= DECALARATOR :y ) )( return DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 9 parsing ==============
 
 Input file : compiler_tests/integer/leftshift.c
  
+ ------------
+compiler_tests/integer/leftshift.c <-> test/working/integer/leftshift.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x << DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 10 parsing ==============
 
 Input file : compiler_tests/integer/less_than.c
  
+ ------------
+compiler_tests/integer/less_than.c <-> test/working/integer/less_than.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x < DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 11 parsing ==============
 
 Input file : compiler_tests/integer/less_than_equal.c
  
+ ------------
+compiler_tests/integer/less_than_equal.c <-> test/working/integer/less_than_equal.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) ( int DECALARATOR :z )( DECALARATOR :z = ( DECALARATOR :x <= DECALARATOR :y ) )( return DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 12 parsing ==============
 
 Input file : compiler_tests/integer/logical_and.c
  
+ ------------
+compiler_tests/integer/logical_and.c <-> test/working/integer/logical_and.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x && DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 13 parsing ==============
 
 Input file : compiler_tests/integer/logical_or.c
  
+ ------------
+compiler_tests/integer/logical_or.c <-> test/working/integer/logical_or.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x || DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 14 parsing ==============
 
 Input file : compiler_tests/integer/maths.c
  
+ ------------
+compiler_tests/integer/maths.c <-> test/working/integer/maths.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) ( int DECALARATOR :z )( DECALARATOR :z = ( ( ( DECALARATOR :x + DECALARATOR :y ) - ( 10 * 2 ) ) && 0 ) )( return DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 15 parsing ==============
 
 Input file : compiler_tests/integer/mod.c
  
+ ------------
+compiler_tests/integer/mod.c <-> test/working/integer/mod.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x % DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 16 parsing ==============
 
 Input file : compiler_tests/integer/mul.c
  
+ ------------
+compiler_tests/integer/mul.c <-> test/working/integer/mul.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x * DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 17 parsing ==============
 
 Input file : compiler_tests/integer/rightshift.c
  
+ ------------
+compiler_tests/integer/rightshift.c <-> test/working/integer/rightshift.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) return ( DECALARATOR :x >> DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 18 parsing ==============
 
 Input file : compiler_tests/integer/sub.c
  
+ ------------
+compiler_tests/integer/sub.c <-> test/working/integer/sub.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x )( int DECALARATOR :y ) ( int DECALARATOR :z )( DECALARATOR :z = ( DECALARATOR :x - DECALARATOR :y ) )( return DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -786,8 +1416,8 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on leftshift (9)==============
-QEMU-MIPS:  64
- QEMU-MIPS: ERROR
+QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on less_than_equal (10)==============
 QEMU-MIPS:  0
@@ -826,7 +1456,7 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 ########################################
- Nb of files COMPILED succesfully: 17 out of 18
+ Nb of files COMPILED succesfully: 18 out of 18
 
  
 ==================================================
@@ -838,60 +1468,148 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/local_var/1line_init.c
  
+ ------------
+compiler_tests/local_var/1line_init.c <-> test/working/local_var/1line_init.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :x=( 12345 + ( 5 * 6 ) ) )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/local_var/2line_declaration.c
  
+ ------------
+compiler_tests/local_var/2line_declaration.c <-> test/working/local_var/2line_declaration.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :x=( 12345 + ( 5 * 6 ) ) )( int INITDECLARATOR 
+DECALARATOR :y=4 )( return DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/local_var/constant_initialiser.c
  
+ ------------
+compiler_tests/local_var/constant_initialiser.c <-> test/working/local_var/constant_initialiser.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :x=12345 )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/local_var/dual_var.c
  
+ ------------
+compiler_tests/local_var/dual_var.c <-> test/working/local_var/dual_var.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( int DECALARATOR :y )( DECALARATOR :x = 1234 )( DECALARATOR :y = DECALARATOR :x )( return DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/local_var/expression_initialiser.c
  
+ ------------
+compiler_tests/local_var/expression_initialiser.c <-> test/working/local_var/expression_initialiser.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :y=10 )( int INITDECLARATOR 
+DECALARATOR :x=( 20 + DECALARATOR :y ) )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
 Input file : compiler_tests/local_var/identity.c
  
+ ------------
+compiler_tests/local_var/identity.c <-> test/working/local_var/identity.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check( int DECALARATOR :x ) return DECALARATOR :x ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 7 parsing ==============
 
 Input file : compiler_tests/local_var/return_constant.c
  
+ ------------
+compiler_tests/local_var/return_constant.c <-> test/working/local_var/return_constant.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check return 5678 ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 8 parsing ==============
 
 Input file : compiler_tests/local_var/scoped_var.c
  
+ ------------
+compiler_tests/local_var/scoped_var.c <-> test/working/local_var/scoped_var.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( DECALARATOR :x = 5678 )( SCOPE( ( int DECALARATOR :x ) )SCOPE( ( DECALARATOR :x = 1234 ) ) )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 9 parsing ==============
 
 Input file : compiler_tests/local_var/scoped_var_dual_assign.c
  
+ ------------
+compiler_tests/local_var/scoped_var_dual_assign.c <-> test/working/local_var/scoped_var_dual_assign.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :w=0 )( int DECALARATOR :x )( int DECALARATOR :m )( DECALARATOR :x = 5678 )( SCOPE( ( int INITDECLARATOR 
+DECALARATOR :y=67 )( int DECALARATOR :x ) )SCOPE( ( DECALARATOR :x = 1234 )( DECALARATOR :w = ( DECALARATOR :w + 1 ) )( return DECALARATOR :w ) ) )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 10 parsing ==============
 
 Input file : compiler_tests/local_var/single_var.c
  
+ ------------
+compiler_tests/local_var/single_var.c <-> test/working/local_var/single_var.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( DECALARATOR :x = 1234 )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -950,24 +1668,52 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/misc/enum1.c
  
+ ------------
+compiler_tests/misc/enum1.c <-> test/working/misc/enum1.s
+
+Intermediate Language:
+( ENUM : X:(ENUM DECALARATOR :vv), )( ( int DEBUG id = DECALARATOR :gend of check return ( DECALARATOR :vv + 1 ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/misc/enum2.c
  
+ ------------
+compiler_tests/misc/enum2.c <-> test/working/misc/enum2.s
+
+Intermediate Language:
+( ENUM : X:vv = 13,yy = 10, )( ( int DEBUG id = DECALARATOR :gend of check return ( DECALARATOR :vv + DECALARATOR :yy ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/misc/switch1.c
  
+ ------------
+compiler_tests/misc/switch1.c <-> test/working/misc/switch1.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :gend of check( int DECALARATOR :x ) SWITCH (DECALARATOR :x) { ( SWITCH (1) { return 10 }  )( SWITCH (2) { return 11 }  ) }  ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/misc/switch2.c
  
+ ------------
+compiler_tests/misc/switch2.c <-> test/working/misc/switch2.s
+
+Intermediate Language:
 139
  ERROR - seg fault
  
@@ -975,12 +1721,22 @@ Input file : compiler_tests/misc/switch2.c
 
 Input file : compiler_tests/misc/typedef1.c
  
+ ------------
+compiler_tests/misc/typedef1.c <-> test/working/misc/typedef1.s
+
+Intermediate Language:
+( TypeDef: int->int_t )( ( int DEBUG id = DECALARATOR :gend of check ( int_t DECALARATOR :x )( DECALARATOR :x = 13 )( return 13 ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 6 parsing ==============
 
 Input file : compiler_tests/misc/typedef2.c
  
+ ------------
+compiler_tests/misc/typedef2.c <-> test/working/misc/typedef2.s
 1
  ERROR - parsing syntax 
 ########################################
@@ -995,8 +1751,8 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on switch1 (3)==============
-11 , 11 QEMU-MIPS:  1
- QEMU-MIPS: ERROR
+10 , 11 QEMU-MIPS:  0
+ QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 =============MIPS-LINUX-GNU-GCC on switch2 (4)==============
 QEMU-MIPS:  1
@@ -1007,7 +1763,7 @@ QEMU-MIPS:  0
  QEMU-MIPS: TESTCASE + driver compiler succesfully
  
 ########################################
- Nb of files COMPILED succesfully: 3 out of 5
+ Nb of files COMPILED succesfully: 4 out of 5
 
  
 ==================================================
@@ -1019,6 +1775,10 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/pointer/addressof.c
  
+ ------------
+compiler_tests/pointer/addressof.c <-> test/working/pointer/addressof.s
+
+Intermediate Language:
 139
  ERROR - seg fault
  
@@ -1026,6 +1786,10 @@ Input file : compiler_tests/pointer/addressof.c
 
 Input file : compiler_tests/pointer/arithmetic.c
  
+ ------------
+compiler_tests/pointer/arithmetic.c <-> test/working/pointer/arithmetic.s
+
+Intermediate Language:
 139
  ERROR - seg fault
  
@@ -1033,6 +1797,10 @@ Input file : compiler_tests/pointer/arithmetic.c
 
 Input file : compiler_tests/pointer/assign.c
  
+ ------------
+compiler_tests/pointer/assign.c <-> test/working/pointer/assign.s
+
+Intermediate Language:
 139
  ERROR - seg fault
  
@@ -1040,6 +1808,10 @@ Input file : compiler_tests/pointer/assign.c
 
 Input file : compiler_tests/pointer/dereference.c
  
+ ------------
+compiler_tests/pointer/dereference.c <-> test/working/pointer/dereference.s
+
+Intermediate Language:
 139
  ERROR - seg fault
  
@@ -1047,6 +1819,10 @@ Input file : compiler_tests/pointer/dereference.c
 
 Input file : compiler_tests/pointer/index.c
  
+ ------------
+compiler_tests/pointer/index.c <-> test/working/pointer/index.s
+
+Intermediate Language:
 139
  ERROR - seg fault
  
@@ -1086,24 +1862,59 @@ QEMU-MIPS:  1
 
 Input file : compiler_tests/programs/fibonacci.c
  
+ ------------
+compiler_tests/programs/fibonacci.c <-> test/working/programs/fibonacci.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fibend of check( int DECALARATOR :x ) IF (( DECALARATOR :x <= 0 )) { SCOPE( return 0 ) } IF (( DECALARATOR :x == 1 )) { SCOPE( return 1 ) } return ( DECALARATOR :fib(:( DECALARATOR :x - 1 ):) + DECALARATOR :fib(:( DECALARATOR :x - 2 ):) ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/programs/multiply.c
  
+ ------------
+compiler_tests/programs/multiply.c <-> test/working/programs/multiply.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :multiplyend of check( int DECALARATOR :x )( int DECALARATOR :y ) ( int INITDECLARATOR 
+DECALARATOR :acc=0 )( IF (( DECALARATOR :x < 0 )) { SCOPE( return ( - DECALARATOR :multiply(:( - DECALARATOR :x )DECALARATOR :y:) ) ) }  )( WHILE (( DECALARATOR :x > 0 )) { SCOPE( DECALARATOR :acc += DECALARATOR :y )SCOPE( ( DECALARATOR :x -- ) ) }  )( return DECALARATOR :acc ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/programs/sqrt.c
  
+ ------------
+compiler_tests/programs/sqrt.c <-> test/working/programs/sqrt.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :bsqrtend of check( int DECALARATOR :lo )( int DECALARATOR :hi )( int DECALARATOR :val ) ( int DECALARATOR :mid )( int DECALARATOR :sqr )( WHILE (( ( DECALARATOR :lo + 1 ) < DECALARATOR :hi )) { SCOPE( DECALARATOR :mid = ( ( DECALARATOR :lo + DECALARATOR :hi ) >> 1 ) )SCOPE( DECALARATOR :sqr = ( DECALARATOR :mid * DECALARATOR :mid ) )SCOPE( IF (( DECALARATOR :sqr <= DECALARATOR :val )) { SCOPE( DECALARATOR :lo = DECALARATOR :mid ) } ELSE {SCOPE( DECALARATOR :hi = DECALARATOR :mid ) }  ) }  )( IF (( ( DECALARATOR :lo * DECALARATOR :lo ) < DECALARATOR :val )) { SCOPE( return DECALARATOR :hi ) } ELSE {SCOPE( return DECALARATOR :lo ) }  ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/programs/sqrtedit.c
  
+ ------------
+compiler_tests/programs/sqrtedit.c <-> test/working/programs/sqrtedit.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :bsqrtend of check( int DECALARATOR :lo )( int DECALARATOR :hi )( int DECALARATOR :val ) WHILE (( ( DECALARATOR :lo + 1 ) < DECALARATOR :hi )) { SCOPE( ( int INITDECLARATOR 
+DECALARATOR :mid=( ( DECALARATOR :lo + DECALARATOR :hi ) >> 1 ) )( int INITDECLARATOR 
+DECALARATOR :sqr=( DECALARATOR :mid * DECALARATOR :mid ) ) )SCOPE( ( IF (( DECALARATOR :sqr <= DECALARATOR :val )) { SCOPE( DECALARATOR :lo = DECALARATOR :mid ) } ELSE {SCOPE( DECALARATOR :hi = DECALARATOR :mid ) }  ) ) } IF (( ( DECALARATOR :lo * DECALARATOR :lo ) < DECALARATOR :val )) { SCOPE( return DECALARATOR :hi ) } ELSE {SCOPE( return DECALARATOR :lo ) }  ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -1138,30 +1949,48 @@ QEMU-MIPS:  1
 
 Input file : compiler_tests/strings/chliteral.c
  
+ ------------
+compiler_tests/strings/chliteral.c <-> test/working/strings/chliteral.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :gend of check return id = 'h'andCHAR_LITERAL c = h ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/strings/escaped.c
  
+ ------------
+compiler_tests/strings/escaped.c <-> test/working/strings/escaped.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/strings/literal.c
  
+ ------------
+compiler_tests/strings/literal.c <-> test/working/strings/literal.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/strings/puts.c
  
+ ------------
+compiler_tests/strings/puts.c <-> test/working/strings/puts.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/strings/search.c
  
+ ------------
+compiler_tests/strings/search.c <-> test/working/strings/search.s
+
+Intermediate Language:
 139
  ERROR - seg fault
  
@@ -1189,30 +2018,40 @@ QEMU-MIPS:  1
 
 Input file : compiler_tests/struct/sizeof.c
  
+ ------------
+compiler_tests/struct/sizeof.c <-> test/working/struct/sizeof.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/struct/struct_inst.c
  
+ ------------
+compiler_tests/struct/struct_inst.c <-> test/working/struct/struct_inst.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/struct/struct_member_get.c
  
+ ------------
+compiler_tests/struct/struct_member_get.c <-> test/working/struct/struct_member_get.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/struct/struct_member_set.c
  
+ ------------
+compiler_tests/struct/struct_member_set.c <-> test/working/struct/struct_member_set.s
 1
  ERROR - parsing syntax 
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/struct/struct_two_members.c
  
+ ------------
+compiler_tests/struct/struct_two_members.c <-> test/working/struct/struct_two_members.s
 1
  ERROR - parsing syntax 
 ########################################
@@ -1235,30 +2074,72 @@ QEMU-MIPS:  1
 
 Input file : compiler_tests/testing/for_in_for.c
  
+ ------------
+compiler_tests/testing/for_in_for.c <-> test/working/testing/for_in_for.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( int DECALARATOR :y )( int DECALARATOR :z )( DECALARATOR :y = 0 )( FOR (DECALARATOR :x = 0 ; ( DECALARATOR :x < 10 ) ; DECALARATOR :x = ( DECALARATOR :x + 1 ) ) { SCOPE( DECALARATOR :y = ( DECALARATOR :y - 1 ) )SCOPE( FOR (DECALARATOR :z = 0 ; ( DECALARATOR :z < 0 ) ; ( DECALARATOR :z -- ) ) { SCOPE( DECALARATOR :y = DECALARATOR :z ) }  ) }  )( return DECALARATOR :y ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/testing/negative.c
  
+ ------------
+compiler_tests/testing/negative.c <-> test/working/testing/negative.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( DECALARATOR :x = ( - 20 ) )( WHILE (( DECALARATOR :x < 10 )) { SCOPE( ( DECALARATOR :x ++ ) ) }  )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/testing/not.c
  
+ ------------
+compiler_tests/testing/not.c <-> test/working/testing/not.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :z= !( 0 ) )( return DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/testing/onescomp.c
  
+ ------------
+compiler_tests/testing/onescomp.c <-> test/working/testing/onescomp.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int INITDECLARATOR 
+DECALARATOR :z= ~( 2 ) )( return DECALARATOR :z ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/testing/while_multiple.c
  
+ ------------
+compiler_tests/testing/while_multiple.c <-> test/working/testing/while_multiple.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( DECALARATOR :x = 20 )( WHILE (( DECALARATOR :x > 10 )) { SCOPE( DECALARATOR :x = ( DECALARATOR :x - 1 ) ) }  )( return DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -1297,30 +2178,70 @@ QEMU-MIPS:  0
 
 Input file : compiler_tests/types/sizeof_char_inst.c
  
+ ------------
+compiler_tests/types/sizeof_char_inst.c <-> test/working/types/sizeof_char_inst.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( char DECALARATOR :x )( return sizeof: DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 2 parsing ==============
 
 Input file : compiler_tests/types/sizeof_char_type.c
  
+ ------------
+compiler_tests/types/sizeof_char_type.c <-> test/working/types/sizeof_char_type.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check return sizeof: TypeSpecifier: char ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 3 parsing ==============
 
 Input file : compiler_tests/types/sizeof_int_inst.c
  
+ ------------
+compiler_tests/types/sizeof_int_inst.c <-> test/working/types/sizeof_int_inst.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check ( int DECALARATOR :x )( return sizeof: DECALARATOR :x ) ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 4 parsing ==============
 
 Input file : compiler_tests/types/sizeof_int_type.c
  
+ ------------
+compiler_tests/types/sizeof_int_type.c <-> test/working/types/sizeof_int_type.s
+
+Intermediate Language:
+( ( int DEBUG id = DECALARATOR :fend of check return sizeof: TypeSpecifier: int ) )
+
+MIPS GENERATED:
+
 0
  
 ============= TESTCASE 5 parsing ==============
 
 Input file : compiler_tests/types/unsigned.c
  
+ ------------
+compiler_tests/types/unsigned.c <-> test/working/types/unsigned.s
+
+Intermediate Language:
+( ( unsigned DEBUG id = DECALARATOR :fend of check return 11 ) )
+
+MIPS GENERATED:
+
 0
  
 ########################################
@@ -1350,7 +2271,7 @@ QEMU-MIPS:  0
  Nb of files COMPILED succesfully: 5 out of 5
 
 ########################################
- Nb of files COMPILED succesfully: 81 out of 98 PARSED from 5 total
+ Nb of files COMPILED succesfully: 86 out of 101 PARSED from 5 total
 
 
 Warning: This appears not to be the target environment

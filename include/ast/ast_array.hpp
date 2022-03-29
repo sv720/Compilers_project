@@ -33,7 +33,7 @@ public:
     ExpressionPtr getSize() const
     { return size; }
 
-    virtual std::string getNature() const override
+    virtual std::string getNature(Context &context) const override
     { 
         return "ArrayDeclarator";
     }
@@ -170,7 +170,7 @@ public:
     virtual ExpressionPtr getSize() const override //not sure what this does
     { return index; }
 
-    virtual std::string getNature() const override
+    virtual std::string getNature(Context &context) const override
     { 
         return "ArrayCall";
     }

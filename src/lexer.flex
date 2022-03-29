@@ -92,6 +92,7 @@ IS			    (u|U|l|L)*
 
 
 [0-9]+                        { yylval.integer=strtod(yytext, 0); return INT_LITERAL; }
+[0-9]+[.]?[0-9]+?[f]?                { yylval.numberFloat=strtof(yytext, 0) ; return FLOAT_LITERAL;}
 {LETTER}({LETTER}|{DIGIT})*	  { yylval.string=new std::string(yytext); return IDENTIFIER; }
 
 '([^'\\\n]|\\.)'            { yylval.string=new std::string(yytext) ; return(CHAR_LITERAL);}

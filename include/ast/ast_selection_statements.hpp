@@ -152,6 +152,10 @@ public:
             dst<<"li $"<<destReg<<","<< i+1 <<'\n';
             dst<<"beq $"<<destReg<<",$"<<conditionReg<<", "<<  switch_case_label <<'\n';
             dst<<"nop"<<'\n';
+
+            // if (caseLabels[i]) {
+
+            // }
         }
         context.regFile.freeReg(conditionReg);
 
@@ -161,7 +165,12 @@ public:
 
         for (int i = 0; i < nb_cases; i++) {
             dst<<caseLabels[i]<<":"<<'\n';
-            statement->list[i]->generateMIPS(dst, context, destReg);
+            if ( statement->list[i]->getId() == "break;") {
+                dst<<"j "<<  ENDswitch_label <<'\n';
+            } else {
+                statement->list[i]->generateMIPS(dst, context, destReg);
+            }
+            
             dst<<"j "<<  ENDswitch_label <<'\n';
             dst<<"nop"<<'\n';
         }
@@ -186,6 +195,11 @@ public:
     Case(ExpressionPtr _statement)
         : statement(_statement)
     {}
+
+    // std::string getId() const override
+    // {
+    //     return ";"
+    // }
 
     virtual ~Case()
     {

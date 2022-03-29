@@ -76,7 +76,7 @@ extern int yydebug;
     INT_LITERAL = 259,             /* INT_LITERAL  */
     CHAR_LITERAL = 260,            /* CHAR_LITERAL  */
     SIZEOF = 261,                  /* SIZEOF  */
-    STRING_LITERAL = 262,          /* STRING_LITERAL  */
+    FLOAT_LITERAL = 262,           /* FLOAT_LITERAL  */
     POINTER_OP = 263,              /* POINTER_OP  */
     INCREMENT_OP = 264,            /* INCREMENT_OP  */
     DECREMENT_OP = 265,            /* DECREMENT_OP  */
@@ -146,11 +146,12 @@ union YYSTYPE
   Expression *expr;
   ExpressionList *expressionList;
   int integer;
-  double numberFloat;
+  float numberFloat;
+  double numberDouble;
   std::string *string;
   yytokentype token;
 
-#line 154 "src/parser.tab.hpp"
+#line 155 "src/parser.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
