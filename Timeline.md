@@ -83,5 +83,7 @@ https://www.cs.tufts.edu/comp/140/lectures/Day_3/mips_summary.pdf //high level m
 - small tasks completed: sizeOf(), changing types of variables, simple switch case, adapted variables to be of more types (not just int)
 - prepared for implementing floats and doubles
 
-TODO:   switch
-        arrays
+
+### 29 Mar 2022
+- implemented typedef
+- floats in progress

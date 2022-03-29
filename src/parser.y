@@ -54,7 +54,7 @@
 %type <expr> parameter_declaration type_name abstract_declarator direct_abstract_declarator
 %type <expr> initializer statement labeled_statement
 %type <expr> expression_statement selection_statement iteration_statement
-%type <expr> jump_statement external_declaration function_definition
+%type <expr> jump_statement external_declaration function_definition typedef_declaration
 
 %type <expressionList> compound_statement
 
@@ -97,6 +97,7 @@ function_definition
 	: declaration_specifiers declarator compound_statement 	{ $$ = new Full_Function(new Function_Definition(*$1, $2), $3); }
 	| declaration_specifiers declarator	';'					{ $$ = new Function_Call_Definition(*$1, $2);}
 	| enum_specifier ';'									{ $$ = $1; }
+	| TYPEDEF declaration_specifiers IDENTIFIER ';'					{ $$ = new TypeDef(*$2, *$3); }
 	| declarator 
 	;
 
@@ -124,7 +125,9 @@ parameter_list
 parameter_declaration
 	: declaration_specifiers declarator				{ $$ = new Declare(*$1, $2);}
 	| declaration_specifiers abstract_declarator	{ $$ = new Declare(*$1, $2);}
-	| declaration_specifiers						{ ; }
+	| IDENTIFIER declarator							{ $$ = new Declare(*$1, $2);}
+	// | declaration_specifiers						{ ; }
+	// | TYPEDEF declaration_specifiers type_specifier	{ $$ = new TypeDef(*$2, *$3); }
 	;
 
 constant_expression
@@ -135,14 +138,15 @@ constant_expression
 declaration
 	: declaration_specifiers ';'						{ ; }
 	| declaration_specifiers init_declarator ';'	{ $$ = new Declare(*$1, $2);}
+	| IDENTIFIER declarator	';'						{ $$ = new Declare(*$1, $2);}
 	;
 
 /* from init_declarator & parameter_declaration*/
 declaration_specifiers
 	: type_specifier									{ $$ == $1; }
 	| type_specifier declaration_specifiers				{ $$ == new std::string( *$1 + " " + *$2); } /* can split the string */
-	| TYPEDEF
-	| TYPEDEF declaration_specifiers
+	| TYPEDEF											{ ; }
+	| TYPEDEF declaration_specifiers type_specifier		{ ; }
 	;
 
 
@@ -167,7 +171,7 @@ initializer_list
 abstract_declarator
 	: pointer
 	| direct_abstract_declarator			{ $$ = $1; }
-	| pointer direct_abstract_declarator
+	| pointer direct_abstract_declarator	{ ; }
 	;
 
 direct_abstract_declarator
@@ -229,7 +233,7 @@ expression_statement
 selection_statement
 	: IF '(' expression ')' statement %prec NOELSE		{ $$ = new If($3, $5); }
 	| IF '(' expression ')' statement ELSE statement	{ $$ = new IfElse($3, $5, $7); /* dangling else problem */ }
-	| SWITCH '(' expression ')' compound_statement				{ $$ = new SwitchCase($3, $5); }
+	| SWITCH '(' expression ')' compound_statement		{ $$ = new SwitchCase($3, $5); }
 	;
 /* from statement */
 iteration_statement
@@ -240,9 +244,9 @@ iteration_statement
 	;
 /* from statement */
 jump_statement
-	: GOTO IDENTIFIER ';'
-	| CONTINUE ';'
-	| BREAK ';'
+	: GOTO IDENTIFIER ';'	{ ; }
+	| CONTINUE ';'			{ ; }
+	| BREAK ';'				{ ; }
 	| RETURN ';' 			{ $$ = new Return(new Integer()); }
 	| RETURN expression ';' { $$ = new Return($2); }
 	;
@@ -262,8 +266,8 @@ postfix_expression
 	| postfix_expression '[' expression ']'					{ $$ = new ArrayCall($1, $3);}
 	| postfix_expression '(' ')'							{ $$ = new FunctionCall($1);}
 	| postfix_expression '(' argument_expression_list ')'	{ $$ = new FunctionCall($1, $3);}
-	| postfix_expression '.' IDENTIFIER
-	| postfix_expression POINTER_OP IDENTIFIER
+	| postfix_expression '.' IDENTIFIER						{ ; }
+	| postfix_expression POINTER_OP IDENTIFIER				{ ; }
 	| postfix_expression INCREMENT_OP						{ $$ = new PostIncrementOperator($1);}
 	| postfix_expression DECREMENT_OP						{ $$ = new PostDecrementOperator($1);}
 	;
@@ -289,7 +293,7 @@ unary_operator
 	| '*'		{ /* pointer value */ }
 	| '+'		{ /* same as $2 */ }
 	| '-'		{ /* neg */ }
-	| '~'
+	| '~'		{ ; }
 	| '!'		{ /* logic NOT */ }
 	;
 
@@ -359,7 +363,7 @@ logical_or_expression
 
 conditional_expression
 	: logical_or_expression												{ $$ = $1; }
-	| logical_or_expression '?' expression ':' conditional_expression
+	| logical_or_expression '?' expression ':' conditional_expression	{ ; }
 	;
 
 assignment_expression
@@ -405,41 +409,41 @@ type_specifier
 	;
 
 struct_or_union_specifier
-	: struct_or_union IDENTIFIER '{' struct_declaration_list '}'
-	| struct_or_union '{' struct_declaration_list '}'
-	| struct_or_union IDENTIFIER
+	: struct_or_union IDENTIFIER '{' struct_declaration_list '}'		{ ; }
+	| struct_or_union '{' struct_declaration_list '}'					{ ; }
+	| struct_or_union IDENTIFIER										{ ; }
 	;
 
 struct_or_union
-	: STRUCT
+	: STRUCT	{ ; }
 	| UNION		{ /* NOT NEEDED */ }
 	;
 
 struct_declaration_list
-	: struct_declaration
-	| struct_declaration_list struct_declaration
+	: struct_declaration							{ ; }
+	| struct_declaration_list struct_declaration	{ ; }
 	;
 
 struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';'
+	: specifier_qualifier_list struct_declarator_list ';'	{ ; }
 	;
 
 specifier_qualifier_list
-	: type_specifier specifier_qualifier_list
-	| type_specifier
-	| type_qualifier specifier_qualifier_list
-	| type_qualifier
+	: type_specifier specifier_qualifier_list	{ ; }
+	| type_specifier							{ ; }
+	| type_qualifier specifier_qualifier_list	{ ; }
+	| type_qualifier							{ ; }
 	;
 
 struct_declarator_list
-	: struct_declarator
-	| struct_declarator_list ',' struct_declarator
+	: struct_declarator								{ ; }
+	| struct_declarator_list ',' struct_declarator	{ ; }
 	;
 
 struct_declarator
-	: declarator
-	| ':' constant_expression
-	| declarator ':' constant_expression
+	: declarator							{ ; }
+	| ':' constant_expression				{ ; }
+	| declarator ':' constant_expression	{ ; }
 	;
 
 enum_specifier
@@ -459,28 +463,28 @@ enumerator
 	;
 
 type_qualifier
-	: CONST
-	| VOLATILE
+	: CONST			{ ; }
+	| VOLATILE		{ ; }
 	;
 
 pointer
-	: '*'
-	| '*' type_qualifier_list
-	| '*' pointer
-	| '*' type_qualifier_list pointer
+	: '*'								{ ; }
+	| '*' type_qualifier_list			{ ; }
+	| '*' pointer						{ ; }
+	| '*' type_qualifier_list pointer	{ ; }
 	;
 
 type_qualifier_list
-	: type_qualifier
-	| type_qualifier_list type_qualifier
+	: type_qualifier						{ ; }
+	| type_qualifier_list type_qualifier	{ ; }
 	;
 
 
 
 
 identifier_list
-	: IDENTIFIER
-	| identifier_list ',' IDENTIFIER
+	: IDENTIFIER						{ ; }
+	| identifier_list ',' IDENTIFIER	{ ; }
 	;
 
 type_name

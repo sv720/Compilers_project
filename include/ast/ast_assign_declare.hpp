@@ -46,22 +46,28 @@ public:
 
     virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
     {
-        
+        std::string type = left;
         
         right->generateMIPS(dst, context, destReg);
+
+        for (int i = 0; i < context.typedefs.size(); i++) {
+            if (context.typedefs.find(left) != context.typedefs.end()) {
+                type = context.typedefs[left];
+            }
+        }
 
         if (right->getNature() != "ArrayDeclarator") {
             variable v;
 
-            if ( (left == "int") || (left == "char") ){
+            if ( (type == "int") || (type == "char") ){
                 dst << "addiu $sp,$sp,-4 \n";  // have a new variable so need to make some space on the stack
                 dst << "sw $25,0($fp) \n";     // we move the old (out of function) frame pointer into the current fp value
                 dst << "sw $31,4($fp) \n";     // we store old_pc just above old_fp
                 dst << "move $fp,$sp" << '\n'; // move frame pointer back to the bottom
-                if (left == "int") {
+                if (type == "int") {
                     v.size = 4; // only for int !!!
                     v.type = "int";
-                }else if (left == "char") {
+                }else if (type == "char") {
                     v.size = 1;
                     v.type = "char";
                 }

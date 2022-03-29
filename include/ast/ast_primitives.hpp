@@ -253,5 +253,35 @@ public:
 
 };
 
+//________________________________________________
+
+class TypeDef
+    : public Expression
+{
+private:
+    std::string type;
+    std::string typedef_id;
+public:
+    TypeDef(std::string type, std::string typedef_id)
+        : type(type)
+        , typedef_id(typedef_id)
+    {}
+
+    std::string getId() const override
+    {
+        return typedef_id;
+    }
+
+    virtual void print(std::ostream &dst) const override
+    {
+        dst<<"TypeDef: "<<type << "->" <<typedef_id;
+    }
+    
+    virtual void generateMIPS(std::ostream &dst, Context &context, int destReg) const override
+    {
+        context.typedefs.insert({typedef_id,type});
+    }
+
+};
 
 #endif
