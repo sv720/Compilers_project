@@ -44,8 +44,8 @@ Timeline:
 - mips working for local_var and integer (arithmetic, parameters, variable allocation to registers)
 
 ### 18 Mar 2022:
-- relative stack/frame pointers implemented (future comments: ...)
-- allocating temporary registers for operations and emtying them after use to avoid runnning out of free registers, so every operation can only use a limited number of registers at a time
+- relative stack/frame pointers implemented. The frame pointer moves down whenever a variable is added to the stack it moves down by the size of that element. This is different to the way gcc does things (it moves by a set amount when a function is called and then remains fixed; loading and storing relative to the fp). Our implementation is such that store  are always done at a fixed offset above the fp and loads are done relative to the fp (depending on when variables where added to the map). 
+- allocating temporary registers for operations and emptying them after use to avoid runnning out of free registers, so every operation can only use a limited number of registers at a time
 - implemented while, if and for loops for generating mips (not scoped)
 
 ### 21 Mar 2022:
